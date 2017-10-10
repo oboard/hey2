@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "omark.hey"
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion 7
+        targetSdkVersion 25
         versionCode 32
         versionName "2.0 beta1"
     }

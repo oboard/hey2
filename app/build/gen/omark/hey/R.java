@@ -11,20 +11,112 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int colorAccent=0x7f040002;
-        public static final int colorPrimary=0x7f040000;
-        public static final int colorPrimaryDark=0x7f040001;
+        public static final int colorAccent=0x7f050003;
+        public static final int colorBackground=0x7f050002;
+        public static final int colorPrimary=0x7f050001;
+        public static final int colorPrimaryDark=0x7f050000;
+    }
+    public static final class drawable {
+        public static final int add=0x7f020000;
+        public static final int add2=0x7f020001;
+        public static final int back=0x7f020002;
+        public static final int close=0x7f020003;
+        public static final int close2=0x7f020004;
+        public static final int dash=0x7f020005;
+        public static final int i=0x7f020006;
+        public static final int menu=0x7f020007;
+        public static final int menu2=0x7f020008;
+        public static final int multi=0x7f020009;
+        public static final int multi2=0x7f02000a;
+        public static final int search=0x7f02000b;
+        public static final int textstyle=0x7f02000c;
+    }
+    public static final class id {
+        public static final int main_desktop=0x7f090001;
+        public static final int main_dock=0x7f090002;
+        public static final int main_progress=0x7f090003;
+        public static final int main_root=0x7f090000;
+        public static final int menuloadeditadd=0x7f090004;
+        public static final int menuloadeditgo=0x7f090005;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
+        public static final int main=0x7f040000;
+    }
+    public static final class menu {
+        public static final int link=0x7f080000;
+        public static final int loadedit=0x7f080001;
+        public static final int photo=0x7f080002;
     }
     public static final class mipmap {
-        public static final int ic_launcher=0x7f020000;
+        public static final int ic_launcher=0x7f030000;
     }
     public static final class string {
-        public static final int app_name=0x7f050000;
+        public static final int an=0x7f060002;
+        public static final int ani=0x7f060003;
+        public static final int asq=0x7f060012;
+        public static final int bctp=0x7f06002a;
+        public static final int boom=0x7f060009;
+        public static final int bpp=0x7f060017;
+        public static final int bss=0x7f06001a;
+        public static final int bt=0x7f060018;
+        public static final int ddd=0x7f060038;
+        public static final int del=0x7f06000b;
+        public static final int dktp=0x7f060029;
+        public static final int dkym=0x7f060030;
+        public static final int fla=0x7f060019;
+        public static final int fzlj=0x7f060036;
+        public static final int glq=0x7f060039;
+        public static final int hdjb=0x7f060034;
+        public static final int history=0x7f060027;
+        public static final int history1=0x7f060028;
+        public static final int htdk=0x7f060037;
+        public static final int jd=0x7f06000f;
+        public static final int jsq=0x7f060015;
+        public static final int lfa=0x7f060006;
+        public static final int lfa2=0x7f060007;
+        public static final int n=0x7f06003a;
+        public static final int name=0x7f060000;
+        public static final int name2=0x7f060001;
+        public static final int no=0x7f060005;
+        public static final int not=0x7f060008;
+        public static final int o=0x7f060011;
+        public static final int p=0x7f06000e;
+        public static final int reput=0x7f06000c;
+        public static final int reset=0x7f06000a;
+        public static final int setting0=0x7f06001b;
+        public static final int setting1=0x7f06001c;
+        public static final int setting2=0x7f06001d;
+        public static final int setting3=0x7f06001e;
+        public static final int setting4=0x7f06001f;
+        public static final int setting5=0x7f060020;
+        public static final int setting6=0x7f060021;
+        public static final int setting7=0x7f060022;
+        public static final int setting8=0x7f06003d;
+        public static final int styleedit1=0x7f060023;
+        public static final int styleedit2=0x7f060024;
+        public static final int styleedit3=0x7f060025;
+        public static final int sx=0x7f060013;
+        public static final int tr=0x7f060014;
+        public static final int ttbitem1=0x7f060026;
+        public static final int txl=0x7f06003e;
+        public static final int wtf=0x7f060016;
+        public static final int xjb=0x7f060033;
+        public static final int xjym=0x7f06002b;
+        public static final int xsdl=0x7f06002e;
+        public static final int xssk=0x7f060031;
+        public static final int xxsq=0x7f06002c;
+        public static final int xy=0x7f060010;
+        public static final int xymdk=0x7f060035;
+        public static final int ycdl=0x7f06002f;
+        public static final int ycsq=0x7f06002d;
+        public static final int yes=0x7f060004;
+        public static final int ymbxy=0x7f06003b;
+        public static final int ymm=0x7f06003c;
+        public static final int ys=0x7f06000d;
+        public static final int yssk=0x7f060032;
     }
     public static final class style {
-        public static final int AppTheme=0x7f060000;
+        public static final int AppTheme=0x7f070000;
+        public static final int AppThemeS=0x7f070001;
     }
 }

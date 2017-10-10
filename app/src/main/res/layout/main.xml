@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+<FrameLayout
+    android:id="@+id/main_root"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <TextView
-        android:text="Hello world!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:clipToPadding="true">
 
-</LinearLayout>
+        <FrameLayout
+            android:id="@+id/main_desktop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="48dp">
+
+        </FrameLayout>
+
+        <omark.hey.ScrollText
+            android:onClick="onDockClick"
+            android:id="@+id/main_dock"
+            android:background="#fff"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:text="Hey"/>
+
+        <ProgressBar
+            android:id="@+id/main_progress"
+            android:layout_height="1dp"
+            android:layout_width="match_parent"/>
+
+    </RelativeLayout>
+
+</FrameLayout>
+
+

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="name2">Hey Browser</string>
+
+    <string name="an">Other</string>
+    <string name="ani">Animation</string>
+    <string name="yes">OK</string>
+    <string name="no">Cancel</string>
+    <string name="lfa">Load Completed</string>
+    <string name="lfa2">New Page</string>
+    <string name="not">None</string>
+    <string name="boom">Boom</string>
+    <string name="reset">Rename</string>
+    <string name="del">Delete</string>
+    <string name="reput">Edit</string>
+    <string name="ys">Style</string>
+    <string name="p">Picture</string>
+    <string name="jd">Classic (White)</string>
+
+    <string name="jsq">Added to bookmark.</string>
+    <string name="wtf">Oooooooooooooops!Operation failed!(QAQ)</string>
+    <string name="bpp">Background Picture</string>
+    <string name="bt">Transparent</string>
+    <string name="fla">Flat</string>
+    <string name="bss">Colorful</string>
+
+    <string name="setting0">Settings</string>
+    <string name="setting1">Homepage</string>
+    <string name="setting2">Style</string>
+    <string name="setting3">Search Engine</string>
+    <string name="setting4">Start-up Manager</string>
+    <string name="setting5">Script</string>
+    <string name="setting6">Other</string>
+    <string name="setting7">About</string>
+
+    <string name="styleedit1">Tip to modify the style | Please restart Hey after modify.</string>
+    <string name="styleedit2">Navigation Bar</string>
+    <string name="styleedit3">Small icons</string>
+
+    <string name="ttbitem1">Share to</string>
+
+    <string name="history">History</string>
+    <string name="history1">Delete all histories</string>
+
+    <string name="dktp">View picture</string>
+    <string name="bctp">Save picture</string>
+    <string name="xy">Smart</string>
+
+    <string name="xjym">New Page"</string>
+    <string name="xxsq">Show Bookmarks"</string>
+    <string name="ycsq">Hide Bookmarks"</string>
+    <string name="xsdl">Show Navigation Bar"</string>
+    <string name="ycdl">Hide Navigation Bar"</string>
+    <string name="dkym">Open..."</string>
+
+    <string name="xjb">New Script</string>
+    <string name="hdjb">Get script</string>
+
+    <string name="o">Exit</string>
+    <string name="asq">Add to bookmarks</string>
+    <string name="sx">Refresh</string>
+    <string name="tr">Translation</string>
+
+    <string name="xssk">Show search box</string>
+    <string name="yssk">Hide search box</string>
+
+    <string name="xymdk">Open in New Tab</string>
+    <string name="fzlj">Copy link</string>
+    <string name="htdk">Open in Background</string>
+
+    <string name="ddd">Downloads</string>
+    <string name="glq">Manager</string>
+    <string name="n">New</string>
+    <string name="ymbxy">You must fill the Domain!</string>
+    <string name="ymm">Domain name ( "*" means global )</string>
+
+    <string name="setting8">Intercept</string>
+    <string name="txl">Enter the domain for intercept.</string>
+
+
+</resources>
+
+
+<!--翻译by Raku En-UKv2.4-->
