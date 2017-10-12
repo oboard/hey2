@@ -18,6 +18,14 @@ public class ScrollText extends TextView {
     public ScrollText(Context context, AttributeSet attrs) {
         super(context, attrs);
         scroller = new Scroller(context);
+
+        setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Main.web.reload();
+                    return true;
+                }
+            });
     }
 
     @Override

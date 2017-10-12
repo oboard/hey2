@@ -1,16 +1,12 @@
 package omark.hey;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -18,23 +14,43 @@ import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.TextView;
-import java.util.ArrayList;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import java.util.ArrayList;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
+import android.view.MotionEvent;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import javax.crypto.interfaces.DHPrivateKey;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.LinearLayout;
 
 public class Main extends Activity {
     static Main me;
-    static View popn;
+    static int webindex = 0;
+    static View popn, back_icon, forward_icon;
+    static HeyClipboard clipboard;
     static ScrollText dock;
     static FrameLayout desktop;
-    static FrameLayout root;
+    static RelativeLayout root;
     static ProgressBar progressbar;
     static HeyWeb web;//now webview
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
+    static LinearLayout multi;
+    static ImageView[] multiimage = new ImageView[4];
+    static TextView[] multitext = new TextView[4];
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        //创建剪辑版
+        clipboard = new HeyClipboard(this);
 
         S.init(this, "main");
         if (S.get("first", true)) {
@@ -44,17 +60,52 @@ public class Main extends Activity {
         }
 
         me = this;
+        popn = findViewById(R.id.main_popn);
         dock = (ScrollText)findViewById(R.id.main_dock);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         progressbar = (ProgressBar)findViewById(R.id.main_progress);
-        root = (FrameLayout)findViewById(R.id.main_root);
-        root.setBackgroundColor(0xff66ccff);
+        back_icon = findViewById(R.id.main_back_icon);
+        back_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.back), Color.WHITE)));
+        forward_icon = findViewById(R.id.main_forward_icon);
+        forward_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.forward), Color.WHITE)));
+        multi = (LinearLayout)findViewById(R.id.multi_root);
+        multitext[0] = (TextView)findViewById(R.id.multi_text0);
+        multitext[1] = (TextView)findViewById(R.id.multi_text1);
+        multitext[2] = (TextView)findViewById(R.id.multi_text2);
+        multitext[3] = (TextView)findViewById(R.id.multi_text3);
+        multiimage[0] = (ImageView)findViewById(R.id.multi_image0);
+        multiimage[1] = (ImageView)findViewById(R.id.multi_image1);
+        multiimage[2] = (ImageView)findViewById(R.id.multi_image2);
+        multiimage[3] = (ImageView)findViewById(R.id.multi_image3);
+        
+        root = (RelativeLayout)findViewById(R.id.main_root);
+        root.setBackgroundColor(0xff707070);
 
-        web = addPage("");
+        Intent i = getIntent();
+        if (i != null) onNewIntent(i);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getDataString() == null) {
+            web = addPage("");
+            webindex += 1;
+        } else {
+            web = addPage(intent.getDataString());
+        }
     }
 
     public void onDockClick(View v) {
-
+        if (multi.getVisibility() == View.GONE) {
+            
+            multiimage[webindex - 1].setImageBitmap(getWebDrawing());
+            multitext[webindex - 1].setText(web.getTitle());
+            
+            multi.setVisibility(View.VISIBLE);
+        } else {
+            multi.setVisibility(View.GONE);
+        }
     }
 
     public HeyWeb addPage(String uri) {
@@ -64,21 +115,33 @@ public class Main extends Activity {
         new_web.loadUrl(link);
         new_web.setVisibility(View.VISIBLE);
         new_web.setWebChromeClient(new HeyWebChrome());
+        new_web.setOnTouchListener(HeyWebTouch(new_web));
         desktop.addView(new_web);
         pages.add(new_web);
+
+        webindex += uri.equals("") ? 0 : 1;
 
         return new_web;
     }
 
+    public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
+        return (new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent moe) {
+                popn.setX(w.getLeft() + moe.getX());
+                popn.setY(w.getTop() + moe.getY());
+                return false;
+            }
+        });
+    }
 
+    public Bitmap getWebDrawing() {
+        View view = getWindow().getDecorView();
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight() - dock.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
 
-
-
-
-
-
-
-    public void ripple_version(View view_children) {
+        return bitmap;
+    } public void ripple_version(View view_children) {
         if (android.os.Build.VERSION.SDK_INT >= 21) {//版本兼容
             int[] attrsArray = { android.R.attr.selectableItemBackgroundBorderless };
             // TypedArray typedArray = this.obtainStyledAttributes(attrsArray); //Activity中使用
@@ -140,10 +203,10 @@ public class Main extends Activity {
 
         return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
     }
-    }
+}
 
 
- class HeyWebChrome extends WebChromeClient {
+class HeyWebChrome extends WebChromeClient {
     //private View mCustomView;
     /* private CustomViewCallback mCustomViewCallback;
      @Override
@@ -179,24 +242,23 @@ public class Main extends Activity {
     } 
     @Override public void onProgressChanged(final WebView v, int newProgress) {
         if (newProgress == 100) {
-
             if (v == Main.web) {
-                Main.progressbar.setVisibility(View.INVISIBLE);
+                Main.progressbar.setVisibility(View.GONE);
                 //关闭刷新状态
                 //  MainActivity.webrefreshlayout.setRefreshing(false);
                 if (!(v.getTitle().equals("about:blank"))) {
                     //int c = GetWebTopColor();
                     //webcolor.set(webholderarray.indexOf(webholder), c);
                     //StatusColor(c);
+                }
+            }
+        } else {
+            if (v == Main.web) {
+                if (View.GONE == Main.progressbar.getVisibility()) Main.progressbar.setVisibility(View.VISIBLE);
+                Main.progressbar.setProgress(newProgress);
+            }
+        } super.onProgressChanged(v, newProgress);
 
-                }
-            } else {
-                if (v == Main.web) {
-                    if (View.INVISIBLE == Main.progressbar.getVisibility()) Main.progressbar.setVisibility(View.VISIBLE);
-                    Main.progressbar.setProgress(newProgress); 
-                }
-            } super.onProgressChanged(v, newProgress);
-        }
     }
 }
     

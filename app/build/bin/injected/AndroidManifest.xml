@@ -37,11 +37,13 @@
 
 		<activity
 			android:name=".Main"
-			android:hardwareAccelerated="true"
-			android:configChanges="orientation|screenSize|keyboardHidden"
-			android:windowSoftInputMode="adjustPan"
+			android:launchMode="singleTask"
+			android:label="@string/name"
 			android:theme="@style/AppTheme"
-			android:label="@string/name">
+			android:hardwareAccelerated="true"
+			android:alwaysRetainTaskState="true"
+			android:windowSoftInputMode="adjustPan"
+			android:configChanges="orientation|screenSize|keyboardHidden">
 
 			<intent-filter>
 

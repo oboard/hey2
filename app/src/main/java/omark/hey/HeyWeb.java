@@ -1,38 +1,25 @@
 package omark.hey;
 
-import android.webkit.WebView;
 import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-import android.webkit.WebSettings;
-import android.os.Build;
-import java.lang.reflect.Method;
-import android.webkit.WebViewClient;
-import android.webkit.SslErrorHandler;
-import android.net.http.SslError;
-import android.widget.Toast;
-import android.widget.ImageView;
 import android.content.Intent;
 import android.net.Uri;
-import android.webkit.WebChromeClient;
-import android.graphics.Bitmap;
-import android.widget.LinearLayout;
-import android.widget.AbsoluteLayout;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import android.app.Activity;
-import android.content.SharedPreferences;
+import android.net.http.SslError;
+import android.os.Build;
+import android.util.AttributeSet;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.webkit.DownloadListener;
-import java.util.ArrayList;
-import android.animation.ValueAnimator;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.view.MenuItem;
-import android.content.ClipboardManager;
-import android.webkit.WebResourceResponse;
-import android.webkit.ValueCallback;
+import android.widget.Toast;
+import java.lang.reflect.Method;
+import android.graphics.Canvas;
+import android.graphics.Bitmap;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
@@ -51,58 +38,64 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         init();
     } void init() {
         //一堆WebView设置
-        WebSettings websettings = getSettings();
+        WebSettings webSettings = getSettings();
 
-        websettings.setAllowFileAccess(true);
-        websettings.setAllowContentAccess(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
         if (Build.VERSION.SDK_INT >= 16) {
-            websettings.setAllowFileAccessFromFileURLs(true);
-            websettings.setAllowUniversalAccessFromFileURLs(true);
+            webSettings.setAllowFileAccessFromFileURLs(true);
+            webSettings.setAllowUniversalAccessFromFileURLs(true);
         }
-        websettings.setDomStorageEnabled(true);
-        websettings.setSavePassword(true);
-        websettings.setSaveFormData(true);
-        websettings.setBuiltInZoomControls(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setSavePassword(true);
+        webSettings.setSaveFormData(true);
+        webSettings.setBuiltInZoomControls(true);
 
         //AppCache
-        websettings.setAppCacheEnabled(true);
-        websettings.setAppCachePath(getContext().getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath());
-        websettings.setAppCacheMaxSize(5 * 1024 * 1024);
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setAppCachePath(getContext().getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath());
+        webSettings.setAppCacheMaxSize(5 * 1024 * 1024);
 
         //Database
-        websettings.setDatabaseEnabled(true);
-        websettings.setDatabasePath(getContext().getApplicationContext().getDir("db", Context.MODE_PRIVATE).getPath());
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setDatabasePath(getContext().getApplicationContext().getDir("db", Context.MODE_PRIVATE).getPath());
 
         //启用地理定位  
-        websettings.setGeolocationEnabled(true);
+        webSettings.setGeolocationEnabled(true);
         //设置定位的数据库路径
-        websettings.setGeolocationDatabasePath(getContext().getApplicationContext().getDir("database", Context.MODE_PRIVATE).getPath());
+        webSettings.setGeolocationDatabasePath(getContext().getApplicationContext().getDir("database", Context.MODE_PRIVATE).getPath());
 
-        websettings.setSupportZoom(true);
-        websettings.setDisplayZoomControls(false);
-        websettings.setUseWideViewPort(true);
-        websettings.setJavaScriptEnabled(true);
-        //websettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        websettings.setPluginState(WebSettings.PluginState.ON);
-        websettings.setLoadWithOverviewMode(true);
-        websettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        websettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        websettings.setDefaultTextEncodingName("UTF-8");
+        webSettings.setSupportZoom(true);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setJavaScriptEnabled(true);
+        //webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setCacheMode(webSettings.LOAD_NO_CACHE);
+        webSettings.setCacheMode(webSettings.LOAD_DEFAULT);
+        webSettings.setDefaultTextEncodingName("UTF-8");
 
         //图片加载优化
         if (Build.VERSION.SDK_INT >= 19) {
-            websettings.setLoadsImagesAutomatically(true);
+            webSettings.setLoadsImagesAutomatically(true);
         } else {
-            websettings.setLoadsImagesAutomatically(false);
+            webSettings.setLoadsImagesAutomatically(false);
         }
+
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(webSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+
 
         if (Build.VERSION.SDK_INT < 19) {
             try {
-                Class class_ = websettings.getClass();
+                Class class_ = webSettings.getClass();
                 Class[] arrclass = new Class[]{Integer.TYPE};
                 Method method = class_.getMethod("setPageCacheCapacity", arrclass);
                 Object[] arrobject = new Object[]{5};
-                method.invoke((Object)websettings, arrobject);
+                method.invoke((Object)webSettings, arrobject);
             } catch (Exception var8_11) {
                 var8_11.printStackTrace();
             }
@@ -116,7 +109,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     HitTestResult hitTestResult = view.getHitTestResult();
 
-                    if ((url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")))) {
+                    if (isUri(url)) {
                         if (hitTestResult == null) {
                             view.loadUrl(url);
                             return true;
@@ -133,7 +126,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
                 public void onPageFinished(WebView v, String url) {
                     super.onPageFinished(v, url);
-                    
+
                     if (!getSettings().getLoadsImagesAutomatically()) getSettings().setLoadsImagesAutomatically(true);
                 }
 
@@ -184,13 +177,16 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     } public interface OnScrollChangedCallback {
         void onScroll(WebView v, int l, int t);
     }
-
+    
+    public static boolean isUri(String url) {
+        return (url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")));
+    }
+    
     @Override public boolean onLongClick(View v) {  
         final HitTestResult result = ((WebView)v).getHitTestResult();  
-        if (null == result)  
-            return false;  
+        if (null == result) return false;  
 
-        int type = result.getType();  
+        int type = result.getType();
         if (type == WebView.HitTestResult.UNKNOWN_TYPE) return false;  
 
         if (type == WebView.HitTestResult.EDIT_TEXT_TYPE) return true;
@@ -221,18 +217,17 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 //填充菜单
                 popup.getMenuInflater().inflate(R.menu.link, popup.getMenu());
                 //绑定菜单项的点击事件
-                /*popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem i) {
                             if (i.getTitle().equals(getContext().getString(R.string.fzlj)))  //复制链接
-                                MainActivity.Clipboard.setText(result.getExtra());
+                                Main.clipboard.set(result.getExtra());
                             else if (i.getTitle().equals(getContext().getString(R.string.xymdk))) {
                                 //新页面打开
-                                MainActivity.webaddbutton.performClick();
-                                MainActivity.webholder.loadUrl(result.getExtra());
+                                Main.web = Main.me.addPage(result.getExtra());
                             }
                             return true;
                         }
-                    });*/
+                    });
                 //显示(这一行代码不要忘记了)
                 popup.show();
                 break;

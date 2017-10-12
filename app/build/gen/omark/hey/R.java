@@ -18,29 +18,39 @@ public final class R {
     }
     public static final class drawable {
         public static final int add=0x7f020000;
-        public static final int add2=0x7f020001;
-        public static final int back=0x7f020002;
-        public static final int close=0x7f020003;
-        public static final int close2=0x7f020004;
-        public static final int dash=0x7f020005;
-        public static final int i=0x7f020006;
-        public static final int menu=0x7f020007;
-        public static final int menu2=0x7f020008;
-        public static final int multi=0x7f020009;
-        public static final int multi2=0x7f02000a;
-        public static final int search=0x7f02000b;
-        public static final int textstyle=0x7f02000c;
+        public static final int back=0x7f020001;
+        public static final int close=0x7f020002;
+        public static final int downward=0x7f020003;
+        public static final int forward=0x7f020004;
+        public static final int i=0x7f020005;
+        public static final int menu=0x7f020006;
+        public static final int multi=0x7f020007;
+        public static final int search=0x7f020008;
+        public static final int textstyle=0x7f020009;
     }
     public static final class id {
-        public static final int main_desktop=0x7f090001;
-        public static final int main_dock=0x7f090002;
-        public static final int main_progress=0x7f090003;
+        public static final int main_back_icon=0x7f090002;
+        public static final int main_desktop=0x7f090004;
+        public static final int main_dock=0x7f090005;
+        public static final int main_forward_icon=0x7f090003;
+        public static final int main_popn=0x7f090001;
+        public static final int main_progress=0x7f090006;
         public static final int main_root=0x7f090000;
-        public static final int menuloadeditadd=0x7f090004;
-        public static final int menuloadeditgo=0x7f090005;
+        public static final int menuloadeditadd=0x7f090010;
+        public static final int menuloadeditgo=0x7f090011;
+        public static final int multi_image0=0x7f090009;
+        public static final int multi_image1=0x7f09000b;
+        public static final int multi_image2=0x7f09000d;
+        public static final int multi_image3=0x7f09000f;
+        public static final int multi_root=0x7f090007;
+        public static final int multi_text0=0x7f090008;
+        public static final int multi_text1=0x7f09000a;
+        public static final int multi_text2=0x7f09000c;
+        public static final int multi_text3=0x7f09000e;
     }
     public static final class layout {
         public static final int main=0x7f040000;
+        public static final int multi=0x7f040001;
     }
     public static final class menu {
         public static final int link=0x7f080000;
