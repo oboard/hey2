@@ -25,10 +25,8 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
     public static ImageView iv;
     public static String lurl = "";
-
-    // public static Boolean canScrollreload = true;
-    //重定义webview
-    private OnScrollChangedCallback mOnScrollChangedCallback;
+    
+    //private OnScrollChangedCallback mOnScrollChangedCallback;
 
     public HeyWeb(final Context context) {
         super(context);
@@ -165,7 +163,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         i.setType("image/*");
         //MainActivity.com.startActivityForResult(Intent.createChooser(i, "Image Chooser"), 233);
     }
-
+/*
     @Override protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
         //普通webview
@@ -177,6 +175,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     } public interface OnScrollChangedCallback {
         void onScroll(WebView v, int l, int t);
     }
+    */
     
     public static boolean isUri(String url) {
         return (url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")));

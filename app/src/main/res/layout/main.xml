@@ -5,48 +5,58 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/main_popn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"/>
-    
-    <View
-        android:id="@+id/main_back_icon"
-        android:layout_margin="16dp"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_centerVertical="true"/>
+	<View
+		android:id="@+id/main_popn"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:visibility="gone"/>
 
-    <View
-        android:id="@+id/main_forward_icon"
-        android:layout_margin="16dp"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"/>
-    
+	<View
+		android:id="@+id/main_back_icon"
+		android:layout_margin="16dp"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
+		android:layout_centerVertical="true"/>
+
+	<View
+		android:id="@+id/main_forward_icon"
+		android:layout_margin="16dp"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
+		android:layout_centerVertical="true"
+		android:layout_alignParentRight="true"/>
+
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:fitsSystemWindows="true"
 		android:clipToPadding="true">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#fff"/>
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="#fff"/>
 
 		<FrameLayout
 			android:id="@+id/main_desktop"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_marginBottom="48dp">
-            
 
 		</FrameLayout>
-        
-        <include layout="@layout/multi"></include>
+
+        <HorizontalScrollView
+            android:id="@+id/main_multi_scroll_box"
+            android:layout_width="match_parent"
+			android:layout_height="match_parent"
+            android:visibility="gone">
+            
+            <LinearLayout
+                android:id="@+id/main_multi_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            
+        </HorizontalScrollView>
 
 		<omark.hey.ScrollText
 			android:onClick="onDockClick"
@@ -58,8 +68,26 @@
 			android:gravity="center"
 			android:text="Hey"/>
 
+		<LinearLayout
+			android:id="@+id/main_multi_box"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:layout_alignParentBottom="true"
+			android:gravity="right|center_vertical"
+            android:visibility="gone">
+
+			<ImageButton
+                android:background="?android:attr/selectableItemBackground"
+				android:layout_height="match_parent"
+                android:onClick="onAddClick"
+				android:clipChildren="false"
+				android:layout_width="48dp"
+				android:src="@drawable/add"/>
+
+		</LinearLayout>
+
 		<omark.hey.HeyProgress
-            style="?android:attr/progressBarStyleHorizontal"
+			style="?android:attr/progressBarStyleHorizontal"
 			android:id="@+id/main_progress"
 			android:layout_height="2dp"
 			android:layout_width="match_parent"

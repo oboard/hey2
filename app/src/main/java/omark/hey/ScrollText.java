@@ -45,7 +45,7 @@ public class ScrollText extends TextView {
                 //触摸事件的第二步，这时候的x,y已经随着滑动操作产生了变化，用变化后的坐标减去首次触摸时的坐标得到相对的偏移量
             case MotionEvent.ACTION_MOVE:
                 int offsetx = viewGroup.getScrollX() + lastX - x;
-                int max = Main.dip2px(this.getContext(), 60);
+                int max = (int)Main.dip2px(this.getContext(), 60);
                 //this.setText("" + offsetx + "max:" + max);
                 if (offsetx > max) {
                     offsetx = max;
