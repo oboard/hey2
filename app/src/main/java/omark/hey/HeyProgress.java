@@ -14,12 +14,14 @@ public class HeyProgress extends ProgressBar {
         super(context, attr);
     }
     
+    
+    
     @Override protected void onDraw(Canvas canvas) {
         //super.onDraw(canvas);
         int h = getHeight(), w = getWidth();
         Paint p = new Paint();
-        p.setColor(getContext().getColor(R.color.colorPrimaryDark));
-        canvas.drawRect(0, 0, w * getProgress() / 100, h, p);
+        p.setColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
+        canvas.drawRect(w - w * getProgress() / 100, 0, w * getProgress() / 100, h, p);
     }
     
 }

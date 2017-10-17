@@ -2,26 +2,27 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/multi_root"
-	android:layout_width="wrap_content"
 	android:layout_height="match_parent"
+	android:layout_width="wrap_content"
 	android:orientation="vertical"
-	android:background="#fff"
+	android:background="@color/colorBackground"
 	android:paddingBottom="48dp">
 
 	<RelativeLayout
-        android:layout_margin="5dp"
-		android:layout_width="wrap_content"
+		android:layout_margin="10dp"
 		android:layout_height="match_parent"
+		android:layout_width="wrap_content"
 		android:layout_weight="1">
 
 		<TextView
-			android:layout_width="wrap_content"
+			android:textColor="#fff"
 			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
 			android:id="@+id/multi_text0"/>
 
 		<ImageView
-            android:layout_margin="5dp"
+			android:layout_margin="10dp"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_centerHorizontal="true"
@@ -32,23 +33,24 @@
 	</RelativeLayout>
 
 	<RelativeLayout
-        android:layout_margin="5dp"
-		android:layout_width="wrap_content"
+		android:layout_margin="10dp"
 		android:layout_height="match_parent"
+		android:layout_width="wrap_content"
 		android:layout_weight="1">
 
 		<TextView
-			android:layout_width="wrap_content"
+			android:textColor="#fff"
 			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
 			android:id="@+id/multi_text1"/>
 
 		<ImageView
-            android:layout_margin="5dp"
+			android:layout_margin="10dp"
 			android:onClick="onMultiClick"
 			android:id="@+id/multi_image1"
-			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
 			android:layout_below="@id/multi_text1"/>
 

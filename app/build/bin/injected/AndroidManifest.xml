@@ -3,11 +3,11 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
 	android:versionCode="32"
-	android:versionName="2.0 beta1">
+	android:versionName="2.0 beta2">
 
 	<uses-sdk
 		android:minSdkVersion="7"
-		android:targetSdkVersion="25"/>
+		android:targetSdkVersion="22"/>
 
 	<uses-permission
 		android:name="android.permission.INTERNET"/>

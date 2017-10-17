@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "omark.hey"
         minSdkVersion 7
-        targetSdkVersion 25
+        targetSdkVersion 22
         versionCode 32
-        versionName "2.0 beta1"
+        versionName "2.0 beta2"
     }
 
     buildTypes {

@@ -14,18 +14,23 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 import java.lang.reflect.Method;
-import android.graphics.Canvas;
-import android.graphics.Bitmap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
-    public static ImageView iv;
-    public static String lurl = "";
+    public static ArrayList<String> images = new ArrayList<String>();
     
+    // 获取 img 标签正则
+    private static final String IMAGE_URL_TAG = "<img.*src=(.*?)[^>]*?>";
+    // 获取 src 路径的正则
+    private static final String IMAGE_URL_CONTENT = "http:\"?(.*?)(\"|>|\\s+)";
+
     //private OnScrollChangedCallback mOnScrollChangedCallback;
 
     public HeyWeb(final Context context) {
@@ -75,16 +80,16 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         webSettings.setDefaultTextEncodingName("UTF-8");
 
         //图片加载优化
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= 19)
             webSettings.setLoadsImagesAutomatically(true);
-        } else {
+        else
             webSettings.setLoadsImagesAutomatically(false);
-        }
+        
 
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
             webSettings.setMixedContentMode(webSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }
+        
 
 
         if (Build.VERSION.SDK_INT < 19) {
@@ -98,6 +103,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 var8_11.printStackTrace();
             }
         }
+
+        //HeyApi
+        addJavascriptInterface(new HeyApi(), "Context");
+        addJavascriptInterface(new HeyApi(), "H5EXT");
 
         //设置WebClient
         setWebViewClient(new WebViewClient() {
@@ -163,24 +172,52 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         i.setType("image/*");
         //MainActivity.com.startActivityForResult(Intent.createChooser(i, "Image Chooser"), 233);
     }
-/*
-    @Override protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
-        super.onScrollChanged(l, t, oldl, oldt);
-        //普通webview
-        if (mOnScrollChangedCallback != null) mOnScrollChangedCallback.onScroll(this, l, t);
-    } public OnScrollChangedCallback getOnScrollChangedCallback() {
-        return mOnScrollChangedCallback;
-    } public void setOnScrollChangedCallback(final OnScrollChangedCallback onScrollChangedCallback) {
-        mOnScrollChangedCallback = onScrollChangedCallback;
-    } public interface OnScrollChangedCallback {
-        void onScroll(WebView v, int l, int t);
+    /*
+     @Override protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
+     super.onScrollChanged(l, t, oldl, oldt);
+     //普通webview
+     if (mOnScrollChangedCallback != null) mOnScrollChangedCallback.onScroll(this, l, t);
+     } public OnScrollChangedCallback getOnScrollChangedCallback() {
+     return mOnScrollChangedCallback;
+     } public void setOnScrollChangedCallback(final OnScrollChangedCallback onScrollChangedCallback) {
+     mOnScrollChangedCallback = onScrollChangedCallback;
+     } public interface OnScrollChangedCallback {
+     void onScroll(WebView v, int l, int t);
+     }
+     */
+
+
+    /***
+     * 获取页面所有图片对应的地址对象，
+     * 例如 <img src="http://sc1.hao123img.com/data/f44d0aab7bc35b8767de3c48706d429e" />
+     * @param HTML WebView 加载的 HTML 文本
+     * @return
+     */
+    private ArrayList<String> getAllImageUrlFromHtml(String html) {
+        Matcher matcher = Pattern.compile(IMAGE_URL_TAG).matcher(html);
+        ArrayList<String> listImgUrl = new ArrayList<String>();
+        while (matcher.find()) {
+            listImgUrl.add(matcher.group());
+        }
+        //从图片对应的地址对象中解析出 src 标签对应的内容
+        getAllImageUrlFormSrcObject(listImgUrl);
+        return listImgUrl;
+    } private ArrayList<String> getAllImageUrlFormSrcObject(ArrayList<String> listImageUrl) {
+        ArrayList<String> listImgSrc = new ArrayList<String>();
+        for (String image : listImageUrl) {
+            Matcher matcher = Pattern.compile(IMAGE_URL_CONTENT).matcher(image);
+            while (matcher.find()) {
+                listImgSrc.add(matcher.group().substring(0, matcher.group().length() - 1));
+            }
+        }
+        return listImgSrc;
     }
-    */
     
+
     public static boolean isUri(String url) {
         return (url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")));
     }
-    
+
     @Override public boolean onLongClick(View v) {  
         final HitTestResult result = ((WebView)v).getHitTestResult();  
         if (null == result) return false;  
@@ -211,7 +248,25 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 //    break;  
                 //case WebView.HitTestResult.SRC_ANCHOR_TYPE:
                 //    break;  
-                //case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+            case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+                //填充菜单
+                popup.getMenuInflater().inflate(R.menu.link, popup.getMenu());
+                //绑定菜单项的点击事件
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem i) {
+                            if (i.getTitle().equals(getContext().getString(R.string.fzlj)))  //复制链接
+                                Main.clipboard.set(result.getExtra());
+                            else if (i.getTitle().equals(getContext().getString(R.string.xymdk))) {
+                                //新页面打开
+                                Main.me.onAddClick(null);
+                                Main.web.loadUrl(result.getExtra());
+                            }
+                            return true;
+                        }
+                    });
+                //显示(这一行代码不要忘记了)
+                popup.show();
+                break;
             case WebView.HitTestResult.SRC_ANCHOR_TYPE:
                 //填充菜单
                 popup.getMenuInflater().inflate(R.menu.link, popup.getMenu());
@@ -222,7 +277,8 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                                 Main.clipboard.set(result.getExtra());
                             else if (i.getTitle().equals(getContext().getString(R.string.xymdk))) {
                                 //新页面打开
-                                Main.web = Main.me.addPage(result.getExtra());
+                                Main.me.onAddClick(null);
+                                Main.web.loadUrl(result.getExtra());
                             }
                             return true;
                         }

@@ -6,14 +6,17 @@ import android.content.SharedPreferences.Editor;
 import java.util.Map;
 import java.util.Set;
 import java.util.ArrayList;
+import android.content.pm.PackageManager;
 
 public class S {
     static Editor e;
     static SharedPreferences s;
+    static Context c;
 
     public static void init(Context context, String name) {
         s = context.getSharedPreferences(name, 0);//Context.MODE_WORLD_READABLE);// + Context.MODE_WORLD_WRITEABLE);
         e = s.edit();
+        c = context;
     }
 
     //Get
@@ -83,5 +86,30 @@ public class S {
     public static boolean OK() {
         if (e != null) return e.commit();
         return false;
+    }
+    
+    
+    public static int getColor(int resid) {
+        return c.getResources().getColor(resid);
+    } public static String getString(int resid) {
+        return c.getResources().getString(resid);
+    } public static int getVersionCode() {
+        int version = 0;
+        try {
+            //获取软件版本号，对应AndroidManifest.xml下android:versionCode
+            version = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return version;
+    } public static String getVersionName() {
+        String version = "";
+        try {
+            //获取软件版本号，对应AndroidManifest.xml下android:versionCode
+            version = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return version;
     }
 }

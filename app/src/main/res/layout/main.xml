@@ -45,18 +45,18 @@
 
 		</FrameLayout>
 
-        <HorizontalScrollView
-            android:id="@+id/main_multi_scroll_box"
-            android:layout_width="match_parent"
+		<HorizontalScrollView
+			android:id="@+id/main_multi_scroll_box"
+			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-            android:visibility="gone">
-            
-            <LinearLayout
-                android:id="@+id/main_multi_scroll"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-            
-        </HorizontalScrollView>
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/main_multi_scroll"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		</HorizontalScrollView>
 
 		<omark.hey.ScrollText
 			android:onClick="onDockClick"
@@ -68,24 +68,6 @@
 			android:gravity="center"
 			android:text="Hey"/>
 
-		<LinearLayout
-			android:id="@+id/main_multi_box"
-			android:layout_width="match_parent"
-			android:layout_height="48dp"
-			android:layout_alignParentBottom="true"
-			android:gravity="right|center_vertical"
-            android:visibility="gone">
-
-			<ImageButton
-                android:background="?android:attr/selectableItemBackground"
-				android:layout_height="match_parent"
-                android:onClick="onAddClick"
-				android:clipChildren="false"
-				android:layout_width="48dp"
-				android:src="@drawable/add"/>
-
-		</LinearLayout>
-
 		<omark.hey.HeyProgress
 			style="?android:attr/progressBarStyleHorizontal"
 			android:id="@+id/main_progress"
@@ -93,7 +75,74 @@
 			android:layout_width="match_parent"
 			android:layout_alignTop="@id/main_dock"/>
 
+		<LinearLayout
+			android:id="@+id/main_multi_box"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:layout_alignParentBottom="true"
+			android:gravity="right|center_vertical"
+			android:clickable="true"
+			android:visibility="gone">
+
+			<ImageButton
+				android:layout_margin="8dp"
+				android:id="@+id/main_clear"
+				android:background="?android:attr/selectableItemBackground"
+				android:layout_height="match_parent"
+				android:layout_width="48dp"
+				android:src="@drawable/clear"
+				android:onClick="onRemoveAllClick"/>
+
+			<ImageButton
+				android:layout_margin="8dp"
+				android:id="@+id/main_add"
+				android:background="?android:attr/selectableItemBackground"
+				android:layout_height="match_parent"
+				android:layout_width="48dp"
+				android:src="@drawable/add"
+				android:onClick="onAddClick"/>
+
+		</LinearLayout>
+
 	</RelativeLayout>
+
+	<LinearLayout
+        android:padding="5dp"
+		android:id="@+id/main_manager"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+        android:background="#fff"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:layout_height="48dp"
+            android:layout_width="match_parent"
+			android:background="#11000000">
+            
+        <ImageButton
+            android:id="@+id/main_manager_back"
+            android:scaleX="0.7"
+            android:scaleY="0.7"
+            android:src="@drawable/back"
+            android:layout_height="match_parent"
+            android:layout_width="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:onClick="onManagerBackClick"/>
+            
+		<EditText
+            android:layout_marginLeft="48dp"
+			android:layout_height="match_parent"
+			android:layout_width="match_parent"
+			android:background="#00000000"
+			android:imeOptions="actionGo"
+			android:id="@+id/main_text"
+			android:singleLine="true"
+            android:maxLines="1"/>
+        
+        </FrameLayout>
+        
+	</LinearLayout>
 
 </RelativeLayout>
 
