@@ -42,6 +42,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import java.net.URL;
+import android.net.Uri;
 
 public class Main extends Activity {
     static Main me;
@@ -53,7 +56,7 @@ public class Main extends Activity {
     static LinearLayout manager;
     static ImageButton manager_back;
     static FrameLayout desktop;
-    static RelativeLayout root;
+    static RelativeLayout root, ground;
     static ProgressBar progressbar;
     static HeyWeb web;//now webview
     static ImageButton add, clear;
@@ -64,6 +67,7 @@ public class Main extends Activity {
     static ArrayList<ImageView> multiimage = new ArrayList<ImageView>();
     static ArrayList<Bitmap> multiimages = new ArrayList<Bitmap>();
     static ArrayList<Drawable> multitop = new ArrayList<Drawable>();
+    static ArrayList<Integer> multibottom = new ArrayList<Integer>();
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
 
 
@@ -80,6 +84,7 @@ public class Main extends Activity {
             S.put("first", false);
             S.put("home", "https://www.bing.com");
             S.put("search" , HeySearch.DEFAULT);
+            S.put("pagecolor" , true);
             S.ok();
         }
 
@@ -87,6 +92,7 @@ public class Main extends Activity {
         popn = findViewById(R.id.main_popn);
         dock = (ScrollText)findViewById(R.id.main_dock);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
+        ground = (RelativeLayout)findViewById(R.id.main_ground);
         progressbar = (ProgressBar)findViewById(R.id.main_progress);
 
         text = (EditText)findViewById(R.id.main_text);
@@ -129,12 +135,27 @@ public class Main extends Activity {
         addMulti();//
 
         root = (RelativeLayout)findViewById(R.id.main_root);
-        root.setBackgroundColor(S.getColor(R.color.colorBackground));
-        desktop.setBackgroundColor(S.getColor(R.color.colorBackground));
+        onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorBackground)));
         multi_box.setBackgroundColor(S.getColor(R.color.colorBackground));
 
         Intent i = getIntent();
         if (i != null) onNewIntent(i);
+    }
+
+    public static void onChangeBackground(Integer f, Drawable b) {
+        Main.root.setBackground(b);
+        Main.ground.setBackgroundColor(f);
+        int c = f;
+        if (f == Color.TRANSPARENT) {
+            if (b instanceof ColorDrawable)
+                c = ((ColorDrawable)b).getColor();
+            else if (b instanceof BitmapDrawable)
+                c = ((BitmapDrawable)b).getBitmap().getPixel(0,0);
+        }
+        if (Main.me.isLightColor(c))
+            dock.setTextColor(Color.BLACK);
+        else
+            dock.setTextColor(Color.WHITE);
     }
 
     @Override
@@ -224,7 +245,7 @@ public class Main extends Activity {
             alphaA.setDuration(320);
             web.setAnimation(alphaA);
 
-            root.setBackground(Main.multitop.get(Main.webindex - 1));
+            onChangeBackground(Main.multibottom.get(Main.webindex - 1), Main.multitop.get(Main.webindex - 1));
             multi_scroll_box.setVisibility(View.GONE);
             web.setVisibility(View.VISIBLE);
         }
@@ -232,19 +253,28 @@ public class Main extends Activity {
         multi_box.setVisibility(multi_scroll_box.getVisibility());
     } public void onDockLongClick(View v) {
         View view = getWindow().getDecorView();
-        TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), 0);
+        TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), desktop.getTop());
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
         text.setText(web.getUrl());
         manager.setAnimation(tranA);
         manager.setVisibility(View.VISIBLE);
     } public void onManagerBackClick(View v) {
+        if (manager.getVisibility() == View.GONE) return;
+        
         View view = getWindow().getDecorView();
-        TranslateAnimation tranA = new TranslateAnimation(0, 0, 0, view.getHeight());
+        TranslateAnimation tranA = new TranslateAnimation(0, 0, desktop.getTop(), view.getHeight());
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
         tranA.setFillAfter(true);
         manager.setAnimation(tranA);
+        
+        new Handler(){
+            @Override public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                manager.setVisibility(View.GONE);
+            }
+        }.sendEmptyMessageDelayed(0, 320);
     } public void onAddClick(View v) {
         web = addPage("");
         if (webindex > multi.size() * 2) addMulti();
@@ -271,7 +301,8 @@ public class Main extends Activity {
         desktop.addView(new_web);
         pages.add(new_web);
 
-        multitop.add(null);
+        multitop.add(new ColorDrawable(S.getColor(R.color.colorBackground)));
+        multibottom.add(0x01000000);
         multiimages.add(null);
 
         webindex = pages.size();
@@ -294,6 +325,8 @@ public class Main extends Activity {
         multi = new ArrayList<LinearLayout>();
         multiimage = new ArrayList<ImageView>();
         multiimages = new ArrayList<Bitmap>();
+        multitop = new ArrayList<Drawable>();
+        multibottom = new ArrayList<Integer>();
         multitext = new ArrayList<TextView>();
         multi_scroll.removeAllViews();
         addMulti();
@@ -310,6 +343,8 @@ public class Main extends Activity {
         multitext.remove(index);
         multiimage.remove(index);
         multiimages.remove(index);
+        multibottom.remove(index);
+        multitop.remove(index);
         if (webindex == index + 1) {
             webindex = index + ((index == 0) ? 1 : 0);
             web = pages.get(webindex - 1);
@@ -366,8 +401,8 @@ public class Main extends Activity {
     public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
         return (new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent moe) {
-                popn.setX(w.getX() + moe.getX());
-                popn.setY(w.getY() + moe.getY());
+                popn.setX(w.getLeft() + moe.getX());
+                popn.setY(w.getTop() + moe.getY());
                 return false;
             }
         });
@@ -378,7 +413,7 @@ public class Main extends Activity {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
-        if (isLightColor(bitmap.getPixel(1, 1))) canvas.drawRect(0, 0, view.getWidth(), 1, new Paint(0x70000000));
+        //if (isLightColor(bitmap.getPixel(1, 1))) canvas.drawRect(0, 0, view.getWidth(), 1, new Paint(0x11000000));
         return Bitmap.createBitmap(bitmap, 0, desktop.getTop(), view.getWidth(), view.getHeight() - dock.getHeight() - desktop.getTop());
     } public void ripple_version(View view_children) {
         //版本兼容
@@ -468,14 +503,14 @@ class HeyWebChrome extends WebChromeClient {
     public void onReceivedTitle(WebView v, String title) {
         //((TextView)v.getTag()).setText(title);
         if ((v == Main.web) && (!(title.equals("about:blank")))) {
+            if (Main.dock.getText().equals(title)) return;
             Main.dock.setText(title);
-
+            Main.multibottom.set(Main.webindex - 1, Color.TRANSPARENT);
             v.loadUrl("javascript:void((function(){" +
-                      "Context.setIndex(" + Main.pages.indexOf(v) + ");" +
                       "try {" +
-                      "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\"));" +
+                      "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + Main.webindex + ");" +
                       "} catch (e) {" +
-                      "Context.onReceivedThemeColor(\"\");" +
+                      "Context.onReceivedThemeColor(\"\"," + Main.webindex + ");" +
                       "}" +
                       "})())");
         }
@@ -498,18 +533,10 @@ class HeyWebChrome extends WebChromeClient {
                     }
                 }.sendEmptyMessageDelayed(0, 1000);
 
-                //关闭刷新状态
-                //  MainActivity.webrefreshlayout.setRefreshing(false);
-                if (!(v.getTitle().equals("about:blank"))) {
-                    //int c = GetWebTopColor();
-                    //webcolor.set(webholderarray.indexOf(webholder), c);
-                    //StatusColor(c);
-
-                    //if (!(Main.multitop.get(Main.webindex - 1) instanceof ColorDrawable)) {
-                    //    Bitmap b = Main.me.getWebDrawing();
-                    //    Main.multitop.set(Main.webindex - 1, new BitmapDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1)));
-                    //    Main.root.setBackground(Main.multitop.get(Main.webindex - 1));
-                    //}
+                if (!(v.getTitle().equals("about:blank") || Main.manager.getVisibility() == View.VISIBLE || Main.multi_scroll_box.getVisibility() == View.VISIBLE)) {
+                    Bitmap b = Main.me.getWebDrawing();
+                    Main.multitop.set(Main.webindex - 1, new BitmapDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1)));
+                    Main.onChangeBackground(Main.multibottom.get(Main.webindex - 1), Main.multitop.get(Main.webindex - 1));
                 }
             }
         } else {

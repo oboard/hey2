@@ -27,15 +27,11 @@
 		android:layout_alignParentRight="true"/>
 
 	<RelativeLayout
+        android:id="@+id/main_ground"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:fitsSystemWindows="true"
 		android:clipToPadding="true">
-
-		<View
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="#fff"/>
 
 		<FrameLayout
 			android:id="@+id/main_desktop"
@@ -61,6 +57,7 @@
 		<omark.hey.ScrollText
 			android:onClick="onDockClick"
 			android:id="@+id/main_dock"
+            android:textColor="#fff"
 			android:background="?@android:attr/selectableItemBackground"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
