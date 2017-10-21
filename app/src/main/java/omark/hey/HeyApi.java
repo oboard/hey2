@@ -1,29 +1,30 @@
 package omark.hey;
-import android.webkit.JavascriptInterface;
-import android.graphics.drawable.ColorDrawable;
-import android.widget.Toast;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
-import android.graphics.drawable.ShapeDrawable;
+import android.os.Handler;
+import android.os.Looper;
+import android.webkit.JavascriptInterface;
 
 public class HeyApi {
 
     @JavascriptInterface
-    public void onReceivedThemeColor(String color, int webi) {
-        /*if (S.get("pagecolor", true) && webi == Main.webindex) {
-            Bitmap b = Main.me.getWebDrawing();
-            Main.multitop.set(webi - 1, new BitmapDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1)));
-        }*/
-        if (Main.multibottom.get(webi - 1) != Color.TRANSPARENT) {
-            if (!color.equals("")) {
-                Main.multibottom.set(webi - 1, Color.parseColor(color));
-            } else {
-                Main.multibottom.set(webi - 1, Color.TRANSPARENT);
-            }
-        }
-        if (webi == Main.webindex) Main.onChangeBackground(Color.parseColor(color), Main.multitop.get(webi - 1));
+    public void onReceivedThemeColor(final String color, final int webi) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                public void run() {
+                    /*if (S.get("pagecolor", true) && webi == Main.webindex) {
+                     Bitmap b = Main.me.getWebDrawing();
+                     Main.multitop.set(webi - 1, new BitmapDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1)));
+                     }*/
+                    //if (Main.multibottom.get(webi) != Color.TRANSPARENT) {
+                    if (!color.equals("")) {
+                        Main.multibottom.set(webi, Color.parseColor(color));
+                    } else {
+                        Main.multibottom.set(webi, Color.TRANSPARENT);
+                    }
+                    //}
+                    if (webi == Main.webindex) Main.onChangeBackground(Main.multibottom.get(webi), Main.multitop.get(webi));
+                }
+            });
     }
 
     @JavascriptInterface
@@ -36,7 +37,7 @@ public class HeyApi {
     public String app(String name) {
         switch (name) {
             case "builder":
-                return "" + S.getVersionCode();
+                return "" + Build.VERSION.SDK_INT;
             case "version":
                 return S.getVersionName();
             case "addin":

@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
 	android:versionCode="32"
-	android:versionName="2.0 beta2">
+	android:versionName="2.0 beta3">
 
 	<uses-sdk
 		android:minSdkVersion="7"
@@ -43,7 +43,7 @@
 			android:hardwareAccelerated="true"
 			android:alwaysRetainTaskState="true"
 			android:windowSoftInputMode="adjustPan"
-			android:configChanges="orientation|screenSize|keyboardHidden">
+			android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard">
 
 			<intent-filter>
 

@@ -1,5 +1,9 @@
 package omark.hey;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +13,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,8 +32,12 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -41,15 +51,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import java.net.URL;
-import android.net.Uri;
 
 public class Main extends Activity {
     static Main me;
-    static int webindex = 0;
-    static View popn, back_icon, forward_icon;
+    static int webindex = - 1;
+    static View popn, blacker, back_icon, forward_icon;
     static HeyClipboard clipboard;
     static ScrollText dock;
     static EditText text;
@@ -59,6 +65,7 @@ public class Main extends Activity {
     static RelativeLayout root, ground;
     static ProgressBar progressbar;
     static HeyWeb web;//now webview
+    static ImageView aniimage;
     static ImageButton add, clear;
     static LinearLayout multi_box, multi_scroll;
     static HorizontalScrollView multi_scroll_box;
@@ -90,7 +97,9 @@ public class Main extends Activity {
 
         me = this;
         popn = findViewById(R.id.main_popn);
+        blacker = findViewById(R.id.main_blacker);
         dock = (ScrollText)findViewById(R.id.main_dock);
+        root = (RelativeLayout)findViewById(R.id.main_root);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
         progressbar = (ProgressBar)findViewById(R.id.main_progress);
@@ -105,7 +114,7 @@ public class Main extends Activity {
                                 if (url.indexOf(".") != -1) 
                                     url = "http://" + url;
                                 else
-                                    url = S.get("search" , HeySearch.DEFAULT) + url;
+                                    url = HeySearch.getSearch(url);
                             }
                             //转到页面
                             web.loadUrl(url);
@@ -121,25 +130,25 @@ public class Main extends Activity {
         ripple_version(manager_back);
 
         add = (ImageButton)findViewById(R.id.main_add);
-        add.setImageBitmap(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.add), S.getColor(R.color.colorAccent)));
+        add.setImageBitmap(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.add), S.getColor(R.color.colorBackground)));
         clear = (ImageButton)findViewById(R.id.main_clear);
-        clear.setImageBitmap(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.clear), S.getColor(R.color.colorAccent)));
+        clear.setImageBitmap(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.clear), S.getColor(R.color.colorBackground)));
 
         back_icon = findViewById(R.id.main_back_icon);
-        back_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.back), S.getColor(R.color.colorAccent))));
+        back_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.back), S.getColor(R.color.colorBackground))));
         forward_icon = findViewById(R.id.main_forward_icon);
-        forward_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.forward), S.getColor(R.color.colorAccent))));
+        forward_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.forward), S.getColor(R.color.colorBackground))));
         multi_scroll_box = (HorizontalScrollView)findViewById(R.id.main_multi_scroll_box);
         multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
+        aniimage = (ImageView)findViewById(R.id.main_aniimage);
         addMulti();//
 
-        root = (RelativeLayout)findViewById(R.id.main_root);
-        onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorBackground)));
-        multi_box.setBackgroundColor(S.getColor(R.color.colorBackground));
+        multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
 
-        Intent i = getIntent();
-        if (i != null) onNewIntent(i);
+        onNewIntent(null);
+
+        onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorPrimary)));
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
@@ -150,22 +159,35 @@ public class Main extends Activity {
             if (b instanceof ColorDrawable)
                 c = ((ColorDrawable)b).getColor();
             else if (b instanceof BitmapDrawable)
-                c = ((BitmapDrawable)b).getBitmap().getPixel(0,0);
+                c = ((BitmapDrawable)b).getBitmap().getPixel(0, 0);
         }
         if (Main.me.isLightColor(c))
-            dock.setTextColor(Color.BLACK);
+            blacker.setVisibility(View.VISIBLE);
+        //dock.setTextColor(Color.BLACK);
         else
-            dock.setTextColor(Color.WHITE);
+            blacker.setVisibility(View.GONE);
+        //dock.setTextColor(Color.WHITE);
+
+        Main.root.invalidate();
+        Main.ground.invalidate();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.getDataString() == null) {
+        if (intent == null) {
             web = addPage("");
-        } else {
-            web = addPage(intent.getDataString());
+            return;
         }
+        String action = intent.getAction();
+        if (Intent.ACTION_SEND.equals(action)) {
+            web = addPage(HeySearch.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
+        } else if (Intent.ACTION_VIEW.equals(action)) {
+            web = addPage(intent.getDataString());
+        } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
+            web = addPage(HeySearch.getSearch(intent.getStringExtra("query")));
+        }
+
     }
 
     Boolean isExit = false;
@@ -175,100 +197,196 @@ public class Main extends Activity {
             super.handleMessage(msg);
             isExit = false;
         }
-    }; @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-        //拦截返回键
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (multi_box.getVisibility() == View.VISIBLE) {
-                onDockClick(null);
-                return true;
-            } else if (manager.getVisibility() == View.VISIBLE) {
-                onManagerBackClick(null);
-                return true;    
-            } else {
-                if (web.canGoBack()) {
-                    web.goBack();
-                    return true;
-                } else {
-                    if (pages.size() != 1) {
-                        if (!isExit) {
-                            isExit = true;
-                            handler.sendEmptyMessageDelayed(0, 1500);
-                            Toast.makeText(this, "再按一次关闭标签页", Toast.LENGTH_SHORT).show();
-                            return false;
-                        } else {
-                            removePage(webindex - 1);
-                            freshMulti();
-                            return true;
-                        }
+    };
 
+    @Override
+    public void onBackPressed() {
+        if (multi_box.getVisibility() == View.VISIBLE) {
+            onDockClick(null);
+            return;
+        } else if (manager.getVisibility() == View.VISIBLE) {
+            onManagerBackClick(null);
+            return;
+        } else {
+            if (web.canGoBack()) {
+                web.goBack();
+
+                web.loadUrl("javascript:document.title = " + web.getTitle());
+                return;
+            } else {
+                if (pages.size() != 1) {
+                    if (!isExit) {
+                        isExit = true;
+                        handler.sendEmptyMessageDelayed(0, 1500);
+                        Toast.makeText(this, "再按一次关闭标签页", Toast.LENGTH_SHORT).show();
+                        return;
                     } else {
-                        if (!isExit) {
-                            isExit = true;
-                            handler.sendEmptyMessageDelayed(0, 1500);
-                            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
-                            return false;
-                        } else {
-                            finish();
-                        }
+                        removePage(webindex);
+                        freshMulti();
+                        return;
+                    }
+
+                } else {
+                    if (!isExit) {
+                        isExit = true;
+                        handler.sendEmptyMessageDelayed(0, 1500);
+                        Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        finish();
                     }
                 }
             }
         }
-        return super.onKeyDown(keyCode, event);
-    } public void onMultiClick(View v) {
+    } 
+
+    public void onMultiClick(View v) {
         if (v.getTag() == null) return;
         webindex = v.getTag();
-        web = pages.get(webindex - 1);
+        web = pages.get(webindex);
         dock.setText(web.getTitle());
         onDockClick(null);
     } public void onDockClick(View v) {
         if (multi_scroll_box.getVisibility() == View.GONE) {
 
-            multiimages.set(webindex - 1, getWebDrawing());
-            multiimage.get(webindex - 1).setImageBitmap(multiimages.get(webindex - 1));
-            multiimage.get(webindex - 1).setTag(webindex);
-            multitext.get(webindex - 1).setText(web.getTitle());
+            multiimages.set(webindex, getWebDrawing());
+            multiimage.get(webindex).setImageBitmap(multiimages.get(webindex));
+            multiimage.get(webindex).setTag(webindex);
+            multitext.get(webindex).setText(web.getTitle());
 
             hidePage();
             AlphaAnimation alphaA = new AlphaAnimation(0, 1);
             alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
             alphaA.setDuration(320);
 
-            multitext.get(webindex - 1).setAnimation(alphaA);
-            multiimage.get(webindex - 1).setAnimation(alphaA);
+            multitext.get(webindex).setAnimation(alphaA);
+            multiimage.get(webindex).setAnimation(alphaA);
 
             multi_scroll_box.setVisibility(View.VISIBLE);
-            root.setBackgroundColor(S.getColor(R.color.colorBackground));
+            multi_box.setVisibility(View.VISIBLE);
+            root.setBackgroundColor(S.getColor(R.color.colorPrimary));
         } else {
+            scaleAni(true);
+        }
+
+    } 
+    @TargetApi(11)
+    private void scaleAni(boolean open) {
+        if (Build.VERSION.SDK_INT < 11) {
+            //老版本老动画～
             AlphaAnimation alphaA = new AlphaAnimation(0, 1);
             alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
             alphaA.setDuration(320);
             web.setAnimation(alphaA);
 
-            onChangeBackground(Main.multibottom.get(Main.webindex - 1), Main.multitop.get(Main.webindex - 1));
             multi_scroll_box.setVisibility(View.GONE);
             web.setVisibility(View.VISIBLE);
-        }
 
-        multi_box.setVisibility(multi_scroll_box.getVisibility());
+            onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+        } else {
+            final View view = getWindow().getDecorView();
+
+            if (open) {
+                int[] l = new int[2];
+                multiimage.get(webindex).getLocationOnScreen(l);
+                ValueAnimator mAni1 = ValueAnimator.ofFloat(l[0] , 0);
+                ValueAnimator mAni2 = ValueAnimator.ofFloat(l[1] , 0);
+                ValueAnimator mAni3 = ValueAnimator.ofFloat(dip2px(this, multiimage.get(webindex).getWidth()), view.getWidth());
+                ValueAnimator mAni4 = ValueAnimator.ofFloat(dip2px(this, multiimage.get(webindex).getHeight()), view.getHeight() - desktop.getY());
+
+                mAni1.setDuration(320).setInterpolator(new AnticipateInterpolator());
+                mAni2.setDuration(320).setInterpolator(new AnticipateInterpolator());
+                mAni3.setDuration(320).setInterpolator(new AnticipateInterpolator());
+                mAni4.setDuration(320).setInterpolator(new AnticipateInterpolator());
+
+                AlphaAnimation alphaA = new AlphaAnimation(1, 0);
+                alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+                alphaA.setDuration(320);
+                multi_scroll_box.setAnimation(alphaA);
+
+                aniimage.setImageBitmap(multiimages.get(webindex));
+                aniimage.setVisibility(View.VISIBLE);
+
+                mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator ani) {  
+                            float curValue = ani.getAnimatedValue();
+                            aniimage.setX(curValue);
+                            aniimage.invalidate();
+                        }
+                    });
+                mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator ani) {  
+                            float curValue = ani.getAnimatedValue();
+                            aniimage.setY(curValue);
+                            aniimage.invalidate();
+                        }
+                    });
+                mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator ani) {  
+                            float curValue = ani.getAnimatedValue();
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
+                            params.width = (int)curValue;
+                            aniimage.setLayoutParams(params);
+                        }
+                    });
+                mAni4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator ani) {  
+                            float curValue = ani.getAnimatedValue();
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
+                            params.height = (int)curValue;
+                            aniimage.setLayoutParams(params);
+                        }
+                    });
+
+                mAni1.addListener(new AnimatorListenerAdapter() {
+                        public void onAnimationEnd(Animator ani) {
+                            web.setVisibility(View.VISIBLE);
+                            aniimage.setVisibility(View.GONE);
+                            multi_box.setVisibility(View.GONE);
+                            multi_scroll_box.setVisibility(View.GONE);
+                            onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+                        }
+                    });
+
+                mAni1.start();
+                mAni2.start();
+                mAni3.start();
+                mAni4.start();
+            }
+        }
     } public void onDockLongClick(View v) {
         View view = getWindow().getDecorView();
-        TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), desktop.getTop());
+
+        TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), 0);
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
+
         text.setText(web.getUrl());
+        text.selectAll();
+        text.requestFocus();
+        keyboardState(true);
         manager.setAnimation(tranA);
         manager.setVisibility(View.VISIBLE);
     } public void onManagerBackClick(View v) {
+        keyboardState(false);
         if (manager.getVisibility() == View.GONE) return;
-        
+
         View view = getWindow().getDecorView();
-        TranslateAnimation tranA = new TranslateAnimation(0, 0, desktop.getTop(), view.getHeight());
+        ScaleAnimation scaleA = new ScaleAnimation(1, 0.9f, 1, 0.9f);
+        scaleA.setDuration(320);
+        //web.setAnimation(scaleA);
+
+        TranslateAnimation tranA = new TranslateAnimation(0, 0, 0, view.getHeight());
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
-        tranA.setFillAfter(true);
+
+        //tranA.setFillAfter(true);
         manager.setAnimation(tranA);
-        
+
         new Handler(){
             @Override public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -277,12 +395,12 @@ public class Main extends Activity {
         }.sendEmptyMessageDelayed(0, 320);
     } public void onAddClick(View v) {
         web = addPage("");
-        if (webindex > multi.size() * 2) addMulti();
+        if (webindex + 1 > multi.size() * 2) addMulti();
         multi_scroll_box.setVisibility(View.GONE);
         multi_box.setVisibility(View.GONE);
     } public void onRemoveClick(View v) {
         if (pages.size() == 1) return;
-        removePage((int)v.getTag() - 1);
+        removePage((int)v.getTag());
         freshMulti();
     } public void onRemoveAllClick(View v) {
         removeAllPage();
@@ -301,11 +419,11 @@ public class Main extends Activity {
         desktop.addView(new_web);
         pages.add(new_web);
 
-        multitop.add(new ColorDrawable(S.getColor(R.color.colorBackground)));
+        multitop.add(new ColorDrawable(S.getColor(R.color.colorPrimary)));
         multibottom.add(0x01000000);
         multiimages.add(null);
 
-        webindex = pages.size();
+        webindex = pages.size() - 1;
 
         return new_web;
     } public void hidePage() {
@@ -330,7 +448,7 @@ public class Main extends Activity {
         multitext = new ArrayList<TextView>();
         multi_scroll.removeAllViews();
         addMulti();
-        webindex = 0;
+        webindex = - 1;
         web = addPage("");
     } public void removePage(int index) {
         HeyWeb page = pages.get(index);
@@ -345,9 +463,9 @@ public class Main extends Activity {
         multiimages.remove(index);
         multibottom.remove(index);
         multitop.remove(index);
-        if (webindex == index + 1) {
-            webindex = index + ((index == 0) ? 1 : 0);
-            web = pages.get(webindex - 1);
+        if (webindex == index) {
+            webindex = index + ((index == 0) ? 0 : -1);
+            web = pages.get(webindex);
             web.setVisibility(View.VISIBLE);
         }
     } public void addMulti() {
@@ -377,7 +495,7 @@ public class Main extends Activity {
         for (int i = 0; i < pages.size(); i++) {
             multitext.get(i).setText(pages.get(i).getTitle());
             multiimage.get(i).setImageBitmap(multiimages.get(i));
-            multiimage.get(i).setTag(i + 1);
+            multiimage.get(i).setTag(i);
         }
     }
 
@@ -401,8 +519,8 @@ public class Main extends Activity {
     public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
         return (new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent moe) {
-                popn.setX(w.getLeft() + moe.getX());
-                popn.setY(w.getTop() + moe.getY());
+                popn.setX(w.getX() + moe.getX());
+                popn.setY(w.getY() + moe.getY());
                 return false;
             }
         });
@@ -413,8 +531,7 @@ public class Main extends Activity {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
-        //if (isLightColor(bitmap.getPixel(1, 1))) canvas.drawRect(0, 0, view.getWidth(), 1, new Paint(0x11000000));
-        return Bitmap.createBitmap(bitmap, 0, desktop.getTop(), view.getWidth(), view.getHeight() - dock.getHeight() - desktop.getTop());
+        return Bitmap.createBitmap(bitmap, 0, (int)desktop.getY(), view.getWidth(), view.getHeight() - dock.getHeight() - desktop.getTop());
     } public void ripple_version(View view_children) {
         //版本兼容
         int[] attrsArray = { 
@@ -436,7 +553,15 @@ public class Main extends Activity {
         //    if (floatblack.getVisibility() == View.GONE) webtcard.setY(0);
         //    webmultilayout.setPadding(0, webtcard.getHeight(), 0, 0);
         //}
-    }
+    } public static void keyboardState(boolean open) {
+        InputMethodManager i = (InputMethodManager)Main.me.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (open) {
+            i.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+        } else {
+            View view = Main.me.getWindow().peekDecorView();
+            if (view != null) i.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    } 
     public Bitmap ColoBitmap(Bitmap bitmap, int color) {
         Bitmap b = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         for (int x = 0; x < b.getWidth(); x++) {
@@ -467,6 +592,56 @@ public class Main extends Activity {
 
         return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
     }
+
+
+
+    ValueCallback<Uri> mUploadMessage;
+    ValueCallback<Uri[]> mUploadMessageForAndroid5;
+
+    public void openFileChooserImpl(ValueCallback<Uri> uploadMsg) {
+        mUploadMessage = uploadMsg;
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("image/*");
+        startActivityForResult(Intent.createChooser(i, "File Chooser"), 333);
+    }
+
+    public void openFileChooserImplForAndroid5(ValueCallback<Uri[]> uploadMsg) {
+        mUploadMessageForAndroid5 = uploadMsg;
+        Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        contentSelectionIntent.setType("image/*");
+
+        Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+
+        startActivityForResult(chooserIntent, 335);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 333) {
+            if (null == mUploadMessage)
+                return;
+            Uri result = intent == null || resultCode != RESULT_OK ? null: intent.getData();
+            mUploadMessage.onReceiveValue(result);
+            mUploadMessage = null;
+
+        } else if (requestCode == 335) {
+            if (null == mUploadMessageForAndroid5)
+                return;
+            Uri result = (intent == null || resultCode != RESULT_OK) ? null: intent.getData();
+            if (result != null) {
+                mUploadMessageForAndroid5.onReceiveValue(new Uri[]{result});
+            } else {
+                mUploadMessageForAndroid5.onReceiveValue(new Uri[]{});
+            }
+            mUploadMessageForAndroid5 = null;
+        }
+    }
+
 }
 
 
@@ -500,20 +675,23 @@ class HeyWebChrome extends WebChromeClient {
      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
      super.onHideCustomView();
      } */
+
     public void onReceivedTitle(WebView v, String title) {
         //((TextView)v.getTag()).setText(title);
-        if ((v == Main.web) && (!(title.equals("about:blank")))) {
-            if (Main.dock.getText().equals(title)) return;
-            Main.dock.setText(title);
-            Main.multibottom.set(Main.webindex - 1, Color.TRANSPARENT);
-            v.loadUrl("javascript:void((function(){" +
-                      "try {" +
-                      "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + Main.webindex + ");" +
-                      "} catch (e) {" +
-                      "Context.onReceivedThemeColor(\"\"," + Main.webindex + ");" +
-                      "}" +
-                      "})())");
-        }
+
+        if (title.equals("about:blank")) return;
+        if (Main.web == v) Main.dock.setText(title);
+
+        int webi = Main.pages.indexOf(v);
+        Main.multitext.get(webi).setText(title);
+        Main.multibottom.set(webi, 0x01000000);
+        v.loadUrl("javascript:void((function(){" +
+                  "try {" +
+                  "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
+                  "} catch (e) {" +
+                  "Context.onReceivedThemeColor(\"\"," + webi + ");" +
+                  "}" +
+                  "})())");
     }
 
     @Override 
@@ -535,12 +713,16 @@ class HeyWebChrome extends WebChromeClient {
 
                 if (!(v.getTitle().equals("about:blank") || Main.manager.getVisibility() == View.VISIBLE || Main.multi_scroll_box.getVisibility() == View.VISIBLE)) {
                     Bitmap b = Main.me.getWebDrawing();
-                    Main.multitop.set(Main.webindex - 1, new BitmapDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1)));
-                    Main.onChangeBackground(Main.multibottom.get(Main.webindex - 1), Main.multitop.get(Main.webindex - 1));
+                    //if (v.getUrl().contains("coolapk.com"))
+                    Main.multitop.set(Main.webindex, new BitmapDrawable(Bitmap.createBitmap(b , 0, 0, b.getWidth(), 1)));
+                    //else
+                    //    Main.multitop.set(Main.webindex, new ColorDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1).getPixel(0, 0)));
+                    Main.onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }
             }
         } else {
             if (v == Main.web) {
+
                 AlphaAnimation alphaA = new AlphaAnimation(0, 1);
                 alphaA.setDuration(320);
                 Main.progressbar.setAnimation(alphaA);
@@ -550,4 +732,31 @@ class HeyWebChrome extends WebChromeClient {
         } super.onProgressChanged(v, newProgress);
 
     }
+
+
+
+
+    //扩展浏览器上传文件
+    //3.0++版本
+    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
+        Main.me.openFileChooserImpl(uploadMsg);
+    }
+
+    //3.0--版本
+    public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+        Main.me.openFileChooserImpl(uploadMsg);
+    }
+
+    //4.x
+    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture) {
+        Main.me.openFileChooserImpl(uploadMsg);
+    }
+
+    // For Android > 5.0
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> uploadMsg, WebChromeClient.FileChooserParams fileChooserParams) {
+        Main.me.openFileChooserImplForAndroid5(uploadMsg);
+        return true;
+    }
+
+
 }

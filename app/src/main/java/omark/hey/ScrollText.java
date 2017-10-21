@@ -64,21 +64,21 @@ public class ScrollText extends TextView {
                     if (Math.abs(offsetx) >= Math.abs(offsety)) {
                         int max = (int)Main.dip2px(this.getContext(), 60);
                         //this.setText("" + offsetx + "max:" + max);
-                        
+
                         if (offsetx > max)
                             offsetx = max;
                         else if (offsetx < -max) 
                             offsetx = -max;
-
+                        viewGroup.stopNestedScroll();
                         viewGroup.scrollTo(offsetx, 0);
                     } else {
-                        int max = (int)Main.dip2px(this.getContext(), 80);
-                        if (offsety < -max) offsetx = -max;
+                        int max = (int)Main.dip2px(this.getContext(), 160);
+                        if (offsety > max) offsety = max;
 
                         viewGroup.scrollTo(0, offsety);
                     }
                 } else {
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 800);
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
                 }
                 break;
                 //触摸事件的第三步，必然执行，手指抬起时候触发，这里会将移动过的view还原到原来的位置，并且有过度效果不是突然移动
@@ -87,16 +87,24 @@ public class ScrollText extends TextView {
                 //调用 startScroll 方法 ，参数为 起始X坐标，起始Y坐标，目的X坐标，目的Y坐标，过度动画持续时间
                 //这里使用了viewGroup.getScrollX() 和 viewGroup.getScrollY() 作为起始坐标，ScrollY 和 ScrollX 记录了使用 scrollBy 进行偏移的量
                 //所以使用他们就等于是使用了现在的坐标作为起始坐标，目的坐标为他们的负数，就是偏移量为0的位置，也是view在没有移动之前的位置
-                
-                if (Main.web != null) {
-                    if (viewGroup.getScrollX() > Main.dip2px(this.getContext(), 50)) 
-                        Main.web.goForward();
-                    else if (viewGroup.getScrollX() < -Main.dip2px(this.getContext(), 50)) 
-                        Main.web.goBack();
+
+                HeyWeb web = Main.web;
+                if (web != null) {
+                    if (viewGroup.getScrollX() > Main.dip2px(this.getContext(), 50)) {
+                        web.goForward();
+                        
+                        web.loadUrl("javascript:document.title = " + web.getTitle());
+                    } else if (viewGroup.getScrollX() < -Main.dip2px(this.getContext(), 50)) {
+                        web.goBack();
+
+                        web.loadUrl("javascript:document.title = " + web.getTitle());
+                    }
                 }
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
-                if (viewGroup.getScrollY() != -(int)Main.dip2px(this.getContext(), 80)) {
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 800);
+                if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100)) {
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(this.getContext(), 160) - viewGroup.getScrollY(), 320);
+                } else {
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
                 }
 
                 isUp = false;

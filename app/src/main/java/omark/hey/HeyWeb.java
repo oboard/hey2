@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.graphics.Bitmap;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
@@ -85,13 +86,9 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         else
             webSettings.setLoadsImagesAutomatically(false);
         
-
-
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
             webSettings.setMixedContentMode(webSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         
-
-
         if (Build.VERSION.SDK_INT < 19) {
             try {
                 Class class_ = webSettings.getClass();
@@ -130,6 +127,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                         Toast.makeText(getContext(), url, Toast.LENGTH_SHORT);
                     } return super.shouldOverrideUrlLoading(view, url);   
                 }
+                
+                //public void onPageStarted(WebView v, String url, Bitmap favicon) {
+                //    super.onPageStarted(v, url, favicon);
+                //}
 
                 public void onPageFinished(WebView v, String url) {
                     super.onPageFinished(v, url);
@@ -147,7 +148,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                     super.onReceivedError(view, errorCode, description, failingUrl);
-                    loadDataWithBaseURL(null, errorCode + "\n" + description + "\n" + failingUrl, "text/html", "utf-8", null);
+                    //loadDataWithBaseURL(null, errorCode + "\n" + description + "\n" + failingUrl, "text/html", "utf-8", null);
                 }
             });
 
@@ -164,7 +165,6 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 }
             });
     }
-
 
     public void openImageChooserActivity() {
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
