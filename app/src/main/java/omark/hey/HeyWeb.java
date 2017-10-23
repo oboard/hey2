@@ -1,27 +1,32 @@
 package omark.hey;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.Request;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Environment;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.webkit.DownloadListener;
+import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import android.graphics.Bitmap;
+import javax.net.ssl.HttpsURLConnection;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
@@ -159,9 +164,9 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         setDownloadListener(new DownloadListener() {   
                 @Override  
                 public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                    Uri uri = Uri.parse(url);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    getContext().startActivity(intent);
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    Main.me.startActivity(i);
                 }
             });
     }
@@ -213,7 +218,6 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         return listImgSrc;
     }
     
-
     public static boolean isUri(String url) {
         return (url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")));
     }

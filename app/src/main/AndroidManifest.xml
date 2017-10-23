@@ -4,11 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SET_ORIENTATION"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS" />
         
     <application
         android:allowBackup="true"
@@ -29,7 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             
-
             <!--这就是添加打开方式的办法了(๑•̀ㅂ•́)و✧-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

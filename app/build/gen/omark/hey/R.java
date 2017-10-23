@@ -21,47 +21,51 @@ public final class R {
     }
     public static final class drawable {
         public static final int add=0x7f020000;
-        public static final int agenda=0x7f020001;
-        public static final int back=0x7f020002;
-        public static final int bookmark=0x7f020003;
-        public static final int bookmark_border=0x7f020004;
-        public static final int clear=0x7f020005;
-        public static final int close=0x7f020006;
-        public static final int download=0x7f020007;
-        public static final int forward=0x7f020008;
+        public static final int back=0x7f020001;
+        public static final int bookmark=0x7f020002;
+        public static final int bookmark_border=0x7f020003;
+        public static final int clear=0x7f020004;
+        public static final int close=0x7f020005;
+        public static final int download=0x7f020006;
+        public static final int forward=0x7f020007;
+        public static final int history=0x7f020008;
         public static final int menu=0x7f020009;
         public static final int multi=0x7f02000a;
         public static final int refresh=0x7f02000b;
         public static final int search=0x7f02000c;
-        public static final int setting=0x7f02000d;
+        public static final int settings=0x7f02000d;
         public static final int textstyle=0x7f02000e;
     }
     public static final class id {
-        public static final int main_add=0x7f0a000d;
-        public static final int main_aniimage=0x7f0a000e;
+        public static final int main_add=0x7f0a000e;
+        public static final int main_aniimage=0x7f0a0007;
         public static final int main_back_icon=0x7f0a0003;
         public static final int main_blacker=0x7f0a0001;
-        public static final int main_clear=0x7f0a000c;
+        public static final int main_clear=0x7f0a000d;
         public static final int main_desktop=0x7f0a0006;
-        public static final int main_dock=0x7f0a0009;
+        public static final int main_dock=0x7f0a000a;
         public static final int main_forward_icon=0x7f0a0004;
         public static final int main_ground=0x7f0a0005;
         public static final int main_manager=0x7f0a000f;
         public static final int main_manager_back=0x7f0a0010;
-        public static final int main_multi_box=0x7f0a000b;
-        public static final int main_multi_scroll=0x7f0a0008;
-        public static final int main_multi_scroll_box=0x7f0a0007;
+        public static final int main_manager_t0=0x7f0a0012;
+        public static final int main_manager_t1=0x7f0a0013;
+        public static final int main_manager_t2=0x7f0a0014;
+        public static final int main_manager_tab=0x7f0a0015;
+        public static final int main_multi_box=0x7f0a000c;
+        public static final int main_multi_scroll=0x7f0a0009;
+        public static final int main_multi_scroll_box=0x7f0a0008;
         public static final int main_popn=0x7f0a0002;
-        public static final int main_progress=0x7f0a000a;
+        public static final int main_progress=0x7f0a000b;
         public static final int main_root=0x7f0a0000;
         public static final int main_text=0x7f0a0011;
-        public static final int menuloadeditadd=0x7f0a0017;
-        public static final int menuloadeditgo=0x7f0a0018;
-        public static final int multi_image0=0x7f0a0014;
-        public static final int multi_image1=0x7f0a0016;
-        public static final int multi_root=0x7f0a0012;
-        public static final int multi_text0=0x7f0a0013;
-        public static final int multi_text1=0x7f0a0015;
+        public static final int menuloadeditadd=0x7f0a001b;
+        public static final int menuloadeditgo=0x7f0a001c;
+        public static final int multi_image0=0x7f0a0018;
+        public static final int multi_image1=0x7f0a001a;
+        public static final int multi_root=0x7f0a0016;
+        public static final int multi_text0=0x7f0a0017;
+        public static final int multi_text1=0x7f0a0019;
     }
     public static final class layout {
         public static final int main=0x7f040000;

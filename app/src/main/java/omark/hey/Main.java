@@ -32,7 +32,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.view.animation.AnticipateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -51,11 +51,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import android.graphics.Rect;
 
 public class Main extends Activity {
     static Main me;
     static int webindex = - 1;
-    static View popn, blacker, back_icon, forward_icon;
+    static View popn, manager_tab, blacker, back_icon, forward_icon;
     static HeyClipboard clipboard;
     static ScrollText dock;
     static EditText text;
@@ -77,11 +78,15 @@ public class Main extends Activity {
     static ArrayList<Integer> multibottom = new ArrayList<Integer>();
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
 
         //创建剪辑版
         clipboard = new HeyClipboard(this);
@@ -92,6 +97,14 @@ public class Main extends Activity {
             S.put("home", "https://www.bing.com");
             S.put("search" , HeySearch.DEFAULT);
             S.put("pagecolor" , true);
+            /*
+             //兼容H5？？
+             S.put("h5_app_ui_pgbar", "#dedede");
+             S.put("h5_app_ui_btnbg", "#aadedede");
+             S.put("h5_app_ui_btntxt", "#000000");
+             S.put("h5_app_ui_stbar", "#888888");
+             S.put("h5_app_ui_bg", "#ffffff");
+             */
             S.ok();
         }
 
@@ -126,6 +139,7 @@ public class Main extends Activity {
                 }    
             }); 
         manager = (LinearLayout)findViewById(R.id.main_manager);
+        manager_tab = findViewById(R.id.main_manager_tab);
         manager_back = (ImageButton)findViewById(R.id.main_manager_back);
         ripple_version(manager_back);
 
@@ -146,14 +160,17 @@ public class Main extends Activity {
 
         multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
 
-        onNewIntent(null);
+        onNewIntent(getIntent());
 
         onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorPrimary)));
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
-        Main.root.setBackground(b);
-        Main.ground.setBackgroundColor(f);
+        if (f == Color.TRANSPARENT)
+            Main.root.setBackground(b);
+        else
+            Main.root.setBackgroundColor(f);
+
         int c = f;
         if (f == Color.TRANSPARENT) {
             if (b instanceof ColorDrawable)
@@ -169,7 +186,6 @@ public class Main extends Activity {
         //dock.setTextColor(Color.WHITE);
 
         Main.root.invalidate();
-        Main.ground.invalidate();
     }
 
     @Override
@@ -183,9 +199,11 @@ public class Main extends Activity {
         if (Intent.ACTION_SEND.equals(action)) {
             web = addPage(HeySearch.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
         } else if (Intent.ACTION_VIEW.equals(action)) {
-            web = addPage(intent.getDataString());
+            web = addPage(intent.getData().toString());
         } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
             web = addPage(HeySearch.getSearch(intent.getStringExtra("query")));
+        } else {
+            web = addPage("");
         }
 
     }
@@ -253,18 +271,10 @@ public class Main extends Activity {
             multiimage.get(webindex).setImageBitmap(multiimages.get(webindex));
             multiimage.get(webindex).setTag(webindex);
             multitext.get(webindex).setText(web.getTitle());
+            multiimage.get(webindex).invalidate();
 
             hidePage();
-            AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-            alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-            alphaA.setDuration(320);
-
-            multitext.get(webindex).setAnimation(alphaA);
-            multiimage.get(webindex).setAnimation(alphaA);
-
-            multi_scroll_box.setVisibility(View.VISIBLE);
-            multi_box.setVisibility(View.VISIBLE);
-            root.setBackgroundColor(S.getColor(R.color.colorPrimary));
+            scaleAni(false);
         } else {
             scaleAni(true);
         }
@@ -274,89 +284,130 @@ public class Main extends Activity {
     private void scaleAni(boolean open) {
         if (Build.VERSION.SDK_INT < 11) {
             //老版本老动画～
-            AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-            alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-            alphaA.setDuration(320);
-            web.setAnimation(alphaA);
-
-            multi_scroll_box.setVisibility(View.GONE);
-            web.setVisibility(View.VISIBLE);
-
-            onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
-        } else {
-            final View view = getWindow().getDecorView();
-
             if (open) {
-                int[] l = new int[2];
-                multiimage.get(webindex).getLocationOnScreen(l);
-                ValueAnimator mAni1 = ValueAnimator.ofFloat(l[0] , 0);
-                ValueAnimator mAni2 = ValueAnimator.ofFloat(l[1] , 0);
-                ValueAnimator mAni3 = ValueAnimator.ofFloat(dip2px(this, multiimage.get(webindex).getWidth()), view.getWidth());
-                ValueAnimator mAni4 = ValueAnimator.ofFloat(dip2px(this, multiimage.get(webindex).getHeight()), view.getHeight() - desktop.getY());
-
-                mAni1.setDuration(320).setInterpolator(new AnticipateInterpolator());
-                mAni2.setDuration(320).setInterpolator(new AnticipateInterpolator());
-                mAni3.setDuration(320).setInterpolator(new AnticipateInterpolator());
-                mAni4.setDuration(320).setInterpolator(new AnticipateInterpolator());
-
-                AlphaAnimation alphaA = new AlphaAnimation(1, 0);
+                AlphaAnimation alphaA = new AlphaAnimation(0, 1);
                 alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
                 alphaA.setDuration(320);
-                multi_scroll_box.setAnimation(alphaA);
+                web.setAnimation(alphaA);
 
-                aniimage.setImageBitmap(multiimages.get(webindex));
-                aniimage.setVisibility(View.VISIBLE);
+                multi_scroll_box.setVisibility(View.GONE);
+                web.setVisibility(View.VISIBLE);
 
-                mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator ani) {  
-                            float curValue = ani.getAnimatedValue();
-                            aniimage.setX(curValue);
-                            aniimage.invalidate();
-                        }
-                    });
-                mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator ani) {  
-                            float curValue = ani.getAnimatedValue();
-                            aniimage.setY(curValue);
-                            aniimage.invalidate();
-                        }
-                    });
-                mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator ani) {  
-                            float curValue = ani.getAnimatedValue();
-                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                            params.width = (int)curValue;
-                            aniimage.setLayoutParams(params);
-                        }
-                    });
-                mAni4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator ani) {  
-                            float curValue = ani.getAnimatedValue();
-                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                            params.height = (int)curValue;
-                            aniimage.setLayoutParams(params);
-                        }
-                    });
+                onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+            } else {
+                AlphaAnimation alphaA = new AlphaAnimation(0, 1);
+                alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+                alphaA.setDuration(320);
+
+                multitext.get(webindex).setAnimation(alphaA);
+                multiimage.get(webindex).setAnimation(alphaA);
+
+                multi_scroll_box.setVisibility(View.VISIBLE);
+                multi_box.setVisibility(View.VISIBLE);
+                root.setBackgroundColor(S.getColor(R.color.colorPrimary));
+            }
+        } else {
+            Rect l = new Rect(), k = new Rect();
+            web.getGlobalVisibleRect(k);
+            multiimage.get(webindex).getGlobalVisibleRect(l);
+
+            ValueAnimator mAni1, mAni2, mAni3, mAni4;
+
+            if (open) {
+                mAni1 = ValueAnimator.ofInt(l.left, k.left);
+                mAni2 = ValueAnimator.ofInt(l.top, k.top);
+                mAni3 = ValueAnimator.ofInt(l.width(), k.width());
+                mAni4 = ValueAnimator.ofInt(l.height(), k.height());
+
+                AnimationSet aniA = new AnimationSet(true);
+                aniA.addAnimation(new AlphaAnimation(1, 0));
+                aniA.addAnimation(new ScaleAnimation(1f, 0.9f, 1f, 0.9f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
+                aniA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+                aniA.setDuration(320);
+                multi_scroll_box.setAnimation(aniA);
+
+
+                multi_box.setVisibility(View.GONE);
+                multi_scroll_box.setVisibility(View.GONE);
+                onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
 
                 mAni1.addListener(new AnimatorListenerAdapter() {
                         public void onAnimationEnd(Animator ani) {
                             web.setVisibility(View.VISIBLE);
                             aniimage.setVisibility(View.GONE);
-                            multi_box.setVisibility(View.GONE);
-                            multi_scroll_box.setVisibility(View.GONE);
-                            onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                         }
                     });
+            } else {
+                mAni1 = ValueAnimator.ofInt(k.left, l.left);
+                mAni2 = ValueAnimator.ofInt(k.top, l.top);
+                mAni3 = ValueAnimator.ofInt(k.width(), l.width());
+                mAni4 = ValueAnimator.ofInt(k.height(), l.height());
 
-                mAni1.start();
-                mAni2.start();
-                mAni3.start();
-                mAni4.start();
+                AnimationSet aniA = new AnimationSet(true);
+                aniA.addAnimation(new AlphaAnimation(0, 1));
+                aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
+                aniA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+                aniA.setDuration(320);
+                multi_scroll_box.setAnimation(aniA);
+
+                multi_box.setVisibility(View.VISIBLE);
+                multi_scroll_box.setVisibility(View.VISIBLE);
+                root.setBackgroundColor(S.getColor(R.color.colorPrimary));
+
+                mAni1.addListener(new AnimatorListenerAdapter() {
+                        public void onAnimationEnd(Animator ani) {
+                            aniimage.setVisibility(View.GONE);
+                        }
+                    });
             }
+
+            mAni1.setDuration(320).setInterpolator(new DecelerateInterpolator());
+            mAni2.setDuration(320).setInterpolator(new DecelerateInterpolator());
+            mAni3.setDuration(320).setInterpolator(new DecelerateInterpolator());
+            mAni4.setDuration(320).setInterpolator(new DecelerateInterpolator());
+
+            aniimage.setImageBitmap(multiimages.get(webindex));
+            aniimage.setVisibility(View.VISIBLE);
+
+            mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator ani) {  
+                        int curValue = ani.getAnimatedValue();
+                        aniimage.setX(curValue);
+                        aniimage.invalidate();
+                    }
+                });
+            mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator ani) {  
+                        int curValue = ani.getAnimatedValue();
+                        aniimage.setY(curValue);
+                        aniimage.invalidate();
+                    }
+                });
+            mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator ani) {  
+                        int curValue = ani.getAnimatedValue();
+                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)aniimage.getLayoutParams();  
+                        params.width = curValue;
+                        aniimage.setLayoutParams(params);
+                    }
+                });
+            mAni4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator ani) {  
+                        int curValue = ani.getAnimatedValue();
+                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)aniimage.getLayoutParams();  
+                        params.height = curValue;
+                        aniimage.setLayoutParams(params);
+                    }
+                });
+
+            mAni1.start();
+            mAni2.start();
+            mAni3.start();
+            mAni4.start();
         }
     } public void onDockLongClick(View v) {
         View view = getWindow().getDecorView();
@@ -393,6 +444,25 @@ public class Main extends Activity {
                 manager.setVisibility(View.GONE);
             }
         }.sendEmptyMessageDelayed(0, 320);
+    } public void onManagerClick(View v) {
+        TranslateAnimation tranA = new TranslateAnimation(manager_tab.getTranslationX(), v.getX(), 0, 0);
+        tranA.setDuration(320);
+        tranA.setFillAfter(true);
+        manager_tab.setAnimation(tranA);
+        manager_tab.invalidate();
+        manager.requestLayout();
+        
+        switch (v.getId()) {
+            case R.id.main_manager_t0:
+                
+                break;
+            case R.id.main_manager_t1:
+
+                break;
+            case R.id.main_manager_t2:
+
+                break;
+        }
     } public void onAddClick(View v) {
         web = addPage("");
         if (webindex + 1 > multi.size() * 2) addMulti();
@@ -531,7 +601,7 @@ public class Main extends Activity {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
-        return Bitmap.createBitmap(bitmap, 0, (int)desktop.getY(), view.getWidth(), view.getHeight() - dock.getHeight() - desktop.getTop());
+        return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - desktop.getTop());
     } public void ripple_version(View view_children) {
         //版本兼容
         int[] attrsArray = { 
@@ -678,20 +748,23 @@ class HeyWebChrome extends WebChromeClient {
 
     public void onReceivedTitle(WebView v, String title) {
         //((TextView)v.getTag()).setText(title);
+        try {
+            if (title.equals("about:blank")) return;
+            if (Main.web == v) Main.dock.setText(title);
 
-        if (title.equals("about:blank")) return;
-        if (Main.web == v) Main.dock.setText(title);
-
-        int webi = Main.pages.indexOf(v);
-        Main.multitext.get(webi).setText(title);
-        Main.multibottom.set(webi, 0x01000000);
-        v.loadUrl("javascript:void((function(){" +
-                  "try {" +
-                  "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
-                  "} catch (e) {" +
-                  "Context.onReceivedThemeColor(\"\"," + webi + ");" +
-                  "}" +
-                  "})())");
+            int webi = Main.pages.indexOf(v);
+            Main.multitext.get(webi).setText(title);
+            Main.multibottom.set(webi, 0x01000000);
+            v.loadUrl("javascript:void((function(){" +
+                      "try {" +
+                      "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
+                      "} catch (e) {" +
+                      "Context.onReceivedThemeColor(\"\"," + webi + ");" +
+                      "}" +
+                      "})())");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override 
