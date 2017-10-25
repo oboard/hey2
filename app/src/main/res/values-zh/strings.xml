@@ -3,76 +3,69 @@
     
     <string name="name2">Hey浏览器</string>
     
-    <string name="an">其他</string>
-    <string name="ani">动画</string>
-    <string name="yes">确定</string>
-    <string name="no">取消</string>
-    <string name="lfa">加载完毕动画</string>
-    <string name="lfa2">新建页面动画</string>
-    <string name="not">无</string>
-    <string name="boom">膨胀</string>
-    <string name="reset">重命名</string>
-    <string name="del">删除</string>
-    <string name="reput">修改</string>
-    <string name="ys">样式</string>
-    <string name="p">图片</string>
-    <string name="jd">经典</string>
-    <string name="xy">新颖</string>
-    <string name="o">退出</string>
-    <string name="asq">添加书签</string>
-    <string name="sx">刷新</string>
-    <string name="tr">翻译</string>
+    <string name="lang1">其他</string>
+    <string name="lang2">插件</string>
+    <string name="lang3">确定</string>
+    <string name="lang4">取消</string>
+    <string name="lang5">关闭所有</string>
+    <string name="lang6">截图</string>
+    <string name="lang7">卸载</string>
+    <string name="lang8">安装</string>
+    <string name="lang9">重命名</string>
+    <string name="lang10">删除</string>
+    <string name="lang11">修改</string>
+    <string name="lang12">样式</string>
+    <string name="lang13">图片</string>
+    <string name="lang14">经典</string>
+    <string name="lang15">新颖</string>
+    <string name="lang16">退出</string>
+    <string name="lang17">添加书签</string>
+    <string name="lang18">刷新</string>
+    <string name="lang19">翻译</string>
     
-    <string name="jsq">已加入书签</string>
-    <string name="wtf">操作失败(＠_＠;)</string>
-    <string name="bpp">背景图</string>
-    <string name="bt">透明</string>
-    <string name="fla">平面</string>
-    <string name="bss">变色</string>
+    <string name="lang20">已加入书签</string>
+    <string name="lang21">操作失败(＠_＠;)</string>
+    <string name="lang22">背景图</string>
+    <string name="lang23">透明</string>
+    <string name="lang24">平面</string>
+    <string name="lang25">变色</string>
     
-    <string name="setting0">设置</string>
-    <string name="setting1">主页</string>
-    <string name="setting2">定制</string>
-    <string name="setting3">搜索</string>
-    <string name="setting4">启动</string>
-    <string name="setting5">脚本</string>
-    <string name="setting6">其他</string>
-    <string name="setting7">关于</string>
+    <string name="lang26">设置</string>
+    <string name="lang27">主页</string>
+    <string name="lang28">定制</string>
+    <string name="lang29">搜索</string>
+    <string name="lang30">启动</string>
+    <string name="lang31">脚本</string>
+    <string name="lang32">其他</string>
+    <string name="lang33">关于</string>
+    <string name="lang34">书签</string>
     
-    <string name="styleedit1">点击来修改样式 | 修改后请重启Hey</string>
-    <string name="styleedit2">底栏</string>
-    <string name="styleedit3">小图标</string>
+    <string name="lang35">底栏</string>
+    <string name="lang36">源代码</string>
     
-    <string name="ttbitem1">分享</string>
+    <string name="lang37">分享</string>
     
-    <string name="history">历史记录</string>
-    <string name="history1">清空历史记录</string>
+    <string name="lang38">历史记录</string>
+    <string name="lang39">清空历史记录</string>
     
-    <string name="dktp">打开图片</string>
-    <string name="bctp">保存图片</string>
-    <string name="xjym">新建页面"</string>
-    <string name="xxsq">显示书签"</string>
-    <string name="ycsq">隐藏书签"</string>
-    <string name="xsdl">显示底栏"</string>
-    <string name="ycdl">隐藏底栏"</string>
-    <string name="dkym">打开页面"</string>
-    <string name="xssk">显示搜索框</string>
-    <string name="yssk">隐藏搜索框</string>
+    <string name="lang40">打开图片</string>
+    <string name="lang41">保存图片</string>
+    <string name="lang42">新页面"</string>
+    <string name="lang43">显示书签"</string>
+    <string name="lang44">隐藏书签"</string>
+    <string name="lang45">显示底栏"</string>
+    <string name="lang46">隐藏底栏"</string>
+    <string name="lang47">打开页面"</string>
+    <string name="lang48">显示搜索框</string>
+    <string name="lang49">隐藏搜索框</string>
     
-    <string name="xjb">新脚本</string>
-    <string name="hdjb">获得脚本</string>
+    <string name="lang50">新脚本</string>
+    <string name="lang51">获得脚本</string>
     
-    <string name="xymdk">新页面打开</string>
-    <string name="fzlj">复制链接</string>
-    <string name="htdk">后台打开</string>
+    <string name="lang52">新页面打开</string>
+    <string name="lang53">复制链接</string>
+    <string name="lang54">后台打开</string>
     
-    <string name="ddd">下载</string>
-    <string name="glq">管理器</string>
-    <string name="n">新</string>
-    <string name="ymbxy">域名必须要填写的呢!</string>
-    <string name="ymm">域名（*代表全局）</string>
-    
-    <string name="setting8">拦截</string>
-    <string name="txl">填写拦截的域</string>
+    <string name="lang55">下载</string>
     
 </resources>

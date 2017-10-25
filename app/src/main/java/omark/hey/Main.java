@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -40,8 +41,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,23 +55,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import android.graphics.Rect;
 
 public class Main extends Activity {
     static Main me;
     static int webindex = - 1;
-    static View popn, manager_tab, blacker, back_icon, forward_icon;
+    static View popn, manager_tab, aniimage, blacker, back_icon, forward_icon;
     static HeyClipboard clipboard;
     static ScrollText dock;
     static EditText text;
+    static GridView menu;
     static LinearLayout manager;
     static ImageButton manager_back;
     static FrameLayout desktop;
     static RelativeLayout root, ground;
     static ProgressBar progressbar;
-    static HeyWeb web;//now webview
-    static ImageView aniimage;
-    static ImageButton add, clear;
+    static HeyWeb web;
+    static TextView multi_text;
     static LinearLayout multi_box, multi_scroll;
     static HorizontalScrollView multi_scroll_box;
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
@@ -94,9 +97,10 @@ public class Main extends Activity {
         S.init(this, "main");
         if (S.get("first", true)) {
             S.put("first", false);
-            S.put("home", "https://www.bing.com");
-            S.put("search" , HeySearch.DEFAULT);
+            S.put("home", HeyHelper.DEFAULT_HOME);
+            S.put("search" , HeyHelper.DEFAULT_SEARCH);
             S.put("pagecolor" , true);
+
             /*
              //兼容H5？？
              S.put("h5_app_ui_pgbar", "#dedede");
@@ -112,10 +116,57 @@ public class Main extends Activity {
         popn = findViewById(R.id.main_popn);
         blacker = findViewById(R.id.main_blacker);
         dock = (ScrollText)findViewById(R.id.main_dock);
+        menu = (GridView)findViewById(R.id.main_menu);
         root = (RelativeLayout)findViewById(R.id.main_root);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
         progressbar = (ProgressBar)findViewById(R.id.main_progress);
+
+        //4.4以上透明
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            ground.setFitsSystemWindows(true);
+            ground.setClipToPadding(true);
+        }
+
+        menu.setAdapter(new HeyMenu().getAdapter());
+        menu.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView view, final View v, final int i, long l) {
+                    
+                    //点击菜单后，滚回去～
+                    View viewGroup = (View)dock.getParent();
+                    dock.scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
+                    
+                    switch (i) {
+                        case 0:
+                            onDockClick(v);
+                            web = addPage("");
+                            break;
+                        case 1:
+                            web.reload();
+                            break;
+                        case 2:
+                            try {
+                                //分享文字
+                                Intent shareIntent = new Intent();
+                                shareIntent.setAction(Intent.ACTION_SEND);
+                                shareIntent.putExtra(Intent.EXTRA_TEXT, web.getUrl());
+                                shareIntent.setType("text/plain");
+                                //设置分享列表的标题，并且每次都显示分享列表
+                                startActivity(Intent.createChooser(shareIntent, getString(R.string.lang37))); 
+                            } catch (Exception e) {
+                                Toast.makeText(Main.this, getString(R.string.lang21), Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case 3:
+                            web.loadUrl(S.get("home", HeyHelper.DEFAULT_HOME));
+                            break;
+                        default:
+                            Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            });
 
         text = (EditText)findViewById(R.id.main_text);
         text.setOnEditorActionListener(new TextView.OnEditorActionListener() {  
@@ -127,7 +178,7 @@ public class Main extends Activity {
                                 if (url.indexOf(".") != -1) 
                                     url = "http://" + url;
                                 else
-                                    url = HeySearch.getSearch(url);
+                                    url = HeyHelper.getSearch(url);
                             }
                             //转到页面
                             web.loadUrl(url);
@@ -143,19 +194,15 @@ public class Main extends Activity {
         manager_back = (ImageButton)findViewById(R.id.main_manager_back);
         ripple_version(manager_back);
 
-        add = (ImageButton)findViewById(R.id.main_add);
-        add.setImageBitmap(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.add), S.getColor(R.color.colorBackground)));
-        clear = (ImageButton)findViewById(R.id.main_clear);
-        clear.setImageBitmap(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.clear), S.getColor(R.color.colorBackground)));
-
         back_icon = findViewById(R.id.main_back_icon);
-        back_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.back), S.getColor(R.color.colorBackground))));
+        back_icon.setBackground(new BitmapDrawable(HeyHelper.ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.back), S.getColor(R.color.colorBackground))));
         forward_icon = findViewById(R.id.main_forward_icon);
-        forward_icon.setBackground(new BitmapDrawable(ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.forward), S.getColor(R.color.colorBackground))));
+        forward_icon.setBackground(new BitmapDrawable(HeyHelper.ColoBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.forward), S.getColor(R.color.colorBackground))));
         multi_scroll_box = (HorizontalScrollView)findViewById(R.id.main_multi_scroll_box);
         multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
-        aniimage = (ImageView)findViewById(R.id.main_aniimage);
+        multi_text = (TextView)findViewById(R.id.main_multi_text);
+        aniimage = findViewById(R.id.main_aniimage);
         addMulti();//
 
         multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
@@ -178,7 +225,7 @@ public class Main extends Activity {
             else if (b instanceof BitmapDrawable)
                 c = ((BitmapDrawable)b).getBitmap().getPixel(0, 0);
         }
-        if (Main.me.isLightColor(c))
+        if (HeyHelper.isLightColor(c))
             blacker.setVisibility(View.VISIBLE);
         //dock.setTextColor(Color.BLACK);
         else
@@ -197,11 +244,11 @@ public class Main extends Activity {
         }
         String action = intent.getAction();
         if (Intent.ACTION_SEND.equals(action)) {
-            web = addPage(HeySearch.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
+            web = addPage(HeyHelper.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
         } else if (Intent.ACTION_VIEW.equals(action)) {
             web = addPage(intent.getData().toString());
         } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
-            web = addPage(HeySearch.getSearch(intent.getStringExtra("query")));
+            web = addPage(HeyHelper.getSearch(intent.getStringExtra("query")));
         } else {
             web = addPage("");
         }
@@ -262,16 +309,22 @@ public class Main extends Activity {
         if (v.getTag() == null) return;
         webindex = v.getTag();
         web = pages.get(webindex);
+        if (web.getProgress() == 100) 
+            progressbar.setVisibility(View.GONE);
+        else
+            progressbar.setProgress(web.getProgress());
         dock.setText(web.getTitle());
         onDockClick(null);
     } public void onDockClick(View v) {
-        if (multi_scroll_box.getVisibility() == View.GONE) {
+        multi_text.setText("" + pages.size());
+        if (multi_scroll_box.getVisibility() == View.GONE || v != null) {
 
             multiimages.set(webindex, getWebDrawing());
-            multiimage.get(webindex).setImageBitmap(multiimages.get(webindex));
+            multiimage.get(webindex).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(webindex), dip2px(this, 2)));
             multiimage.get(webindex).setTag(webindex);
             multitext.get(webindex).setText(web.getTitle());
-            multiimage.get(webindex).invalidate();
+
+            if (v != null) return;
 
             hidePage();
             scaleAni(false);
@@ -326,15 +379,15 @@ public class Main extends Activity {
                 aniA.setDuration(320);
                 multi_scroll_box.setAnimation(aniA);
 
-
                 multi_box.setVisibility(View.GONE);
-                multi_scroll_box.setVisibility(View.GONE);
                 onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
 
                 mAni1.addListener(new AnimatorListenerAdapter() {
                         public void onAnimationEnd(Animator ani) {
-                            web.setVisibility(View.VISIBLE);
+                            multi_scroll_box.setVisibility(View.GONE);
+                            multi_scroll_box.invalidate();
                             aniimage.setVisibility(View.GONE);
+                            web.setVisibility(View.VISIBLE);
                         }
                     });
             } else {
@@ -344,7 +397,7 @@ public class Main extends Activity {
                 mAni4 = ValueAnimator.ofInt(k.height(), l.height());
 
                 AnimationSet aniA = new AnimationSet(true);
-                aniA.addAnimation(new AlphaAnimation(0, 1));
+                //aniA.addAnimation(new AlphaAnimation(0, 1));
                 aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
                 aniA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
                 aniA.setDuration(320);
@@ -366,30 +419,32 @@ public class Main extends Activity {
             mAni3.setDuration(320).setInterpolator(new DecelerateInterpolator());
             mAni4.setDuration(320).setInterpolator(new DecelerateInterpolator());
 
-            aniimage.setImageBitmap(multiimages.get(webindex));
+            aniimage.setBackground(new BitmapDrawable(multiimages.get(webindex)));
             aniimage.setVisibility(View.VISIBLE);
 
             mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         int curValue = ani.getAnimatedValue();
-                        aniimage.setX(curValue);
-                        aniimage.invalidate();
+                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
+                        params.setMargins(curValue, params.topMargin, params.rightMargin, params.bottomMargin);
+                        aniimage.setLayoutParams(params);
                     }
                 });
             mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         int curValue = ani.getAnimatedValue();
-                        aniimage.setY(curValue);
-                        aniimage.invalidate();
+                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
+                        params.setMargins(params.leftMargin, curValue - (int)dip2px(Main.this, 30), params.rightMargin, params.bottomMargin);
+                        aniimage.setLayoutParams(params);
                     }
                 });
             mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         int curValue = ani.getAnimatedValue();
-                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)aniimage.getLayoutParams();  
+                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
                         params.width = curValue;
                         aniimage.setLayoutParams(params);
                     }
@@ -398,7 +453,7 @@ public class Main extends Activity {
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         int curValue = ani.getAnimatedValue();
-                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)aniimage.getLayoutParams();  
+                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
                         params.height = curValue;
                         aniimage.setLayoutParams(params);
                     }
@@ -427,15 +482,11 @@ public class Main extends Activity {
         if (manager.getVisibility() == View.GONE) return;
 
         View view = getWindow().getDecorView();
-        ScaleAnimation scaleA = new ScaleAnimation(1, 0.9f, 1, 0.9f);
-        scaleA.setDuration(320);
-        //web.setAnimation(scaleA);
 
         TranslateAnimation tranA = new TranslateAnimation(0, 0, 0, view.getHeight());
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
 
-        //tranA.setFillAfter(true);
         manager.setAnimation(tranA);
 
         new Handler(){
@@ -445,29 +496,31 @@ public class Main extends Activity {
             }
         }.sendEmptyMessageDelayed(0, 320);
     } public void onManagerClick(View v) {
-        TranslateAnimation tranA = new TranslateAnimation(manager_tab.getTranslationX(), v.getX(), 0, 0);
-        tranA.setDuration(320);
-        tranA.setFillAfter(true);
-        manager_tab.setAnimation(tranA);
-        manager_tab.invalidate();
-        manager.requestLayout();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)manager_tab.getLayoutParams();  
+        params.setMargins((int)v.getX(), 0, 0, 0);
+        manager_tab.setLayoutParams(params);
+
+        LinearLayout[] page = {
+            (LinearLayout)findViewById(R.id.main_manager_p1),
+            (LinearLayout)findViewById(R.id.main_manager_p2),
+            (LinearLayout)findViewById(R.id.main_manager_p3)
+        };
+        
+        for (LinearLayout l : page) {
+            l.setVisibility(View.GONE);
+        }
         
         switch (v.getId()) {
             case R.id.main_manager_t0:
-                
+                page[0].setVisibility(View.VISIBLE);
                 break;
             case R.id.main_manager_t1:
-
+                page[1].setVisibility(View.VISIBLE);
                 break;
             case R.id.main_manager_t2:
-
+                page[2].setVisibility(View.VISIBLE);
                 break;
         }
-    } public void onAddClick(View v) {
-        web = addPage("");
-        if (webindex + 1 > multi.size() * 2) addMulti();
-        multi_scroll_box.setVisibility(View.GONE);
-        multi_box.setVisibility(View.GONE);
     } public void onRemoveClick(View v) {
         if (pages.size() == 1) return;
         removePage((int)v.getTag());
@@ -493,7 +546,35 @@ public class Main extends Activity {
         multibottom.add(0x01000000);
         multiimages.add(null);
 
+        if (pages.size() > multi.size() * 2) addMulti();
+        multi_scroll_box.setVisibility(View.GONE);
+        multi_box.setVisibility(View.GONE);
+
         webindex = pages.size() - 1;
+
+        return new_web;
+    }  public HeyWeb addPageB(String uri) {
+        String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
+        HeyWeb new_web = new HeyWeb(this);
+        new_web.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        new_web.loadUrl(link);
+        new_web.setVisibility(View.GONE);
+        new_web.setWebChromeClient(new HeyWebChrome());
+        new_web.setOnTouchListener(HeyWebTouch(new_web));
+
+        desktop.addView(new_web);
+        pages.add(new_web);
+
+        multitop.add(new ColorDrawable(S.getColor(R.color.colorPrimary)));
+        multibottom.add(0x01000000);
+        multiimages.add(getWebDrawingB());
+
+        if (pages.size() > multi.size() * 2) addMulti();
+        multi_scroll_box.setVisibility(View.GONE);
+        multi_box.setVisibility(View.GONE);
+
+        multiimage.get(pages.size() - 1).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(pages.size() - 1), dip2px(this, 2)));
+        multiimage.get(pages.size() - 1).setTag(pages.size() - 1);
 
         return new_web;
     } public void hidePage() {
@@ -564,7 +645,7 @@ public class Main extends Activity {
 
         for (int i = 0; i < pages.size(); i++) {
             multitext.get(i).setText(pages.get(i).getTitle());
-            multiimage.get(i).setImageBitmap(multiimages.get(i));
+            multiimage.get(i).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(i), dip2px(this, 2)));
             multiimage.get(i).setTag(i);
         }
     }
@@ -601,10 +682,13 @@ public class Main extends Activity {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
-        return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - desktop.getTop());
+        return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - (int)desktop.getY());
+    } public Bitmap getWebDrawingB() {
+        Bitmap bitmap = getWebDrawing();
+        return HeyHelper.ColoBitmap(bitmap, Color.WHITE);
     } public void ripple_version(View view_children) {
         //版本兼容
-        int[] attrsArray = { 
+        int[] attrsArray = {
             (android.os.Build.VERSION.SDK_INT >= 21) ?
             android.R.attr.selectableItemBackgroundBorderless :
             android.R.attr.selectableItemBackground
@@ -632,18 +716,7 @@ public class Main extends Activity {
             if (view != null) i.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     } 
-    public Bitmap ColoBitmap(Bitmap bitmap, int color) {
-        Bitmap b = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        for (int x = 0; x < b.getWidth(); x++) {
-            for (int y = 0; y < b.getHeight(); y++) {
-                if (b.getPixel(x, y) != Color.TRANSPARENT) b.setPixel(x, y, color);
-            }
-        }
-        return b;
-    } public boolean isLightColor(int color) {
-        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
-        return (darkness < 0.5);
-    } public int getNavigationBarHeight(Context context) {
+    public int getNavigationBarHeight(Context context) {
         if (hasSoftKeys(getWindowManager())) return context.getResources().getDimensionPixelSize(context.getResources().getIdentifier("navigation_bar_height", "dimen", "android"));
         return 0;
     } private boolean hasSoftKeys(WindowManager windowManager) {
@@ -662,7 +735,6 @@ public class Main extends Activity {
 
         return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
     }
-
 
 
     ValueCallback<Uri> mUploadMessage;
@@ -784,7 +856,10 @@ class HeyWebChrome extends WebChromeClient {
                     }
                 }.sendEmptyMessageDelayed(0, 1000);
 
-                if (!(v.getTitle().equals("about:blank") || Main.manager.getVisibility() == View.VISIBLE || Main.multi_scroll_box.getVisibility() == View.VISIBLE)) {
+                if (!(v.getTitle().equals("about:blank") ||
+                    Main.manager.getVisibility() == View.VISIBLE ||
+                    Main.multi_scroll_box.getVisibility() == View.VISIBLE)) {
+
                     Bitmap b = Main.me.getWebDrawing();
                     //if (v.getUrl().contains("coolapk.com"))
                     Main.multitop.set(Main.webindex, new BitmapDrawable(Bitmap.createBitmap(b , 0, 0, b.getWidth(), 1)));
@@ -796,10 +871,13 @@ class HeyWebChrome extends WebChromeClient {
         } else {
             if (v == Main.web) {
 
-                AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                alphaA.setDuration(320);
-                Main.progressbar.setAnimation(alphaA);
-                if (View.GONE == Main.progressbar.getVisibility()) Main.progressbar.setVisibility(View.VISIBLE);
+                if (View.GONE == Main.progressbar.getVisibility()) {
+                    AlphaAnimation alphaA = new AlphaAnimation(0, 1);
+                    alphaA.setDuration(320);
+                    Main.progressbar.setAnimation(alphaA);
+
+                    Main.progressbar.setVisibility(View.VISIBLE);
+                }
                 Main.progressbar.setProgress(newProgress);
             }
         } super.onProgressChanged(v, newProgress);

@@ -1,4 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="@string/dktp"/>
-    <item android:title="@string/bctp"/>
+    <item android:title="@string/lang40"/> 
+    <item android:title="@string/lang52"/>
+    <item android:title="@string/lang53"/>
+    <item android:title="@string/lang54"/>
+    <item android:title="@string/lang41"/>
 </menu>

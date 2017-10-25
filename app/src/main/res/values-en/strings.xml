@@ -3,83 +3,73 @@
 
     <string name="name2">Hey Browser</string>
 
-    <string name="an">Other</string>
-    <string name="ani">Animation</string>
-    <string name="yes">OK</string>
-    <string name="no">Cancel</string>
-    <string name="lfa">Load Completed</string>
-    <string name="lfa2">New Page</string>
-    <string name="not">None</string>
-    <string name="boom">Boom</string>
-    <string name="reset">Rename</string>
-    <string name="del">Delete</string>
-    <string name="reput">Edit</string>
-    <string name="ys">Style</string>
-    <string name="p">Picture</string>
-    <string name="jd">Classic (White)</string>
+    <string name="lang1">Other</string>
+    <string name="lang2">Animation</string>
+    <string name="lang3">OK</string>
+    <string name="lang4">Cancel</string>
+    <string name="lang5">Load Completed</string>
+    <string name="lang6">New Page</string>
+    <string name="lang7">None</string>
+    <string name="lang8">Boom</string>
+    <string name="lang9">Rename</string>
+    <string name="lang10">Delete</string>
+    <string name="lang11">Edit</string>
+    <string name="lang12">Style</string>
+    <string name="lang13">Picture</string>
+    <string name="lang14">Classic (White)</string>
 
-    <string name="jsq">Added to bookmark.</string>
-    <string name="wtf">Oooooooooooooops!Operation failed!(QAQ)</string>
-    <string name="bpp">Background Picture</string>
-    <string name="bt">Transparent</string>
-    <string name="fla">Flat</string>
-    <string name="bss">Colorful</string>
+    <string name="lang15">Added to bookmark.</string>
+    <string name="lang16">Oooooooooooooops!Operation failed!(QAQ)</string>
+    <string name="lang17">Background Picture</string>
+    <string name="lang18">Transparent</string>
+    <string name="lang19">Flat</string>
+    <string name="lang20">Colorful</string>
 
-    <string name="setting0">Settings</string>
-    <string name="setting1">Homepage</string>
-    <string name="setting2">Style</string>
-    <string name="setting3">Search Engine</string>
-    <string name="setting4">Start-up Manager</string>
-    <string name="setting5">Script</string>
-    <string name="setting6">Other</string>
-    <string name="setting7">About</string>
+    <string name="lang21">Settings</string>
+    <string name="lang22">Homepage</string>
+    <string name="lang23">Style</string>
+    <string name="lang24">Search Engine</string>
+    <string name="lang25">Start-up Manager</string>
+    <string name="lang26">Script</string>
+    <string name="lang27">Other</string>
+    <string name="lang28">About</string>
 
-    <string name="styleedit1">Tip to modify the style | Please restart Hey after modify.</string>
-    <string name="styleedit2">Navigation Bar</string>
-    <string name="styleedit3">Small icons</string>
+    <string name="lang29">Tip to modify the style | Please restart Hey after modify.</string>
+    <string name="lang30">Navigation Bar</string>
+    <string name="lang31">Small icons</string>
 
-    <string name="ttbitem1">Share to</string>
+    <string name="lang32">Share to</string>
 
-    <string name="history">History</string>
-    <string name="history1">Delete all histories</string>
+    <string name="lang33">History</string>
+    <string name="lang34">Delete all histories</string>
 
-    <string name="dktp">View picture</string>
-    <string name="bctp">Save picture</string>
-    <string name="xy">Smart</string>
+    <string name="lang35">View picture</string>
+    <string name="lang36">Save picture</string>
+    <string name="lang37">Smart</string>
 
-    <string name="xjym">New Page"</string>
-    <string name="xxsq">Show Bookmarks"</string>
-    <string name="ycsq">Hide Bookmarks"</string>
-    <string name="xsdl">Show Navigation Bar"</string>
-    <string name="ycdl">Hide Navigation Bar"</string>
-    <string name="dkym">Open..."</string>
+    <string name="lang38">New Page"</string>
+    <string name="lang39">Show Bookmarks"</string>
+    <string name="lang40">Hide Bookmarks"</string>
+    <string name="lang41">Show Navigation Bar"</string>
+    <string name="lang42">Hide Navigation Bar"</string>
+    <string name="lang43">Open..."</string>
 
-    <string name="xjb">New Script</string>
-    <string name="hdjb">Get script</string>
+    <string name="lang44">New Script</string>
+    <string name="lang45">Get script</string>
 
-    <string name="o">Exit</string>
-    <string name="asq">Add to bookmarks</string>
-    <string name="sx">Refresh</string>
-    <string name="tr">Translation</string>
+    <string name="lang46">Exit</string>
+    <string name="lang47">Add to bookmarks</string>
+    <string name="lang48">Refresh</string>
+    <string name="lang49">Translation</string>
 
-    <string name="xssk">Show search box</string>
-    <string name="yssk">Hide search box</string>
+    <string name="lang50">Show search box</string>
+    <string name="lang51">Hide search box</string>
+    
+    <string name="lang52">Open in New Tab</string>
+    <string name="lang53">Copy link</string>
+    <string name="lang54">Open in Background</string>
 
-    <string name="xymdk">Open in New Tab</string>
-    <string name="fzlj">Copy link</string>
-    <string name="htdk">Open in Background</string>
-
-    <string name="ddd">Downloads</string>
-    <string name="glq">Manager</string>
-    <string name="n">New</string>
-    <string name="ymbxy">You must fill the Domain!</string>
-    <string name="ymm">Domain name ( "*" means global )</string>
-
-    <string name="setting8">Intercept</string>
-    <string name="txl">Enter the domain for intercept.</string>
+    <string name="lang55">Downloads</string>
 
 
 </resources>
-
-
-<!--翻译by Raku En-UKv2.4-->

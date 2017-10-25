@@ -31,7 +31,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
     public static ArrayList<String> images = new ArrayList<String>();
-    
+
     // 获取 img 标签正则
     private static final String IMAGE_URL_TAG = "<img.*src=(.*?)[^>]*?>";
     // 获取 src 路径的正则
@@ -90,10 +90,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
             webSettings.setLoadsImagesAutomatically(true);
         else
             webSettings.setLoadsImagesAutomatically(false);
-        
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
             webSettings.setMixedContentMode(webSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        
+
         if (Build.VERSION.SDK_INT < 19) {
             try {
                 Class class_ = webSettings.getClass();
@@ -132,7 +132,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                         Toast.makeText(getContext(), url, Toast.LENGTH_SHORT);
                     } return super.shouldOverrideUrlLoading(view, url);   
                 }
-                
+
                 //public void onPageStarted(WebView v, String url, Bitmap favicon) {
                 //    super.onPageStarted(v, url, favicon);
                 //}
@@ -217,12 +217,12 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         }
         return listImgSrc;
     }
-    
+
     public static boolean isUri(String url) {
         return (url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")));
     }
 
-    @Override public boolean onLongClick(View v) {  
+    @Override public boolean onLongClick(final View v) {  
         final HitTestResult result = ((WebView)v).getHitTestResult();  
         if (null == result) return false;  
 
@@ -231,16 +231,6 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
         if (type == WebView.HitTestResult.EDIT_TEXT_TYPE) return true;
         PopupMenu popup = new PopupMenu(getContext(), Main.popn);//第二个参数是绑定的那个view
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem i) {
-                    if (i.getTitle().equals(getContext().getString(R.string.dktp))) 
-                        loadUrl(result.getExtra());
-                    else 
-                        Toast.makeText(getContext(), getContext().getString(R.string.wtf), Toast.LENGTH_SHORT).show();
-
-                    return true;
-                }
-            });
         switch (type) {
                 //case WebView.HitTestResult.PHONE_TYPE:  
                 // 处理拨号  
@@ -255,59 +245,38 @@ public class HeyWeb extends WebView implements OnLongClickListener {
             case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE:
                 //填充菜单
                 popup.getMenuInflater().inflate(R.menu.link, popup.getMenu());
-                //绑定菜单项的点击事件
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem i) {
-                            if (i.getTitle().equals(getContext().getString(R.string.fzlj)))  //复制链接
-                                Main.clipboard.set(result.getExtra());
-                            else if (i.getTitle().equals(getContext().getString(R.string.xymdk))) {
-                                //新页面打开
-                                Main.me.onAddClick(null);
-                                Main.web.loadUrl(result.getExtra());
-                            }
-                            return true;
-                        }
-                    });
-                //显示(这一行代码不要忘记了)
-                popup.show();
                 break;
             case WebView.HitTestResult.SRC_ANCHOR_TYPE:
                 //填充菜单
                 popup.getMenuInflater().inflate(R.menu.link, popup.getMenu());
-                //绑定菜单项的点击事件
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem i) {
-                            if (i.getTitle().equals(getContext().getString(R.string.fzlj)))  //复制链接
-                                Main.clipboard.set(result.getExtra());
-                            else if (i.getTitle().equals(getContext().getString(R.string.xymdk))) {
-                                //新页面打开
-                                Main.me.onAddClick(null);
-                                Main.web.loadUrl(result.getExtra());
-                            }
-                            return true;
-                        }
-                    });
-                //显示(这一行代码不要忘记了)
-                popup.show();
                 break;
             case WebView.HitTestResult.IMAGE_TYPE:  
                 //填充菜单
                 popup.getMenuInflater().inflate(R.menu.photo, popup.getMenu());
-                //绑定菜单项的点击事件
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem i) {
-                            if (i.getTitle().equals(getContext().getString(R.string.dktp))) 
-                                loadUrl(result.getExtra());
+                break;  
+            default:
+                return true; 
+        }
+        //绑定菜单项的点击事件
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                public boolean onMenuItemClick(MenuItem i) {
+                    if (i.getTitle().equals(getContext().getString(R.string.lang53)))  //复制链接
+                        Main.clipboard.set(result.getExtra());
+                    else if (i.getTitle().equals(getContext().getString(R.string.lang52))) {
+                        //新页面打开
+                        Main.me.onDockClick(v);
+                        Main.web = Main.me.addPage(result.getExtra());
+                    } else if (i.getTitle().equals(getContext().getString(R.string.lang54))) {
+                        //后台打开
+                        Main.me.addPageB(result.getExtra());
+                    } else if (i.getTitle().equals(getContext().getString(R.string.lang40))) 
+                        loadUrl(result.getExtra());
 
-                            return true;
-                        }
-                    });
-                //显示(这一行代码不要忘记了)
-                popup.show();
-                break;  
-            default:  
-                break;  
-        }  
+                    return true;
+                }
+            });
+        Main.me.multiimages.set(Main.webindex, Main.me.getWebDrawing());
+        popup.show();
         return true;  
     }  
 }
