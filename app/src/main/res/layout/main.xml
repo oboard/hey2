@@ -89,7 +89,7 @@
 		<omark.hey.ScrollText
 			android:onClick="onDockClick"
 			android:id="@+id/main_dock"
-			android:textColor="#fff"
+			android:textColor="#ffffff"
 			android:background="?@android:attr/selectableItemBackground"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
@@ -208,7 +208,7 @@
                     android:layout_width="match_parent">
                     
                     <ListView
-                        android:id="@+id/main_manager_book_list"
+                        android:id="@+id/main_manager_bookmark_list"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"/>
                     

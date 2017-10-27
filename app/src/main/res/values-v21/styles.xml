@@ -6,12 +6,5 @@
         <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
-
-    <style name="AppThemeS" parent="@android:style/Theme.Material.Light.DarkActionBar">
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:navigationBarColor">@color/colorPrimary</item>
-        <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="android:colorPrimary">@color/colorPrimary</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-    </style>
+    
 </resources>

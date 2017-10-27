@@ -5,6 +5,5 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">false</item>
     </style>
-
-    <style name="AppThemeS" parent="@android:style/Theme.Holo.Light"/>
+    
 </resources>

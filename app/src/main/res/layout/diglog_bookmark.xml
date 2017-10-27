@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+    android:padding="5dp">
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="@string/lang56"/>
+
+	<EditText
+        android:id="@+id/diglog_bookmark_1"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"/>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:text="@string/lang57"/>
+
+	<EditText
+        android:id="@+id/diglog_bookmark_2"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"/>
+
+</LinearLayout>
+

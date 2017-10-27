@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.ArrayList;
 import android.content.pm.PackageManager;
+import java.util.List;
 
 public class S {
     static Editor e;
@@ -63,10 +64,17 @@ public class S {
         if (e != null) e.remove(name);
     }
 
-    //此函数效率低，请谨慎使用
-    public static void delIndex(String name, String max_name, int index) {
-        int n = get(max_name, 0);
-        ArrayList<String> a = new ArrayList<String>();
+    //此系列函数效率低，请谨慎使用
+    public static void addIndex(String max_name, String name, String value) {
+        final int n = get(max_name, 0);
+
+        put(name + n, value);
+        put(max_name, n + 1);
+        
+        ok();
+    } public static void delIndex(String max_name, String name, int index) {
+        final int n = get(max_name, 0);
+        final List<String> a = new ArrayList<String>();
         for (int i = 0; i < n; i++) {
             a.add(get(name + i, ""));
         }
@@ -77,13 +85,14 @@ public class S {
         for (int i = 0; i < n - 1; i++) {
             put(name + i, a.get(i));
         }
+        ok();
     }
 
     public static void ok() {
         if (e != null) e.apply();
     }
 
-    public static boolean OK() {
+    public static boolean okay() {
         if (e != null) return e.commit();
         return false;
     }
@@ -96,7 +105,6 @@ public class S {
     } public static int getVersionCode() {
         int version = 0;
         try {
-            //获取软件版本号，对应AndroidManifest.xml下android:versionCode
             version = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -105,7 +113,6 @@ public class S {
     } public static String getVersionName() {
         String version = "";
         try {
-            //获取软件版本号，对应AndroidManifest.xml下android:versionCode
             version = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();

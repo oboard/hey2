@@ -5,7 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -43,6 +45,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -50,11 +53,14 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Main extends Activity {
     static Main me;
@@ -64,14 +70,14 @@ public class Main extends Activity {
     static ScrollText dock;
     static EditText text;
     static GridView menu;
-    static LinearLayout manager;
     static ImageButton manager_back;
     static FrameLayout desktop;
     static RelativeLayout root, ground;
     static ProgressBar progressbar;
     static HeyWeb web;
     static TextView multi_text;
-    static LinearLayout multi_box, multi_scroll;
+    static ListView bookmark_list, history_list;
+    static LinearLayout multi_box, multi_scroll, manager;
     static HorizontalScrollView multi_scroll_box;
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
     static ArrayList<LinearLayout> multi = new ArrayList<LinearLayout>();
@@ -81,18 +87,16 @@ public class Main extends Activity {
     static ArrayList<Integer> multibottom = new ArrayList<Integer>();
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
 
+    static HeyBookmark bookmark;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
-            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-        }
-
-        //创建剪辑版
+        //创建
         clipboard = new HeyClipboard(this);
+        bookmark = new HeyBookmark();
 
         S.init(this, "main");
         if (S.get("first", true)) {
@@ -122,7 +126,12 @@ public class Main extends Activity {
         ground = (RelativeLayout)findViewById(R.id.main_ground);
         progressbar = (ProgressBar)findViewById(R.id.main_progress);
 
-        //4.4以上透明
+        //5.0以上半透明
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
+        //4.4以上半透明
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             ground.setFitsSystemWindows(true);
             ground.setClipToPadding(true);
@@ -132,11 +141,11 @@ public class Main extends Activity {
         menu.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, final View v, final int i, long l) {
-                    
+
                     //点击菜单后，滚回去～
                     View viewGroup = (View)dock.getParent();
                     dock.scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
-                    
+
                     switch (i) {
                         case 0:
                             onDockClick(v);
@@ -160,6 +169,22 @@ public class Main extends Activity {
                             break;
                         case 3:
                             web.loadUrl(S.get("home", HeyHelper.DEFAULT_HOME));
+                            break;
+                        case 4:
+                            LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
+                            final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);;   
+                            t1.setText(web.getTitle());
+                            t2.setText(web.getUrl());
+                            new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
+                                .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int i) {
+                                        S.addIndex("bnm" , "bn", t1.getText().toString());
+                                        S.addIndex("bm" , "b", t2.getText().toString());
+                                        S.addIndex("btm" , "bt", "" + System.currentTimeMillis());
+                                        bookmark_list.setAdapter(bookmark.getAdapter());
+                                        Toast.makeText(Main.this, R.string.lang20, Toast.LENGTH_SHORT).show();
+                                    }
+                                }).show();
                             break;
                         default:
                             Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
@@ -192,6 +217,8 @@ public class Main extends Activity {
         manager = (LinearLayout)findViewById(R.id.main_manager);
         manager_tab = findViewById(R.id.main_manager_tab);
         manager_back = (ImageButton)findViewById(R.id.main_manager_back);
+        bookmark_list = (ListView)findViewById(R.id.main_manager_bookmark_list);
+        history_list = (ListView)findViewById(R.id.main_manager_history_list);
         ripple_version(manager_back);
 
         back_icon = findViewById(R.id.main_back_icon);
@@ -210,6 +237,40 @@ public class Main extends Activity {
         onNewIntent(getIntent());
 
         onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorPrimary)));
+
+        bookmark_list.setAdapter(bookmark.getAdapter());
+        bookmark_list.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView view, View v, int index, long l) {
+                    text.setText(bookmark.getData().get(index).get("url").toString());
+                }
+            });
+        bookmark_list.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView view, View v, final int index, long l) {
+                    LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
+                    final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);;   
+                    List<Map<String, Object>> hbm = bookmark.getData();
+                    t1.setText(hbm.get(index).get("title").toString());
+                    t2.setText(hbm.get(index).get("url").toString());
+                    new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang11)
+                        .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int i) {
+                                S.put("bn" + index, t1.getText().toString());
+                                S.put("b" + index, t2.getText().toString());
+                                S.put("bt" + index, System.currentTimeMillis());
+                                S.ok();
+                                bookmark_list.setAdapter(bookmark.getAdapter());
+                            }
+                        }).setNeutralButton(R.string.lang10, new DialogInterface.OnClickListener() {   
+                            public void onClick(DialogInterface dialog, int i) {
+                                S.delIndex("bm", "b", index);
+                                bookmark_list.setAdapter(bookmark.getAdapter());
+                            }
+                        }).show();
+                    return true;
+                }
+            });
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
@@ -232,7 +293,6 @@ public class Main extends Activity {
             blacker.setVisibility(View.GONE);
         //dock.setTextColor(Color.WHITE);
 
-        Main.root.invalidate();
     }
 
     @Override
@@ -268,27 +328,22 @@ public class Main extends Activity {
     public void onBackPressed() {
         if (multi_box.getVisibility() == View.VISIBLE) {
             onDockClick(null);
-            return;
         } else if (manager.getVisibility() == View.VISIBLE) {
             onManagerBackClick(null);
-            return;
         } else {
             if (web.canGoBack()) {
                 web.goBack();
 
                 web.loadUrl("javascript:document.title = " + web.getTitle());
-                return;
             } else {
                 if (pages.size() != 1) {
                     if (!isExit) {
                         isExit = true;
                         handler.sendEmptyMessageDelayed(0, 1500);
                         Toast.makeText(this, "再按一次关闭标签页", Toast.LENGTH_SHORT).show();
-                        return;
                     } else {
                         removePage(webindex);
                         freshMulti();
-                        return;
                     }
 
                 } else {
@@ -296,7 +351,6 @@ public class Main extends Activity {
                         isExit = true;
                         handler.sendEmptyMessageDelayed(0, 1500);
                         Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
-                        return;
                     } else {
                         finish();
                     }
@@ -332,7 +386,8 @@ public class Main extends Activity {
             scaleAni(true);
         }
 
-    } 
+    }
+
     @TargetApi(11)
     private void scaleAni(boolean open) {
         if (Build.VERSION.SDK_INT < 11) {
@@ -361,6 +416,8 @@ public class Main extends Activity {
             }
         } else {
             Rect l = new Rect(), k = new Rect();
+            multi_box.setVisibility(View.VISIBLE);
+            multi_scroll_box.setVisibility(View.VISIBLE);
             web.getGlobalVisibleRect(k);
             multiimage.get(webindex).getGlobalVisibleRect(l);
 
@@ -403,8 +460,6 @@ public class Main extends Activity {
                 aniA.setDuration(320);
                 multi_scroll_box.setAnimation(aniA);
 
-                multi_box.setVisibility(View.VISIBLE);
-                multi_scroll_box.setVisibility(View.VISIBLE);
                 root.setBackgroundColor(S.getColor(R.color.colorPrimary));
 
                 mAni1.addListener(new AnimatorListenerAdapter() {
@@ -436,7 +491,7 @@ public class Main extends Activity {
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         int curValue = ani.getAnimatedValue();
                         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                        params.setMargins(params.leftMargin, curValue - (int)dip2px(Main.this, 30), params.rightMargin, params.bottomMargin);
+                        params.setMargins(params.leftMargin, curValue - (int)dip2px(Main.this, 32), params.rightMargin, params.bottomMargin);
                         aniimage.setLayoutParams(params);
                     }
                 });
@@ -465,9 +520,9 @@ public class Main extends Activity {
             mAni4.start();
         }
     } public void onDockLongClick(View v) {
-        View view = getWindow().getDecorView();
+        final View view = getWindow().getDecorView();
 
-        TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), 0);
+        final TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), 0);
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
 
@@ -481,9 +536,9 @@ public class Main extends Activity {
         keyboardState(false);
         if (manager.getVisibility() == View.GONE) return;
 
-        View view = getWindow().getDecorView();
+        final View view = getWindow().getDecorView();
 
-        TranslateAnimation tranA = new TranslateAnimation(0, 0, 0, view.getHeight());
+        final TranslateAnimation tranA = new TranslateAnimation(0, 0, 0, view.getHeight());
         tranA.setZAdjustment(AnimationSet.ZORDER_TOP);
         tranA.setDuration(320);
 
@@ -496,20 +551,20 @@ public class Main extends Activity {
             }
         }.sendEmptyMessageDelayed(0, 320);
     } public void onManagerClick(View v) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)manager_tab.getLayoutParams();  
+        final LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)manager_tab.getLayoutParams();  
         params.setMargins((int)v.getX(), 0, 0, 0);
         manager_tab.setLayoutParams(params);
 
-        LinearLayout[] page = {
+        final LinearLayout[] page = {
             (LinearLayout)findViewById(R.id.main_manager_p1),
             (LinearLayout)findViewById(R.id.main_manager_p2),
             (LinearLayout)findViewById(R.id.main_manager_p3)
         };
-        
+
         for (LinearLayout l : page) {
             l.setVisibility(View.GONE);
         }
-        
+
         switch (v.getId()) {
             case R.id.main_manager_t0:
                 page[0].setVisibility(View.VISIBLE);
@@ -531,8 +586,8 @@ public class Main extends Activity {
     }
 
     public HeyWeb addPage(String uri) {
-        String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
-        HeyWeb new_web = new HeyWeb(this);
+        final String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
+        final HeyWeb new_web = new HeyWeb(this);
         new_web.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         new_web.loadUrl(link);
         new_web.setVisibility(View.VISIBLE);
@@ -578,12 +633,12 @@ public class Main extends Activity {
 
         return new_web;
     } public void hidePage() {
-        for (int i = 0;i < pages.size();i++) {
-            pages.get(i).setVisibility(View.GONE);
+        for (Object page : pages.toArray()) {
+            ((HeyWeb)page).setVisibility(View.GONE);
         }
     } public void removeAllPage() {
-        for (int i = 0; i < pages.size(); i++) {
-            HeyWeb page = pages.get(i);
+        for (Object p : pages.toArray()) {
+            HeyWeb page = (HeyWeb)p;
             if (page != null) {
                 desktop.removeView(page);
                 page.loadUrl("about:blank");
@@ -600,6 +655,8 @@ public class Main extends Activity {
         multi_scroll.removeAllViews();
         addMulti();
         webindex = - 1;
+
+        onDockClick(dock);
         web = addPage("");
     } public void removePage(int index) {
         HeyWeb page = pages.get(index);
@@ -860,11 +917,10 @@ class HeyWebChrome extends WebChromeClient {
                     Main.manager.getVisibility() == View.VISIBLE ||
                     Main.multi_scroll_box.getVisibility() == View.VISIBLE)) {
 
+                    //v.scrollTo(0, 0);
                     Bitmap b = Main.me.getWebDrawing();
-                    //if (v.getUrl().contains("coolapk.com"))
+                    FastBlur.doBlur(b, 20, true);
                     Main.multitop.set(Main.webindex, new BitmapDrawable(Bitmap.createBitmap(b , 0, 0, b.getWidth(), 1)));
-                    //else
-                    //    Main.multitop.set(Main.webindex, new ColorDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1).getPixel(0, 0)));
                     Main.onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }
             }
@@ -883,9 +939,6 @@ class HeyWebChrome extends WebChromeClient {
         } super.onProgressChanged(v, newProgress);
 
     }
-
-
-
 
     //扩展浏览器上传文件
     //3.0++版本

@@ -30,6 +30,7 @@ public class HeyMenu {
             S.getString(R.string.lang18),
             S.getString(R.string.lang37),
             S.getString(R.string.lang27),
+            S.getString(R.string.lang17),
             S.getString(R.string.lang34),
             S.getString(R.string.lang38),
             S.getString(R.string.lang36)
@@ -40,7 +41,8 @@ public class HeyMenu {
             0xE5D5,
             0xE80D,
             0xE88A,
-            0xE866,
+            0xE867,
+            0xE865,
             0xE889,
             0xE86F
         };

@@ -9,6 +9,9 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 public class ScrollText extends TextView {
+    
+    boolean isUper = false;
+    
     //定义两个变量用于存储按下view时所处的坐标
     int lastX = 0, lastY = 0;
 
@@ -51,9 +54,11 @@ public class ScrollText extends TextView {
             case MotionEvent.ACTION_DOWN:
                 lastX = x;
                 lastY = y;
-
-                isUp = true;
-                handler.sendEmptyMessageDelayed(0, 500);
+                
+                if (!isUper) {
+                    isUp = true;
+                    handler.sendEmptyMessageDelayed(0, 500);
+                }
                 break;
                 //触摸事件的第二步，这时候的x,y已经随着滑动操作产生了变化，用变化后的坐标减去首次触摸时的坐标得到相对的偏移量
             case MotionEvent.ACTION_MOVE:
@@ -102,8 +107,10 @@ public class ScrollText extends TextView {
                 }
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
                 if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100)) {
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(this.getContext(), 160) - viewGroup.getScrollY(), 320);
+                    isUper = true;
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 320);
                 } else {
+                    isUper = false;
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
                 }
 
