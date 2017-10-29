@@ -3,73 +3,71 @@
 
     <string name="name2">Hey Browser</string>
 
-    <string name="lang1">Other</string>
-    <string name="lang2">Animation</string>
+    <string name="lang1">Others</string>
+    <string name="lang2">Plug-in</string>
     <string name="lang3">OK</string>
     <string name="lang4">Cancel</string>
-    <string name="lang5">Load Completed</string>
-    <string name="lang6">New Page</string>
-    <string name="lang7">None</string>
-    <string name="lang8">Boom</string>
+    <string name="lang5">Close All</string>
+    <string name="lang6">Scr Prn</string>
+    <string name="lang7">Unstall</string>
+    <string name="lang8">Install</string>
     <string name="lang9">Rename</string>
     <string name="lang10">Delete</string>
     <string name="lang11">Edit</string>
     <string name="lang12">Style</string>
     <string name="lang13">Picture</string>
-    <string name="lang14">Classic (White)</string>
+    <string name="lang14">Classic</string>
+    <string name="lang15">Smart</string>
+    <string name="lang16">Exit</string>
+    <string name="lang17">Add Bookmark</string>
+    <string name="lang18">Refresh</string>
+    <string name="lang19">Translate</string>
 
-    <string name="lang15">Added to bookmark.</string>
-    <string name="lang16">Oooooooooooooops!Operation failed!(QAQ)</string>
-    <string name="lang17">Background Picture</string>
-    <string name="lang18">Transparent</string>
-    <string name="lang19">Flat</string>
-    <string name="lang20">Colorful</string>
+    <string name="lang20">Done</string>
+    <string name="lang21">Oooops!Error!</string>
+    <string name="lang22">Background</string>
+    <string name="lang23">Pure</string>
+    <string name="lang24">Flat</string>
+    <string name="lang25">Colorful</string>
 
-    <string name="lang21">Settings</string>
-    <string name="lang22">Homepage</string>
-    <string name="lang23">Style</string>
-    <string name="lang24">Search Engine</string>
-    <string name="lang25">Start-up Manager</string>
-    <string name="lang26">Script</string>
-    <string name="lang27">Other</string>
-    <string name="lang28">About</string>
+    <string name="lang26">Settings</string>
+    <string name="lang27">Homepage</string>
+    <string name="lang28">Style</string>
+    <string name="lang29">Search</string>
+    <string name="lang30">Start-Up</string>
+    <string name="lang31">Script</string>
+    <string name="lang32">Others</string>
+    <string name="lang33">About</string>
+    <string name="lang34">Bookmarks</string>
 
-    <string name="lang29">Tip to modify the style | Please restart Hey after modify.</string>
-    <string name="lang30">Navigation Bar</string>
-    <string name="lang31">Small icons</string>
+    <string name="lang35">Smart Bar</string>
+    <string name="lang36">Source Code</string>
 
-    <string name="lang32">Share to</string>
+    <string name="lang37">Share to</string>
 
-    <string name="lang33">History</string>
-    <string name="lang34">Delete all histories</string>
+    <string name="lang38">History</string>
+    <string name="lang39">Empty the histories</string>
 
-    <string name="lang35">View picture</string>
-    <string name="lang36">Save picture</string>
-    <string name="lang37">Smart</string>
+    <string name="lang40">View Picture</string>
+    <string name="lang41">Save Picture</string>
+    <string name="lang42">New Page"</string>
+    <string name="lang43">Show Bookmarks"</string>
+    <string name="lang44">Hide Bookmarks"</string>
+    <string name="lang45">Show Smartbar"</string>
+    <string name="lang46">Hide Smartbar"</string>
+    <string name="lang47">Open..."</string>
+    <string name="lang48">Show Searchbox</string>
+    <string name="lang49">Hide Searchbox</string>
 
-    <string name="lang38">New Page"</string>
-    <string name="lang39">Show Bookmarks"</string>
-    <string name="lang40">Hide Bookmarks"</string>
-    <string name="lang41">Show Navigation Bar"</string>
-    <string name="lang42">Hide Navigation Bar"</string>
-    <string name="lang43">Open..."</string>
+    <string name="lang50">New Script</string>
+    <string name="lang51">Get Scripts…</string>
 
-    <string name="lang44">New Script</string>
-    <string name="lang45">Get script</string>
-
-    <string name="lang46">Exit</string>
-    <string name="lang47">Add to bookmarks</string>
-    <string name="lang48">Refresh</string>
-    <string name="lang49">Translation</string>
-
-    <string name="lang50">Show search box</string>
-    <string name="lang51">Hide search box</string>
-    
-    <string name="lang52">Open in New Tab</string>
-    <string name="lang53">Copy link</string>
+    <string name="lang52">Open in New Page</string>
+    <string name="lang53">Copy Link</string>
     <string name="lang54">Open in Background</string>
 
-    <string name="lang55">Downloads</string>
-
+    <string name="lang55">Diwnloads</string>
 
 </resources>
+
+<!--Raku 英语 2017.10.29-->

@@ -97,7 +97,7 @@
 			android:gravity="center"
 			android:text="Hey"/>
 
-		<omark.hey.HeyProgress
+		<omark.hey.control.HeyProgress
 			style="?android:attr/progressBarStyleHorizontal"
 			android:id="@+id/main_progress"
 			android:layout_height="2dp"
@@ -132,7 +132,8 @@
 			android:layout_width="match_parent"
 			android:orientation="vertical"
 			android:background="#fff"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:clickable="true">
 
 			<FrameLayout
 				android:layout_height="48dp"
@@ -215,7 +216,6 @@
                 </LinearLayout>
                 
                 <LinearLayout
-                    android:background="#027384"
                     android:id="@+id/main_manager_p2"
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
@@ -229,13 +229,13 @@
                 </LinearLayout>
                 
                 <LinearLayout
-                    android:background="#550012"
                     android:id="@+id/main_manager_p3"
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
                     android:visibility="gone">
                     
-                    
+                    <include
+                        layout="@layout/settings" />
 
                 </LinearLayout>
                 

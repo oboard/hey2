@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.view.View.OnClickListener;
 
 public class ScrollText extends TextView {
     
@@ -39,7 +40,7 @@ public class ScrollText extends TextView {
             if (isUp) Main.me.onDockClick(null);
             isUp = false;
         }
-    }; 
+    };
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -1,0 +1,84 @@
+package omark.hey.control;
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.view.MotionEvent;
+
+public class HeySetting extends RelativeLayout {
+    
+    TextView mTextView;
+    HeySwitch mSwitch;
+
+    public HeySetting(final Context context) {
+        super(context);
+        init(context);
+    } public HeySetting(final Context context, AttributeSet attr) {
+        super(context, attr);
+        init(context);
+    } public void init(Context c) {
+        if (getTag() == null) return;
+
+        View mView = new View(c);
+        mView.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mSwitch.setChecked(!mSwitch.isChecked());
+                mSwitch.change();
+                performClick();
+            }
+        });
+       
+        if (getBackground() == null) {
+            int[] attrsArray = { android.R.attr.selectableItemBackground };
+            TypedArray typedArray = c.obtainStyledAttributes(attrsArray);
+            mView.setBackgroundResource(typedArray.getResourceId(0, attrsArray[0]));
+            typedArray.recycle();
+        }
+        
+        mTextView = new TextView(c);
+        mTextView.setMaxLines(1);
+        mTextView.setText(getTag().toString());
+        mTextView.setTextColor(Color.BLACK);
+        mTextView.setVisibility(View.VISIBLE);
+        mTextView.setEllipsize(TextUtils.TruncateAt.END);
+        
+        mSwitch = new HeySwitch(c);
+        //mSwitch.setClickable(false);
+        if (getAlpha() < 1)
+            mSwitch.setVisibility(View.VISIBLE);
+        else
+            mSwitch.setVisibility(View.GONE);
+            
+        setAlpha(1);
+        
+        MarginLayoutParams lpm = new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
+        lpm.setMargins(10, 0, 24, 0);
+
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(lpm);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        addView(mTextView, lp);
+        
+        MarginLayoutParams lpm2 = new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
+        lpm2.setMargins(0, 0, 10, 0);
+        
+        RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(lpm2);
+        lp2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp2.addRule(RelativeLayout.CENTER_VERTICAL);
+        addView(mSwitch, lp2);
+        addView(mView, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT));
+        
+        postInvalidate();
+    }
+    public void setChecked(boolean checked) {
+        mSwitch.setChecked(checked);
+        mSwitch.change();
+    }
+    public boolean isChecked() {
+        return mSwitch.isChecked();
+    }
+}

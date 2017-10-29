@@ -61,6 +61,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import omark.hey.control.HeySetting;
 
 public class Main extends Activity {
     static Main me;
@@ -88,8 +89,10 @@ public class Main extends Activity {
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
 
     static HeyBookmark bookmark;
-    
+    static HeyHistory history;
+
     @Override
+    @TargetApi(19)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -97,13 +100,14 @@ public class Main extends Activity {
         //创建
         clipboard = new HeyClipboard(this);
         bookmark = new HeyBookmark();
+        history = new HeyHistory();
 
         S.init(this, "main");
         if (S.get("first", true)) {
             S.put("first", false);
             S.put("home", HeyHelper.DEFAULT_HOME);
             S.put("search" , HeyHelper.DEFAULT_SEARCH);
-            S.put("pagecolor" , true);
+            S.put("pagecolor", true);
 
             /*
              //兼容H5？？
@@ -115,7 +119,9 @@ public class Main extends Activity {
              */
             S.ok();
         }
-
+        
+        ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
+        
         me = this;
         popn = findViewById(R.id.main_popn);
         blacker = findViewById(R.id.main_blacker);
@@ -126,13 +132,10 @@ public class Main extends Activity {
         ground = (RelativeLayout)findViewById(R.id.main_ground);
         progressbar = (ProgressBar)findViewById(R.id.main_progress);
 
-        //5.0以上半透明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        //4.4以上透明
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
-        }
-        //4.4以上半透明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             ground.setFitsSystemWindows(true);
             ground.setClipToPadding(true);
         }
@@ -185,6 +188,10 @@ public class Main extends Activity {
                                         Toast.makeText(Main.this, R.string.lang20, Toast.LENGTH_SHORT).show();
                                     }
                                 }).show();
+                            break;
+                        case 5:
+                            //开发者模式
+                            web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='https://cdn.bootcss.com/eruda/1.2.6/eruda.min.js'; document.body.appendChild(script);script.onload=function(){eruda.init()}})()");
                             break;
                         default:
                             Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
@@ -248,9 +255,9 @@ public class Main extends Activity {
         bookmark_list.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView view, View v, final int index, long l) {
-                    LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
+                    final LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
                     final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);;   
-                    List<Map<String, Object>> hbm = bookmark.getData();
+                    final List<Map<String, Object>> hbm = bookmark.data_list;
                     t1.setText(hbm.get(index).get("title").toString());
                     t2.setText(hbm.get(index).get("url").toString());
                     new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang11)
@@ -258,20 +265,86 @@ public class Main extends Activity {
                             public void onClick(DialogInterface dialog, int i) {
                                 S.put("bn" + index, t1.getText().toString());
                                 S.put("b" + index, t2.getText().toString());
-                                S.put("bt" + index, System.currentTimeMillis());
+                                S.put("bt" + index, "" + System.currentTimeMillis());
                                 S.ok();
                                 bookmark_list.setAdapter(bookmark.getAdapter());
                             }
                         }).setNeutralButton(R.string.lang10, new DialogInterface.OnClickListener() {   
                             public void onClick(DialogInterface dialog, int i) {
                                 S.delIndex("bm", "b", index);
+                                S.delIndex("bnm", "bn", index);
+                                S.delIndex("btm", "bt", index);
                                 bookmark_list.setAdapter(bookmark.getAdapter());
                             }
                         }).show();
                     return true;
                 }
             });
+
+        history_list.setAdapter(history.getAdapter());
+        history_list.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView view, View v, int index, long l) {
+                    text.setText(history.getData().get(index).get("url").toString());
+                }
+            });
+        history_list.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView view, View v, final int i, long l) {
+                    final int index = history.data_list.size() - i - 1;
+                    final LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
+                    final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);;   
+                    final List<Map<String, Object>> hbm = history.data_list;
+                    t1.setText(hbm.get(i).get("title").toString());
+                    t2.setText(hbm.get(i).get("url").toString());
+                    new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang11)
+                        .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int i) {
+                                S.put("hn" + index, t1.getText().toString());
+                                S.put("h" + index, t2.getText().toString());
+                                S.put("ht" + index, "" + System.currentTimeMillis());
+                                S.ok();
+                                history_list.setAdapter(history.getAdapter());
+                            }
+                        }).setNeutralButton(R.string.lang10, new DialogInterface.OnClickListener() {   
+                            public void onClick(DialogInterface dialog, int i) {
+                                S.delIndex("hm", "h", index);
+                                S.delIndex("hnm", "hn", index);
+                                S.delIndex("htm", "ht", index);
+                                history_list.setAdapter(history.getAdapter());
+                            }
+                        }).show();
+                    return true;
+                }
+            });
     }
+
+
+    public void onSettingClick(View v) {
+        switch (v.getId()) {
+            case R.id.setting_1:
+                final EditText et = new EditText(this);
+                et.setText(S.get("home", HeyHelper.DEFAULT_HOME));
+                new AlertDialog.Builder(this).setView(et).setTitle(R.string.lang11)
+                    .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int i) {
+                            S.put("home", et.getText().toString());
+                            S.ok();
+                        }
+                    }).setNeutralButton(R.string.lang1, new DialogInterface.OnClickListener() {   
+                        public void onClick(DialogInterface dialog, int i) {
+                            S.put("home", HeyHelper.DEFAULT_HOME);
+                            S.ok();
+                        }
+                    }).show();
+                break;
+            case R.id.setting_2:
+                S.put("pagecolor", ((HeySetting)v).isChecked());
+                S.ok();
+                break;
+        }
+    }
+
 
     public static void onChangeBackground(Integer f, Drawable b) {
         if (f == Color.TRANSPARENT)
@@ -491,7 +564,7 @@ public class Main extends Activity {
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         int curValue = ani.getAnimatedValue();
                         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                        params.setMargins(params.leftMargin, curValue - (int)dip2px(Main.this, 32), params.rightMargin, params.bottomMargin);
+                        params.setMargins(params.leftMargin, curValue, params.rightMargin, params.bottomMargin);
                         aniimage.setLayoutParams(params);
                     }
                 });
@@ -530,6 +603,7 @@ public class Main extends Activity {
         text.selectAll();
         text.requestFocus();
         keyboardState(true);
+        history_list.setAdapter(history.getAdapter());
         manager.setAnimation(tranA);
         manager.setVisibility(View.VISIBLE);
     } public void onManagerBackClick(View v) {
@@ -884,13 +958,15 @@ class HeyWebChrome extends WebChromeClient {
             int webi = Main.pages.indexOf(v);
             Main.multitext.get(webi).setText(title);
             Main.multibottom.set(webi, 0x01000000);
-            v.loadUrl("javascript:void((function(){" +
-                      "try {" +
-                      "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
-                      "} catch (e) {" +
-                      "Context.onReceivedThemeColor(\"\"," + webi + ");" +
-                      "}" +
-                      "})())");
+            if (S.get("pagecolor", true))
+                v.loadUrl("javascript:(function(){" +
+                          "try{" +
+                          "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
+                          "}catch(e){" +
+                          "Context.onReceivedThemeColor(\"\"," + webi + ");" +
+                          "}" +
+                          "})()");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -913,7 +989,8 @@ class HeyWebChrome extends WebChromeClient {
                     }
                 }.sendEmptyMessageDelayed(0, 1000);
 
-                if (!(v.getTitle().equals("about:blank") ||
+                if (!(!S.get("pagecolor", true) ||
+                    v.getTitle().equals("about:blank") ||
                     Main.manager.getVisibility() == View.VISIBLE ||
                     Main.multi_scroll_box.getVisibility() == View.VISIBLE)) {
 

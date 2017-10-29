@@ -22,19 +22,20 @@ public class HeyBookmark {
             R.id.bookmark_item_url
         };
         
-        getData();
+        data_list = getData();
 
         return new SimpleAdapter(Main.me, data_list, R.layout.bookmark_item, from, to);
     }
     
     public List<Map<String, Object>> getData() {
+        List<Map<String, Object>> date_list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < S.get("bm", 0); i++) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("title", S.get("bn" + i, ""));
             map.put("url", S.get("b" + i, ""));
-            data_list.add(map);
+            date_list.add(map);
         }
-        return data_list;
+        return date_list;
     }
     
 }

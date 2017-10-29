@@ -3,7 +3,7 @@
     
     <string name="name2">Hey浏览器</string>
     
-    <string name="lang1">其他</string>
+    <string name="lang1">默认</string>
     <string name="lang2">插件</string>
     <string name="lang3">确定</string>
     <string name="lang4">取消</string>
@@ -28,7 +28,7 @@
     <string name="lang22">背景图</string>
     <string name="lang23">透明</string>
     <string name="lang24">平面</string>
-    <string name="lang25">变色</string>
+    <string name="lang25">网页沉浸</string>
     
     <string name="lang26">设置</string>
     <string name="lang27">主页</string>
@@ -41,7 +41,7 @@
     <string name="lang34">书签</string>
     
     <string name="lang35">底栏</string>
-    <string name="lang36">源代码</string>
+    <string name="lang36">开发者</string>
     
     <string name="lang37">分享</string>
     

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/settings_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<omark.hey.control.HeySetting
+		android:id="@+id/setting_1"
+        android:onClick="onSettingClick"
+		android:layout_height="48dp"
+		android:layout_width="match_parent"
+		android:tag="@string/lang27"/>
+
+	<omark.hey.control.HeySetting
+		android:id="@+id/setting_2"
+        android:onClick="onSettingClick"
+		android:layout_height="48dp"
+		android:layout_width="match_parent"
+		android:tag="@string/lang25"
+		android:alpha="0.9"/>
+
+</LinearLayout>
+

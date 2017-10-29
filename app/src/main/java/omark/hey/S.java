@@ -74,7 +74,7 @@ public class S {
         ok();
     } public static void delIndex(String max_name, String name, int index) {
         final int n = get(max_name, 0);
-        final List<String> a = new ArrayList<String>();
+        List<String> a = new ArrayList<String>();
         for (int i = 0; i < n; i++) {
             a.add(get(name + i, ""));
         }
@@ -85,6 +85,7 @@ public class S {
         for (int i = 0; i < n - 1; i++) {
             put(name + i, a.get(i));
         }
+        put(max_name, n - 1);
         ok();
     }
 

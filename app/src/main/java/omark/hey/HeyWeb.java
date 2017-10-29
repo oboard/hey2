@@ -4,7 +4,6 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.net.http.Request;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Environment;
@@ -140,6 +139,11 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 public void onPageFinished(WebView v, String url) {
                     super.onPageFinished(v, url);
 
+                    //历史记录
+                    S.addIndex("hnm" , "hn", v.getTitle());
+                    S.addIndex("hm" , "h", url);
+                    S.addIndex("htm" , "ht", "" + System.currentTimeMillis());
+                    
                     if (!getSettings().getLoadsImagesAutomatically()) getSettings().setLoadsImagesAutomatically(true);
                 }
 
@@ -219,7 +223,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     }
 
     public static boolean isUri(String url) {
-        return (url.startsWith("http")) || (url.startsWith("file") || (url.startsWith("content")));
+        return (url.startsWith("http")) || url.startsWith("file") || (url.startsWith("content") || (url.startsWith("javascript")));
     }
 
     @Override public boolean onLongClick(final View v) {  
