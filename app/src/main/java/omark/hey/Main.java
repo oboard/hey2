@@ -92,7 +92,6 @@ public class Main extends Activity {
     static ArrayList<Drawable> multitop = new ArrayList<Drawable>();
     static ArrayList<Integer> multibottom = new ArrayList<Integer>();
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
-    static float xx, yy, hh = 1, ww = 1;
     static HeyBookmark bookmark;
     static HeyHistory history;
 
@@ -469,149 +468,57 @@ public class Main extends Activity {
     }
 
     private void scaleAni(boolean open) {
-        try {
-            final Rect l = new Rect(), k = new Rect();
-            multi_box.setVisibility(View.VISIBLE);
+        if (open) {
+            AnimationSet aniA = new AnimationSet(true);
+            aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
+            aniA.addAnimation(new AlphaAnimation(0f, 1f));
+            aniA.setDuration(320);
+            web.setAnimation(aniA);
+            aniA.setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationStart(Animation ani) {}
+                    public void onAnimationRepeat(Animation ani) {}
+                    public void onAnimationEnd(Animation ani) {
+                        multi_scroll_box.setVisibility(View.GONE);
+                    }
+                });
+
+            AnimationSet aniB = new AnimationSet(true);
+            aniB.addAnimation(new ScaleAnimation(1f, 1.2f, 1f, 1.2f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
+            aniB.addAnimation(new AlphaAnimation(1f, 0f));
+            aniB.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+            aniB.setDuration(320);
+            multi_scroll_box.setAnimation(aniB);
+
             multi_scroll_box.setVisibility(View.VISIBLE);
-            web.getGlobalVisibleRect(k);
-            final ImageView iv = multiimage.get(webindex);
-            iv.getGlobalVisibleRect(l);
-            
-            iv.setVisibility(View.INVISIBLE);
-            
-            ValueAnimator mAni1, mAni2, mAni3, mAni4;
+            multi_box.setVisibility(View.GONE);
+            web.setVisibility(View.VISIBLE);
 
-            if (open) {
-                mAni1 = ValueAnimator.ofFloat(l.left, k.left);
-                mAni2 = ValueAnimator.ofFloat(l.top, k.top);
-                mAni3 = ValueAnimator.ofFloat(l.right, k.right);
-                mAni4 = ValueAnimator.ofFloat(l.bottom, k.bottom);
-                /*
-                mAni1.setInterpolator(new OvershootInterpolator());
-                mAni2.setInterpolator(new OvershootInterpolator());
-                mAni3.setInterpolator(new OvershootInterpolator());
-                mAni4.setInterpolator(new OvershootInterpolator());
-                */
-                AnimationSet aniA = new AnimationSet(true);
-                aniA.addAnimation(new AlphaAnimation(1, 0));
-                aniA.addAnimation(new ScaleAnimation(1f, 0.9f, 1f, 0.9f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
-                aniA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-                aniA.setDuration(320);
-                multi_scroll_box.setAnimation(aniA);
-
-                multi_box.setVisibility(View.GONE);
-                onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
-
-                mAni1.addListener(new AnimatorListenerAdapter() {
-                        public void onAnimationEnd(Animator ani) {
-                            multi_scroll_box.setVisibility(View.GONE);
-                            multi_scroll_box.invalidate();
-                            iv.setVisibility(View.VISIBLE);
-                            aniimage.setVisibility(View.GONE);
-                            web.setVisibility(View.VISIBLE);
-                        }
-                    });
-            } else {
-                mAni1 = ValueAnimator.ofFloat(k.left, l.left);
-                mAni2 = ValueAnimator.ofFloat(k.top, l.top);
-                mAni3 = ValueAnimator.ofFloat(k.right, l.right);
-                mAni4 = ValueAnimator.ofFloat(k.bottom, l.bottom);
-                
-                AnimationSet aniA = new AnimationSet(true);
-                aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
-                aniA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-                aniA.setDuration(320);
-                multi_scroll_box.setAnimation(aniA);
-
-                root.setBackgroundColor(S.getColor(R.color.colorPrimary));
-
-                mAni1.addListener(new AnimatorListenerAdapter() {
-                        public void onAnimationEnd(Animator ani) {
-                            iv.setVisibility(View.VISIBLE);
-                            aniimage.setVisibility(View.GONE);
-                        }
-                    });
-            }
-
-            mAni1.setDuration(320);
-            mAni2.setDuration(320);
-            mAni3.setDuration(320);
-            mAni4.setDuration(320);
-            
-            aniimage.setBackground(new BitmapDrawable(multiimages.get(webindex)));
-            aniimage.setVisibility(View.VISIBLE);
-            
-            mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator ani) {  
-                        float curValue = ani.getAnimatedValue();
-                        xx = curValue;
-                        MarginLayoutParams ml = new MarginLayoutParams(MarginLayoutParams.MATCH_PARENT, MarginLayoutParams.MATCH_PARENT);
-                        ml.setMargins((int)xx, (int)yy, k.right - (int)ww, k.bottom - (int)hh + (int)dip2px(Main.this, 48));
-                        aniimage.setLayoutParams(new RelativeLayout.LayoutParams(ml));
+            onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+        } else {
+            AnimationSet aniA = new AnimationSet(true);
+            aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
+            aniA.addAnimation(new AlphaAnimation(1f, 0f));
+            aniA.setDuration(320);
+            web.setAnimation(aniA);
+            aniA.setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationStart(Animation ani) {}
+                    public void onAnimationRepeat(Animation ani) {}
+                    public void onAnimationEnd(Animation ani) {
+                        web.setVisibility(View.GONE);
                     }
                 });
-            mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator ani) {  
-                        float curValue = ani.getAnimatedValue();
-                        yy = curValue;/*
-                        Bitmap bb = Bitmap.createBitmap(k.right, k.bottom, Bitmap.Config.ARGB_8888);
-                        Canvas cv = new Canvas(bb);
-                        RectF dst = new RectF(xx, yy, ww, hh); // 图片 >>目标矩形
-                        
-                        cv.drawBitmap(bd, null, dst, null);
-                        dst = null;
+            
+            AnimationSet aniB = new AnimationSet(true);
+            aniB.addAnimation(new ScaleAnimation(1.2f, 1f, 1.2f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
+            aniB.addAnimation(new AlphaAnimation(0f, 1f));
+            aniB.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+            aniB.setDuration(320);
+            multi_scroll_box.setAnimation(aniB);
 
-                        aniimage.setBackground(new BitmapDrawable(bb));*/
-                    }
-                });
-            mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator ani) {  
-                        float curValue = ani.getAnimatedValue();
-                        ww = curValue;
-                    }
-                });
-            mAni4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator ani) {  
-                        float curValue = ani.getAnimatedValue();
-                        hh = curValue;
-                    }
-                });
-
-            mAni1.start();
-            mAni2.start();
-            mAni3.start();
-            mAni4.start();
-        } catch (Exception e) {
-            if (Build.VERSION.SDK_INT < 11) {
-                //老版本老动画～
-                if (open) {
-                    AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                    alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-                    alphaA.setDuration(320);
-                    web.setAnimation(alphaA);
-
-                    multi_scroll_box.setVisibility(View.GONE);
-                    web.setVisibility(View.VISIBLE);
-
-                    onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
-                } else {
-                    AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                    alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-                    alphaA.setDuration(320);
-
-                    multitext.get(webindex).setAnimation(alphaA);
-                    multiimage.get(webindex).setAnimation(alphaA);
-                    multiimage.get(webindex).setVisibility(View.VISIBLE);
-
-                    multi_scroll_box.setVisibility(View.VISIBLE);
-                    multi_box.setVisibility(View.VISIBLE);
-                    root.setBackgroundColor(S.getColor(R.color.colorPrimary));
-                }
-            }
+            web.setVisibility(View.VISIBLE);
+            multi_scroll_box.setVisibility(View.VISIBLE);
+            multi_box.setVisibility(View.VISIBLE);
+            root.setBackgroundColor(S.getColor(R.color.colorPrimary));
         }
     } public void onDockLongClick(View v) {
         final View view = getWindow().getDecorView();
@@ -990,7 +897,7 @@ class HeyWebChrome extends WebChromeClient {
                           "}" +
                           "})()");
             v.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='https://cdn.bootcss.com/eruda/1.2.6/eruda.min.js'; document.body.appendChild(script);})()");
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
