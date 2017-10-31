@@ -23,7 +23,7 @@ public class HeySetting extends RelativeLayout {
         init(context);
     } public void init(Context c) {
         if (getTag() == null) return;
-
+        setClipChildren(false);
         View mView = new View(c);
         mView.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -63,7 +63,7 @@ public class HeySetting extends RelativeLayout {
         lp.addRule(RelativeLayout.CENTER_VERTICAL);
         addView(mTextView, lp);
         
-        MarginLayoutParams lpm2 = new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
+        MarginLayoutParams lpm2 = new MarginLayoutParams((int)dip2px(c, 40), (int)dip2px(c, 16));
         lpm2.setMargins(0, 0, 10, 0);
         
         RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(lpm2);
@@ -80,5 +80,9 @@ public class HeySetting extends RelativeLayout {
     }
     public boolean isChecked() {
         return mSwitch.isChecked();
+    }
+
+    public static float dip2px(Context context, float dipValue) {
+        return (dipValue * context.getResources().getDisplayMetrics().density + 0.5f) ;
     }
 }

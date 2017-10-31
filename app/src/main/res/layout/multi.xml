@@ -5,27 +5,28 @@
 	android:layout_height="match_parent"
 	android:layout_width="wrap_content"
 	android:orientation="vertical"
-	android:paddingBottom="48dp">
+    android:clipChildren="false">
 
 	<RelativeLayout
 		android:layout_margin="10dp"
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
-		android:layout_weight="1">
+		android:layout_weight="1"
+        android:clipChildren="false">
 
 		<TextView
 			android:textColor="#fff"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
-            android:maxLines="1"
-            android:ellipsize="end"
+			android:maxLines="1"
+			android:ellipsize="end"
 			android:id="@+id/multi_text0"/>
 
 		<ImageView
 			android:layout_margin="10dp"
-			android:layout_height="match_parent"
-			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
 			android:onClick="onMultiClick"
 			android:id="@+id/multi_image0"
@@ -37,23 +38,24 @@
 		android:layout_margin="10dp"
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
-		android:layout_weight="1">
+		android:layout_weight="1"
+        android:clipChildren="false">
 
 		<TextView
 			android:textColor="#fff"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
-            android:maxLines="1"
-            android:ellipsize="end"
+			android:maxLines="1"
+			android:ellipsize="end"
 			android:id="@+id/multi_text1"/>
 
 		<ImageView
 			android:layout_margin="10dp"
 			android:onClick="onMultiClick"
 			android:id="@+id/multi_image1"
-			android:layout_height="match_parent"
-			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
 			android:layout_centerHorizontal="true"
 			android:layout_below="@id/multi_text1"/>
 

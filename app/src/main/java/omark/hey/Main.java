@@ -3,7 +3,6 @@ package omark.hey;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -62,6 +61,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import omark.hey.control.HeySetting;
+import omark.hey.control.HeyProgress;
+import android.widget.AbsoluteLayout;
+import android.view.animation.OvershootInterpolator;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 
 public class Main extends Activity {
     static Main me;
@@ -74,7 +78,7 @@ public class Main extends Activity {
     static ImageButton manager_back;
     static FrameLayout desktop;
     static RelativeLayout root, ground;
-    static ProgressBar progressbar;
+    static HeyProgress progressbar;
     static HeyWeb web;
     static TextView multi_text;
     static ListView bookmark_list, history_list;
@@ -87,12 +91,11 @@ public class Main extends Activity {
     static ArrayList<Drawable> multitop = new ArrayList<Drawable>();
     static ArrayList<Integer> multibottom = new ArrayList<Integer>();
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
-
+    static float xx, yy, hh = 1, ww = 1;
     static HeyBookmark bookmark;
     static HeyHistory history;
 
     @Override
-    @TargetApi(19)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -119,9 +122,9 @@ public class Main extends Activity {
              */
             S.ok();
         }
-        
+
         ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
-        
+
         me = this;
         popn = findViewById(R.id.main_popn);
         blacker = findViewById(R.id.main_blacker);
@@ -130,7 +133,7 @@ public class Main extends Activity {
         root = (RelativeLayout)findViewById(R.id.main_root);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
-        progressbar = (ProgressBar)findViewById(R.id.main_progress);
+        progressbar = (HeyProgress)findViewById(R.id.main_progress);
 
         //4.4以上透明
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -241,7 +244,7 @@ public class Main extends Activity {
 
         multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
 
-        onNewIntent(getIntent());
+        onIntent(getIntent());
 
         onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorPrimary)));
 
@@ -345,7 +348,6 @@ public class Main extends Activity {
         }
     }
 
-
     public static void onChangeBackground(Integer f, Drawable b) {
         if (f == Color.TRANSPARENT)
             Main.root.setBackground(b);
@@ -356,8 +358,10 @@ public class Main extends Activity {
         if (f == Color.TRANSPARENT) {
             if (b instanceof ColorDrawable)
                 c = ((ColorDrawable)b).getColor();
-            else if (b instanceof BitmapDrawable)
-                c = ((BitmapDrawable)b).getBitmap().getPixel(0, 0);
+            else if (b instanceof BitmapDrawable) {
+                Bitmap hb = ((BitmapDrawable)b).getBitmap();
+                c = hb.getPixel(hb.getWidth() / 2, 0);
+            }
         }
         if (HeyHelper.isLightColor(c))
             blacker.setVisibility(View.VISIBLE);
@@ -365,12 +369,15 @@ public class Main extends Activity {
         else
             blacker.setVisibility(View.GONE);
         //dock.setTextColor(Color.WHITE);
-
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        onIntent(intent);
+    }
+
+    public void onIntent(Intent intent) {
         if (intent == null) {
             web = addPage("");
             return;
@@ -385,7 +392,6 @@ public class Main extends Activity {
         } else {
             web = addPage("");
         }
-
     }
 
     Boolean isExit = false;
@@ -461,47 +467,48 @@ public class Main extends Activity {
 
     }
 
-    @TargetApi(11)
     private void scaleAni(boolean open) {
-        if (Build.VERSION.SDK_INT < 11) {
-            //老版本老动画～
-            if (open) {
-                AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-                alphaA.setDuration(320);
-                web.setAnimation(alphaA);
-
-                multi_scroll_box.setVisibility(View.GONE);
-                web.setVisibility(View.VISIBLE);
-
-                onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
-            } else {
-                AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-                alphaA.setDuration(320);
-
-                multitext.get(webindex).setAnimation(alphaA);
-                multiimage.get(webindex).setAnimation(alphaA);
-
-                multi_scroll_box.setVisibility(View.VISIBLE);
-                multi_box.setVisibility(View.VISIBLE);
-                root.setBackgroundColor(S.getColor(R.color.colorPrimary));
-            }
-        } else {
-            Rect l = new Rect(), k = new Rect();
+        try {
+            final Rect l = new Rect(), k = new Rect();
             multi_box.setVisibility(View.VISIBLE);
             multi_scroll_box.setVisibility(View.VISIBLE);
             web.getGlobalVisibleRect(k);
-            multiimage.get(webindex).getGlobalVisibleRect(l);
-
+            final ImageView iv = multiimage.get(webindex);
+            iv.getGlobalVisibleRect(l);
+            
+            //获得ImageView中Image的真实宽高，  
+            int dw = iv.getDrawable().getBounds().width();  
+            int dh = iv.getDrawable().getBounds().height();  
+            //获得ImageView中Image的变换矩阵  
+            Matrix m = iv.getImageMatrix();  
+            float[] values = new float[10];
+            m.getValues(values);
+            //Image在绘制过程中的变换矩阵，从中获得x和y方向的缩放系数  
+            float sx = values[0];  
+            float sy = values[4];
+            //计算Image在屏幕上实际绘制的宽高
+            int cw = (int)(dw * sx);  
+            int ch = (int)(dh * sy);
+            l.left = l.left + (l.left + l.right - cw) / 2;
+            l.top = l.top + (l.top + l.bottom - ch) / 2;
+            l.right = cw;
+            l.bottom = ch;
+            iv.setVisibility(View.INVISIBLE);
+            
+            
             ValueAnimator mAni1, mAni2, mAni3, mAni4;
 
             if (open) {
-                mAni1 = ValueAnimator.ofInt(l.left, k.left);
-                mAni2 = ValueAnimator.ofInt(l.top, k.top);
-                mAni3 = ValueAnimator.ofInt(l.width(), k.width());
-                mAni4 = ValueAnimator.ofInt(l.height(), k.height());
-
+                mAni1 = ValueAnimator.ofFloat(l.left, k.left);
+                mAni2 = ValueAnimator.ofFloat(l.top, k.top);
+                mAni3 = ValueAnimator.ofFloat(l.right, k.right);
+                mAni4 = ValueAnimator.ofFloat(l.bottom, k.bottom);
+                /*
+                mAni1.setInterpolator(new OvershootInterpolator());
+                mAni2.setInterpolator(new OvershootInterpolator());
+                mAni3.setInterpolator(new OvershootInterpolator());
+                mAni4.setInterpolator(new OvershootInterpolator());
+                */
                 AnimationSet aniA = new AnimationSet(true);
                 aniA.addAnimation(new AlphaAnimation(1, 0));
                 aniA.addAnimation(new ScaleAnimation(1f, 0.9f, 1f, 0.9f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
@@ -516,18 +523,18 @@ public class Main extends Activity {
                         public void onAnimationEnd(Animator ani) {
                             multi_scroll_box.setVisibility(View.GONE);
                             multi_scroll_box.invalidate();
+                            iv.setVisibility(View.VISIBLE);
                             aniimage.setVisibility(View.GONE);
                             web.setVisibility(View.VISIBLE);
                         }
                     });
             } else {
-                mAni1 = ValueAnimator.ofInt(k.left, l.left);
-                mAni2 = ValueAnimator.ofInt(k.top, l.top);
-                mAni3 = ValueAnimator.ofInt(k.width(), l.width());
-                mAni4 = ValueAnimator.ofInt(k.height(), l.height());
-
+                mAni1 = ValueAnimator.ofFloat(k.left, l.left);
+                mAni2 = ValueAnimator.ofFloat(k.top, l.top);
+                mAni3 = ValueAnimator.ofFloat(k.right, l.right);
+                mAni4 = ValueAnimator.ofFloat(k.bottom, l.bottom);
+                
                 AnimationSet aniA = new AnimationSet(true);
-                //aniA.addAnimation(new AlphaAnimation(0, 1));
                 aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
                 aniA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
                 aniA.setDuration(320);
@@ -537,53 +544,56 @@ public class Main extends Activity {
 
                 mAni1.addListener(new AnimatorListenerAdapter() {
                         public void onAnimationEnd(Animator ani) {
+                            iv.setVisibility(View.VISIBLE);
                             aniimage.setVisibility(View.GONE);
                         }
                     });
             }
 
-            mAni1.setDuration(320).setInterpolator(new DecelerateInterpolator());
-            mAni2.setDuration(320).setInterpolator(new DecelerateInterpolator());
-            mAni3.setDuration(320).setInterpolator(new DecelerateInterpolator());
-            mAni4.setDuration(320).setInterpolator(new DecelerateInterpolator());
-
+            mAni1.setDuration(320);
+            mAni2.setDuration(320);
+            mAni3.setDuration(320);
+            mAni4.setDuration(320);
+            
             aniimage.setBackground(new BitmapDrawable(multiimages.get(webindex)));
             aniimage.setVisibility(View.VISIBLE);
-
+            
+            final Bitmap bd = multiimages.get(webindex);
+            
             mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
-                        int curValue = ani.getAnimatedValue();
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                        params.setMargins(curValue, params.topMargin, params.rightMargin, params.bottomMargin);
-                        aniimage.setLayoutParams(params);
+                        float curValue = ani.getAnimatedValue();
+                        xx = curValue;
                     }
                 });
             mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
-                        int curValue = ani.getAnimatedValue();
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                        params.setMargins(params.leftMargin, curValue, params.rightMargin, params.bottomMargin);
-                        aniimage.setLayoutParams(params);
+                        float curValue = ani.getAnimatedValue();
+                        yy = curValue;
+                        Bitmap bb = Bitmap.createBitmap(k.right, k.bottom, Bitmap.Config.ARGB_8888);
+                        Canvas cv = new Canvas(bb);
+                        RectF dst = new RectF(xx, yy, ww, hh); // 图片 >>目标矩形
+                        
+                        cv.drawBitmap(bd, null, dst, null);
+                        dst = null;
+
+                        aniimage.setBackground(new BitmapDrawable(bb));
                     }
                 });
             mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
-                        int curValue = ani.getAnimatedValue();
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                        params.width = curValue;
-                        aniimage.setLayoutParams(params);
+                        float curValue = ani.getAnimatedValue();
+                        ww = curValue;
                     }
                 });
             mAni4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
-                        int curValue = ani.getAnimatedValue();
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)aniimage.getLayoutParams();  
-                        params.height = curValue;
-                        aniimage.setLayoutParams(params);
+                        float curValue = ani.getAnimatedValue();
+                        hh = curValue;
                     }
                 });
 
@@ -591,6 +601,33 @@ public class Main extends Activity {
             mAni2.start();
             mAni3.start();
             mAni4.start();
+        } catch (Exception e) {
+            if (Build.VERSION.SDK_INT < 11) {
+                //老版本老动画～
+                if (open) {
+                    AlphaAnimation alphaA = new AlphaAnimation(0, 1);
+                    alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+                    alphaA.setDuration(320);
+                    web.setAnimation(alphaA);
+
+                    multi_scroll_box.setVisibility(View.GONE);
+                    web.setVisibility(View.VISIBLE);
+
+                    onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+                } else {
+                    AlphaAnimation alphaA = new AlphaAnimation(0, 1);
+                    alphaA.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
+                    alphaA.setDuration(320);
+
+                    multitext.get(webindex).setAnimation(alphaA);
+                    multiimage.get(webindex).setAnimation(alphaA);
+                    multiimage.get(webindex).setVisibility(View.VISIBLE);
+
+                    multi_scroll_box.setVisibility(View.VISIBLE);
+                    multi_box.setVisibility(View.VISIBLE);
+                    root.setBackgroundColor(S.getColor(R.color.colorPrimary));
+                }
+            }
         }
     } public void onDockLongClick(View v) {
         final View view = getWindow().getDecorView();
@@ -736,6 +773,7 @@ public class Main extends Activity {
         HeyWeb page = pages.get(index);
         if (page != null) {
             desktop.removeView(page);
+            page.removeAllViews();
             page.loadUrl("about:blank");
             page = null;
         }
@@ -784,10 +822,11 @@ public class Main extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        desktop.removeAllViews();
         for (int i = 0; i < pages.size(); i++) {
             HeyWeb page = pages.get(i);
             if (page != null) {
-                desktop.removeView(page);
+                page.removeAllViews();
                 page.clearHistory();
                 page.clearCache(true);
                 page.loadUrl("about:blank");
@@ -966,7 +1005,8 @@ class HeyWebChrome extends WebChromeClient {
                           "Context.onReceivedThemeColor(\"\"," + webi + ");" +
                           "}" +
                           "})()");
-
+            v.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='https://cdn.bootcss.com/eruda/1.2.6/eruda.min.js'; document.body.appendChild(script);})()");
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

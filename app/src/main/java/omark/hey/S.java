@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.ArrayList;
 import android.content.pm.PackageManager;
 import java.util.List;
+import android.widget.Toast;
 
 public class S {
     static Editor e;
@@ -70,23 +71,27 @@ public class S {
 
         put(name + n, value);
         put(max_name, n + 1);
-        
+
         ok();
     } public static void delIndex(String max_name, String name, int index) {
-        final int n = get(max_name, 0);
-        List<String> a = new ArrayList<String>();
-        for (int i = 0; i < n; i++) {
-            a.add(get(name + i, ""));
-        }
-        a.remove(index);
+        try {
+            final int n = get(max_name, 0);
+            List<String> a = new ArrayList<String>();
+            for (int i = 0; i < n; i++) {
+                a.add(get(name + i, ""));
+            }
+            a.remove(index);
 
-        del(name + n);
+            del(name + n);
 
-        for (int i = 0; i < n - 1; i++) {
-            put(name + i, a.get(i));
+            for (int i = 0; i < n - 1; i++) {
+                put(name + i, a.get(i));
+            }
+            put(max_name, n - 1);
+            ok();
+        } catch (Exception e) {
+            Toast.makeText(c, "EXT.ERROR:" + e, Toast.LENGTH_LONG);
         }
-        put(max_name, n - 1);
-        ok();
     }
 
     public static void ok() {
@@ -97,8 +102,8 @@ public class S {
         if (e != null) return e.commit();
         return false;
     }
-    
-    
+
+
     public static int getColor(int resid) {
         return c.getResources().getColor(resid);
     } public static String getString(int resid) {

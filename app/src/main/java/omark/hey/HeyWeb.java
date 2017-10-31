@@ -1,31 +1,25 @@
 package omark.hey;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
-import android.os.Environment;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.webkit.DownloadListener;
-import android.webkit.MimeTypeMap;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.net.ssl.HttpsURLConnection;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
@@ -172,15 +166,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                     i.setData(Uri.parse(url));
                     Main.me.startActivity(i);
                 }
-            });
+            }); 
+         
     }
 
-    public void openImageChooserActivity() {
-        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-        i.addCategory(Intent.CATEGORY_OPENABLE);
-        i.setType("image/*");
-        //MainActivity.com.startActivityForResult(Intent.createChooser(i, "Image Chooser"), 233);
-    }
     /*
      @Override protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
      super.onScrollChanged(l, t, oldl, oldt);

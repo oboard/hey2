@@ -8,7 +8,8 @@ import android.webkit.JavascriptInterface;
 public class HeyApi {
 
     @JavascriptInterface
-    public void onReceivedThemeColor(final String color, final int webi) {
+    public void onReceivedThemeColor(final String color, final int webi) {   
+        
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
                     /*if (S.get("pagecolor", true) && webi == Main.webindex) {
