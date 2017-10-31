@@ -239,13 +239,12 @@
 
 		</LinearLayout>
 
+        <View
+            android:id="@+id/main_aniimage"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+        
 	</RelativeLayout>
-
-    <View
-        android:id="@+id/main_aniimage"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_marginBottom="48dp"/>
     
 </RelativeLayout>
 

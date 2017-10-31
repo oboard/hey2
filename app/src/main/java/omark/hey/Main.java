@@ -66,6 +66,7 @@ import android.widget.AbsoluteLayout;
 import android.view.animation.OvershootInterpolator;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.view.ViewGroup.MarginLayoutParams;
 
 public class Main extends Activity {
     static Main me;
@@ -476,25 +477,7 @@ public class Main extends Activity {
             final ImageView iv = multiimage.get(webindex);
             iv.getGlobalVisibleRect(l);
             
-            //获得ImageView中Image的真实宽高，  
-            int dw = iv.getDrawable().getBounds().width();  
-            int dh = iv.getDrawable().getBounds().height();  
-            //获得ImageView中Image的变换矩阵  
-            Matrix m = iv.getImageMatrix();  
-            float[] values = new float[10];
-            m.getValues(values);
-            //Image在绘制过程中的变换矩阵，从中获得x和y方向的缩放系数  
-            float sx = values[0];  
-            float sy = values[4];
-            //计算Image在屏幕上实际绘制的宽高
-            int cw = (int)(dw * sx);  
-            int ch = (int)(dh * sy);
-            l.left = l.left + (l.left + l.right - cw) / 2;
-            l.top = l.top + (l.top + l.bottom - ch) / 2;
-            l.right = cw;
-            l.bottom = ch;
             iv.setVisibility(View.INVISIBLE);
-            
             
             ValueAnimator mAni1, mAni2, mAni3, mAni4;
 
@@ -558,20 +541,21 @@ public class Main extends Activity {
             aniimage.setBackground(new BitmapDrawable(multiimages.get(webindex)));
             aniimage.setVisibility(View.VISIBLE);
             
-            final Bitmap bd = multiimages.get(webindex);
-            
             mAni1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         float curValue = ani.getAnimatedValue();
                         xx = curValue;
+                        MarginLayoutParams ml = new MarginLayoutParams(MarginLayoutParams.MATCH_PARENT, MarginLayoutParams.MATCH_PARENT);
+                        ml.setMargins((int)xx, (int)yy, k.right - (int)ww, k.bottom - (int)hh + (int)dip2px(Main.this, 48));
+                        aniimage.setLayoutParams(new RelativeLayout.LayoutParams(ml));
                     }
                 });
             mAni2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
                     @Override
                     public void onAnimationUpdate(ValueAnimator ani) {  
                         float curValue = ani.getAnimatedValue();
-                        yy = curValue;
+                        yy = curValue;/*
                         Bitmap bb = Bitmap.createBitmap(k.right, k.bottom, Bitmap.Config.ARGB_8888);
                         Canvas cv = new Canvas(bb);
                         RectF dst = new RectF(xx, yy, ww, hh); // 图片 >>目标矩形
@@ -579,7 +563,7 @@ public class Main extends Activity {
                         cv.drawBitmap(bd, null, dst, null);
                         dst = null;
 
-                        aniimage.setBackground(new BitmapDrawable(bb));
+                        aniimage.setBackground(new BitmapDrawable(bb));*/
                     }
                 });
             mAni3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {  
