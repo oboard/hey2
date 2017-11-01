@@ -18,15 +18,19 @@
 		android:layout_height="0dp"
 		android:visibility="gone"/>
 
-	<View
+	<TextView
 		android:id="@+id/main_back_icon"
+        android:gravity="center"
+        android:textSize="24sp"
 		android:layout_margin="16dp"
 		android:layout_width="24dp"
 		android:layout_height="24dp"
 		android:layout_centerVertical="true"/>
 
-	<View
+	<TextView
 		android:id="@+id/main_forward_icon"
+        android:gravity="center"
+        android:textSize="24sp"
 		android:layout_margin="16dp"
 		android:layout_width="24dp"
 		android:layout_height="24dp"
@@ -136,14 +140,11 @@
 				android:layout_width="match_parent"
 				android:background="#11000000">
 
-				<ImageButton
+				<TextView
 					android:id="@+id/main_manager_back"
-					android:scaleX="0.7"
-					android:scaleY="0.7"
-					android:src="@drawable/back"
+					android:textSize="24sp"
 					android:layout_height="match_parent"
 					android:layout_width="48dp"
-					android:background="?android:attr/selectableItemBackground"
 					android:onClick="onManagerBackClick"/>
 
 				<EditText
@@ -163,25 +164,28 @@
 				android:layout_width="match_parent"
 				android:background="#11000000">
 
-				<ImageButton
+				<TextView
 					android:id="@+id/main_manager_t0"
-					android:src="@drawable/bookmark"
+                    android:gravity="center"
+                    android:textSize="24sp"
 					android:layout_height="match_parent"
 					android:layout_width="48dp"
 					android:background="?android:attr/selectableItemBackground"
 					android:onClick="onManagerClick"/>
 
-				<ImageButton
+				<TextView
 					android:id="@+id/main_manager_t1"
-					android:src="@drawable/history"
+                    android:gravity="center"
+                    android:textSize="24sp"
 					android:layout_height="match_parent"
 					android:layout_width="48dp"
 					android:background="?android:attr/selectableItemBackground"
 					android:onClick="onManagerClick"/>
 
-				<ImageButton
+				<TextView
 					android:id="@+id/main_manager_t2"
-					android:src="@drawable/settings"
+                    android:gravity="center"
+                    android:textSize="24sp"
 					android:layout_height="match_parent"
 					android:layout_width="48dp"
 					android:background="?android:attr/selectableItemBackground"
@@ -239,11 +243,6 @@
 
 		</LinearLayout>
 
-        <View
-            android:id="@+id/main_aniimage"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"/>
-        
 	</RelativeLayout>
     
 </RelativeLayout>

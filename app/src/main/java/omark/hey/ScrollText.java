@@ -22,14 +22,6 @@ public class ScrollText extends TextView {
     public ScrollText(Context context, AttributeSet attrs) {
         super(context, attrs);
         scroller = new Scroller(context);
-
-        setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Main.web.reload();
-                    return true;
-                }
-            });
     }
 
     Boolean isUp = true;
@@ -55,6 +47,7 @@ public class ScrollText extends TextView {
             case MotionEvent.ACTION_DOWN:
                 lastX = x;
                 lastY = y;
+                Main.me.onDockClick(this);
                 
                 if (!isUper) {
                     isUp = true;
@@ -75,7 +68,6 @@ public class ScrollText extends TextView {
                             offsetx = max;
                         else if (offsetx < -max) 
                             offsetx = -max;
-                        viewGroup.stopNestedScroll();
                         viewGroup.scrollTo(offsetx, 0);
                     } else {
                         int max = (int)Main.dip2px(this.getContext(), 160);

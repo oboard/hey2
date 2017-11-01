@@ -68,14 +68,14 @@ public class HeySwitch extends CheckBox {
         //画外部
         canvas.drawCircle(h / 2, h / 2, h / 2, paint);
         canvas.drawCircle(w - h / 2, h / 2, h / 2, paint);
-        canvas.drawRect(h / 2, 0, w - h / 2, h, paint);
+        canvas.drawRect(h / 2, 0, w - h / 2, h - 1, paint);
 
         //画内部
         int border = 2;
         paint.setColor(blendColor(color, Color.WHITE, fx + fy));
         canvas.drawCircle(h / 2, h / 2, h / 2 - border, paint);
         canvas.drawCircle(w - h / 2, h / 2, h / 2 - border, paint);
-        canvas.drawRect(h / 2, border , w - h / 2 - border, h - border, paint);
+        canvas.drawRect(h / 2, border , w - h / 2 - border, h - border -1, paint);
 
         //画状态球
         paint.setColor(blendColor(Color.WHITE, color, fx));

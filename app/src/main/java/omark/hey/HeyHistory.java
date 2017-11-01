@@ -16,12 +16,12 @@ public class HeyHistory {
     public SimpleAdapter getAdapter() {
         //新建适配器
 
-        String[] from = new String[] {
+        final String[] from = new String[] {
             "title",
             "url",
             "time"
         };
-        int[] to = new int[] {
+        final int[] to = new int[] {
             R.id.history_item_title,
             R.id.history_item_url,
             R.id.history_item_time

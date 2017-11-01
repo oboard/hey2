@@ -23,7 +23,7 @@
 			android:ellipsize="end"
 			android:id="@+id/multi_text0"/>
 
-		<ImageView
+		<omark.hey.ScrollImage
 			android:layout_margin="10dp"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
 			android:ellipsize="end"
 			android:id="@+id/multi_text1"/>
 
-		<ImageView
+		<omark.hey.ScrollImage
 			android:layout_margin="10dp"
 			android:onClick="onMultiClick"
 			android:id="@+id/multi_image1"
