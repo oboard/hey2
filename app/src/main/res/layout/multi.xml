@@ -4,15 +4,13 @@
 	android:id="@+id/multi_root"
 	android:layout_height="match_parent"
 	android:layout_width="wrap_content"
-	android:orientation="vertical"
-    android:clipChildren="false">
+	android:orientation="vertical">
 
 	<RelativeLayout
 		android:layout_margin="10dp"
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
-		android:layout_weight="1"
-        android:clipChildren="false">
+		android:layout_weight="1">
 
 		<TextView
 			android:textColor="#fff"
@@ -38,8 +36,7 @@
 		android:layout_margin="10dp"
 		android:layout_height="match_parent"
 		android:layout_width="wrap_content"
-		android:layout_weight="1"
-        android:clipChildren="false">
+		android:layout_weight="1">
 
 		<TextView
 			android:textColor="#fff"

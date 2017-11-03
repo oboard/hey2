@@ -12,6 +12,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.CheckBox;
+import android.graphics.Xfermode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.PorterDuff;
 
 public class HeySwitch extends CheckBox {
     float fx = 0, fy = 0;
@@ -66,18 +69,22 @@ public class HeySwitch extends CheckBox {
         paint.setColor(color);
      
         //画外部
-        canvas.drawCircle(h / 2, h / 2, h / 2, paint);
-        canvas.drawCircle(w - h / 2, h / 2, h / 2, paint);
-        canvas.drawRect(h / 2, 0, w - h / 2, h - 1, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        canvas.drawArc(0, 0, h, h, 90, 180, false, paint);
+        canvas.drawArc(w - h, 0, w, h, -90, 180, false, paint);
+        canvas.drawLine(h / 2, 0, w - h / 2, 0, paint);
+        canvas.drawLine(h / 2, h, w - h / 2, h, paint);
 
         //画内部
-        int border = 2;
-        paint.setColor(blendColor(color, Color.WHITE, fx + fy));
-        canvas.drawCircle(h / 2, h / 2, h / 2 - border, paint);
-        canvas.drawCircle(w - h / 2, h / 2, h / 2 - border, paint);
-        canvas.drawRect(h / 2, border , w - h / 2 - border, h - border -1, paint);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(blendColor(color, Color.TRANSPARENT, fx + fy));
+        canvas.drawArc(0, 0, h, h, 90, 180, false, paint);
+        canvas.drawArc(w - h, 0, w, h, -90, 180, false, paint);
+        canvas.drawRect(h / 2, 0 , w - h / 2 , h, paint);
 
         //画状态球
+        paint.setStyle(Paint.Style.FILL);
         paint.setColor(blendColor(Color.WHITE, color, fx));
         canvas.drawCircle(fx * (w - h) + h / 2, h / 2, h / 4, paint);
 
@@ -85,10 +92,11 @@ public class HeySwitch extends CheckBox {
 
     public int blendColor(int colorA, int colorB, float ratio) {  
         final float inverseRatio = 1f - ratio;
+        float a = (Color.alpha(colorA) * ratio) + (Color.alpha(colorB) * inverseRatio);
         float r = (Color.red(colorA) * ratio) + (Color.red(colorB) * inverseRatio);
         float g = (Color.green(colorA) * ratio) + (Color.green(colorB) * inverseRatio);
         float b = (Color.blue(colorA) * ratio) + (Color.blue(colorB) * inverseRatio);
-        return Color.argb(255, (int) r, (int) g, (int) b);
+        return Color.argb((int) a, (int) r, (int) g, (int) b);
     }
 
     public class BarAnimation extends Animation {

@@ -59,6 +59,7 @@ import omark.hey.control.HeySetting;
 import android.renderscript.Float2;
 import android.webkit.WebViewClient;
 import android.view.View.OnTouchListener;
+import android.os.Looper;
 
 public class Main extends Activity {
     static Main me;
@@ -69,13 +70,13 @@ public class Main extends Activity {
     static EditText text;
     static GridView menu;
     static FrameLayout desktop;
-    static RelativeLayout root, ground;
+    static RelativeLayout root, ground, manager, manager_ground;
     static HeyProgress progressbar;
     static HeyWeb web;
     static TextView multi_text, back_icon, forward_icon, manager_back;
     static TextView[] manager_tab_button = new TextView[3];
     static ListView bookmark_list, history_list;
-    static LinearLayout multi_box, multi_scroll, manager;
+    static LinearLayout multi_box, multi_scroll;
     static HorizontalScrollView multi_scroll_box;
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
     static ArrayList<LinearLayout> multi = new ArrayList<LinearLayout>();
@@ -86,6 +87,7 @@ public class Main extends Activity {
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
     static HeyBookmark bookmark;
     static HeyHistory history;
+    static Bitmap lastimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,16 +118,20 @@ public class Main extends Activity {
         }
 
         ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
-        
+
         me = this;
         popn = findViewById(R.id.main_popn);
         blacker = findViewById(R.id.main_blacker);
-        dock = (ScrollText)findViewById(R.id.main_dock);
         menu = (GridView)findViewById(R.id.main_menu);
+        text = (EditText)findViewById(R.id.main_text);
+        dock = (ScrollText)findViewById(R.id.main_dock);
+        manager_tab = findViewById(R.id.main_manager_tab);
         root = (RelativeLayout)findViewById(R.id.main_root);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
+        manager = (RelativeLayout)findViewById(R.id.main_manager);
         progressbar = (HeyProgress)findViewById(R.id.main_progress);
+        manager_ground = (RelativeLayout)findViewById(R.id.main_manager_ground);
 
         //4.4以上透明
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -194,7 +200,6 @@ public class Main extends Activity {
                 }
             });
 
-        text = (EditText)findViewById(R.id.main_text);
         text.setOnEditorActionListener(new TextView.OnEditorActionListener() {  
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event)  {
                     if (actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
@@ -214,29 +219,28 @@ public class Main extends Activity {
                     }    
                     return false;
                 }    
-            }); 
-        manager = (LinearLayout)findViewById(R.id.main_manager);
-        manager_tab = findViewById(R.id.main_manager_tab);
+            });
+
         bookmark_list = (ListView)findViewById(R.id.main_manager_bookmark_list);
         history_list = (ListView)findViewById(R.id.main_manager_history_list);
-        
+
         manager_back = (TextView)findViewById(R.id.main_manager_back);
         back_icon = (TextView)findViewById(R.id.main_back_icon);
         forward_icon = (TextView)findViewById(R.id.main_forward_icon);
-        
+
         manager_back.setTextColor(S.getColor(R.color.colorPrimary));
         manager_back.setText(String.valueOf((char)((Integer)0xE5C4).intValue()));
         back_icon.setTextColor(S.getColor(R.color.colorBackground));
         back_icon.setText(String.valueOf((char)((Integer)0xE5C4).intValue()));
         forward_icon.setTextColor(S.getColor(R.color.colorBackground));
         forward_icon.setText(String.valueOf((char)((Integer)0xE5C8).intValue()));
-        
+
         HeyHelper.setFont(back_icon, "m");
         HeyHelper.setFont(forward_icon, "m");
         HeyHelper.setFont(manager_back, "m");
         ripple_version(manager_back);
 
-        
+
         multi_scroll_box = (HorizontalScrollView)findViewById(R.id.main_multi_scroll_box);
         multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
@@ -263,7 +267,9 @@ public class Main extends Activity {
         bookmark_list.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, View v, int index, long l) {
-                    text.setText(bookmark.getData().get(index).get("url").toString());
+                    String url = bookmark.getData().get(index).get("url").toString();
+                    web.loadUrl(url);
+                    onManagerBackClick(null);
                 }
             });
         bookmark_list.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -299,7 +305,9 @@ public class Main extends Activity {
         history_list.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, View v, int index, long l) {
-                    text.setText(history.getData().get(index).get("url").toString());
+                    String url = history.getData().get(index).get("url").toString();
+                    web.loadUrl(url);
+                    onManagerBackClick(null);
                 }
             });
         history_list.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -332,7 +340,6 @@ public class Main extends Activity {
                 }
             });
     }
-
 
     public void onSettingClick(View v) {
         switch (v.getId()) {
@@ -464,8 +471,9 @@ public class Main extends Activity {
         multi_text.setText("" + pages.size());
         if (multi_scroll_box.getVisibility() == View.GONE || v != null) {
 
-            multiimages.set(webindex, getWebDrawing());
-            multiimage.get(webindex).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(webindex), dip2px(this, 2)));
+            Bitmap l = getWebDrawing();
+            multiimages.set(webindex, l);
+            multiimage.get(webindex).setImageBitmap(HeyHelper.getRoundedCornerBitmap(l, dip2px(this, 2)));
             multiimage.get(webindex).setTag(webindex);
             multitext.get(webindex).setText(web.getTitle());
 
@@ -494,7 +502,7 @@ public class Main extends Activity {
                     public void onAnimationEnd(Animation ani) {
                         back_icon.setVisibility(View.VISIBLE);
                         forward_icon.setVisibility(View.VISIBLE);
-                        
+
                         multi_scroll_box.setVisibility(View.GONE);
                     }
                 });
@@ -523,7 +531,7 @@ public class Main extends Activity {
                     public void onAnimationEnd(Animation ani) {
                         back_icon.setVisibility(View.VISIBLE);
                         forward_icon.setVisibility(View.VISIBLE);
-                        
+
                         web.setVisibility(View.GONE);
                     }
                 });
@@ -541,44 +549,53 @@ public class Main extends Activity {
             root.setBackgroundColor(S.getColor(R.color.colorPrimary));
         }
     } public void onDockLongClick(View v) {
-        final View view = getWindow().getDecorView();
-
-        final TranslateAnimation tranA = new TranslateAnimation(0, 0, view.getHeight(), 0);
-        tranA.setDuration(320);
-        manager.startAnimation(tranA);
-
         text.setText(web.getUrl());
         text.selectAll();
         text.requestFocus();
         keyboardState(true);
         history_list.setAdapter(history.getAdapter());
-        manager.setVisibility(View.VISIBLE);
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                public void run() {
+                    Bitmap bitmap = lastimage;
+                    if (Build.VERSION.SDK_INT >= 16)
+                        bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
+                    else
+                        FastBlur.jBlur(bitmap, 25, true);
+                    manager.setBackground(new BitmapDrawable(bitmap));
+
+                    final AlphaAnimation tranA = new AlphaAnimation(0, 1);
+                    tranA.setDuration(320);
+                    manager.startAnimation(tranA);
+                    manager.setVisibility(View.VISIBLE);
+                    onChangeBackground(Color.TRANSPARENT, new BitmapDrawable(bitmap));
+                }
+            });
     } public void onManagerBackClick(View v) {
         keyboardState(false);
         if (manager.getVisibility() == View.GONE) return;
 
-        final View view = getWindow().getDecorView();
-
-        final TranslateAnimation tranA = new TranslateAnimation(0, 0, 0, view.getHeight());
+        final AlphaAnimation tranA = new AlphaAnimation(1, 0);
         tranA.setDuration(320);
         tranA.setAnimationListener(new Animation.AnimationListener() {
                 public void onAnimationStart(Animation ani) {}
                 public void onAnimationRepeat(Animation ani) {}
                 public void onAnimationEnd(Animation ani) {
                     manager.setVisibility(View.GONE);
+                    onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }
             });
 
         manager.startAnimation(tranA);
-/*
-        new Handler(){
-            @Override public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                manager.setVisibility(View.GONE);
-            }
-        }.sendEmptyMessageDelayed(0, 320);*/
+        /*
+         new Handler(){
+         @Override public void handleMessage(Message msg) {
+         super.handleMessage(msg);
+         manager.setVisibility(View.GONE);
+         }
+         }.sendEmptyMessageDelayed(0, 320);*/
     } public void onManagerClick(View v) {
-        final LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)manager_tab.getLayoutParams();  
+        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)manager_tab.getLayoutParams();  
         params.setMargins((int)v.getX(), 0, 0, 0);
         manager_tab.setLayoutParams(params);
 
@@ -633,7 +650,7 @@ public class Main extends Activity {
         multi_box.setVisibility(View.GONE);
 
         webindex = pages.size() - 1;
-        
+
         AnimationSet aniA = new AnimationSet(true);
         aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
         aniA.addAnimation(new AlphaAnimation(0f, 1f));
@@ -699,16 +716,16 @@ public class Main extends Activity {
             page.loadUrl("about:blank");
             page = null;
         }
-        
-        if (pages.size() <= 0) return;
-        
+
         pages.remove(index);
         multitext.remove(index);
         multiimage.remove(index);
         multiimages.remove(index);
         multibottom.remove(index);
         multitop.remove(index);
-        
+
+        if (pages.size() <= 1) return;
+
         if (webindex == index) {
             webindex = index + ((index == 0) ? 0 : -1);
             web = pages.get(webindex);
@@ -778,6 +795,9 @@ public class Main extends Activity {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
+
+        lastimage = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+
         return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - (int)desktop.getY() - getNavigationBarHeight(this));
     } public Bitmap getWebDrawingB() {
         Bitmap bitmap = getWebDrawing();
@@ -962,7 +982,7 @@ class HeyWebChrome extends WebChromeClient {
 
                     //v.scrollTo(0, 0);
                     Bitmap b = Main.me.getWebDrawing();
-                    FastBlur.doBlur(b, 20, true);
+                    FastBlur.jBlur(b, 20, true);
                     Main.multitop.set(Main.webindex, new BitmapDrawable(Bitmap.createBitmap(b , 0, 0, b.getWidth(), 1)));
                     Main.onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }

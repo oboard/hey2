@@ -1,34 +1,53 @@
 package omark.hey;
 
-import android.graphics.Bitmap;  
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;  
 
-/** 
- * Created by paveld on 3/6/14. 
- */  
-public class FastBlur {  
+public class FastBlur {
 
-    public static Bitmap doBlur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {  
+    public static Bitmap rsBlur(Context context, Bitmap sentBitmap, int radius) {
+        Bitmap bitmap = Bitmap.createScaledBitmap(sentBitmap, sentBitmap.getWidth() / 2, sentBitmap.getHeight() / 2, false);
+        try {
+
+            final RenderScript rs = RenderScript.create(context);
+            final Allocation input = Allocation.createFromBitmap(rs, bitmap, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+            final Allocation output = Allocation.createTyped(rs, input.getType());
+            final ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+            script.setRadius(radius);
+            script.setInput(input);
+            script.forEach(output);
+            output.copyTo(bitmap);
+        } catch (Exception e) {
+            jBlur(bitmap, radius, true);
+        }
+        return bitmap;
+    }
+
+    public static Bitmap jBlur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {  
         Bitmap bitmap;  
-        if (canReuseInBitmap) {  
+        if (canReuseInBitmap) 
             bitmap = sentBitmap;  
-        } else {  
+        else
             bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);  
-        }  
 
-        if (radius < 1) {  
-            return (null);  
-        }  
 
-        int w = bitmap.getWidth();  
-        int h = bitmap.getHeight();  
+        if (radius < 1) return (null);  
+
+
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
 
         int[] pix = new int[w * h];  
         bitmap.getPixels(pix, 0, w, 0, 0, w, h);  
 
-        int wm = w - 1;  
-        int hm = h - 1;  
-        int wh = w * h;  
-        int div = radius + radius + 1;  
+        int wm = w - 1;
+        int hm = h - 1;
+        int wh = w * h;
+        int div = radius + radius + 1;
 
         int r[] = new int[wh];  
         int g[] = new int[wh];  
@@ -123,21 +142,21 @@ public class FastBlur {
                 ginsum -= sir[1];  
                 binsum -= sir[2];  
 
-                yi++;  
-            }  
-            yw += w;  
-        }  
-        for (x = 0; x < w; x++) {  
+                yi++;
+            }
+            yw += w;
+        }
+        for (x = 0; x < w; x++) {
             rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;  
-            yp = -radius * w;  
-            for (i = -radius; i <= radius; i++) {  
-                yi = Math.max(0, yp) + x;  
+            yp = -radius * w;
+            for (i = -radius; i <= radius; i++) {
+                yi = Math.max(0, yp) + x;
 
-                sir = stack[i + radius];  
+                sir = stack[i + radius];
 
-                sir[0] = r[yi];  
-                sir[1] = g[yi];  
-                sir[2] = b[yi];  
+                sir[0] = r[yi];
+                sir[1] = g[yi];
+                sir[2] = b[yi];
 
                 rbs = r1 - Math.abs(i);  
 
@@ -148,62 +167,62 @@ public class FastBlur {
                 if (i > 0) {  
                     rinsum += sir[0];  
                     ginsum += sir[1];  
-                    binsum += sir[2];  
-                } else {  
-                    routsum += sir[0];  
-                    goutsum += sir[1];  
-                    boutsum += sir[2];  
-                }  
+                    binsum += sir[2];
+                } else {
+                    routsum += sir[0];
+                    goutsum += sir[1];
+                    boutsum += sir[2];
+                }
 
-                if (i < hm) {  
-                    yp += w;  
-                }  
-            }  
-            yi = x;  
-            stackpointer = radius;  
+                if (i < hm) {
+                    yp += w;
+                }
+            }
+            yi = x;
+            stackpointer = radius;
             for (y = 0; y < h; y++) {  
-                // Preserve alpha channel: ( 0xff000000 & pix[yi] )  
-                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16)  
-                    | (dv[gsum] << 8) | dv[bsum];  
+                // Preserve alpha channel: ( 0xff000000 & pix[yi] )
+                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16)
+                    | (dv[gsum] << 8) | dv[bsum];
 
-                rsum -= routsum;  
-                gsum -= goutsum;  
-                bsum -= boutsum;  
+                rsum -= routsum;
+                gsum -= goutsum;
+                bsum -= boutsum;
 
-                stackstart = stackpointer - radius + div;  
-                sir = stack[stackstart % div];  
+                stackstart = stackpointer - radius + div;
+                sir = stack[stackstart % div];
 
-                routsum -= sir[0];  
-                goutsum -= sir[1];  
-                boutsum -= sir[2];  
+                routsum -= sir[0];
+                goutsum -= sir[1];
+                boutsum -= sir[2];
 
                 if (x == 0) {  
-                    vmin[y] = Math.min(y + r1, hm) * w;  
+                    vmin[y] = Math.min(y + r1, hm) * w;
                 }  
-                p = x + vmin[y];  
+                p = x + vmin[y];
 
-                sir[0] = r[p];  
-                sir[1] = g[p];  
-                sir[2] = b[p];  
+                sir[0] = r[p];
+                sir[1] = g[p];
+                sir[2] = b[p];
 
-                rinsum += sir[0];  
-                ginsum += sir[1];  
-                binsum += sir[2];  
+                rinsum += sir[0];
+                ginsum += sir[1];
+                binsum += sir[2];
 
-                rsum += rinsum;  
-                gsum += ginsum;  
-                bsum += binsum;  
+                rsum += rinsum;
+                gsum += ginsum;
+                bsum += binsum;
 
-                stackpointer = (stackpointer + 1) % div;  
-                sir = stack[stackpointer];  
+                stackpointer = (stackpointer + 1) % div;
+                sir = stack[stackpointer];
 
-                routsum += sir[0];  
-                goutsum += sir[1];  
-                boutsum += sir[2];  
+                routsum += sir[0];
+                goutsum += sir[1];
+                boutsum += sir[2];
 
-                rinsum -= sir[0];  
-                ginsum -= sir[1];  
-                binsum -= sir[2];  
+                rinsum -= sir[0];
+                ginsum -= sir[1];
+                binsum -= sir[2];
 
                 yi += w;  
             }  
@@ -211,6 +230,6 @@ public class FastBlur {
 
         bitmap.setPixels(pix, 0, w, 0, 0, w, h);  
 
-        return (bitmap);  
+        return bitmap;  
     }
 }
