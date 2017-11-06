@@ -48,7 +48,7 @@ public class HeyApi {
         }
         return "";
     }
-
+    
     @JavascriptInterface
     public void set(String name, String value) {
         S.put("h5_" + name, value);
@@ -59,7 +59,7 @@ public class HeyApi {
     public String get(String name) {
         switch (name) {
             case "app_title":
-                return S.getString(R.string.name);
+                return S.getString(R.string.app_name);
 
             case "lang23":
                 return "设置";
@@ -83,7 +83,7 @@ public class HeyApi {
             case "lang42":
                 return "使用攻略";
             case "lang43":
-                return "历史记录";
+                return S.getString(R.string.lang38);
             case "lang44":
                 return "我的收藏";
             case "lang45":

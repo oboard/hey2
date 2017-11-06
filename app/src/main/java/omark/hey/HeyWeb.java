@@ -2,6 +2,7 @@ package omark.hey;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -20,6 +21,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.view.DragEvent;
+import android.content.ClipData;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
     public static String htmlSource;
@@ -110,7 +113,6 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
                     HitTestResult hitTestResult = view.getHitTestResult();
-
                     if (isUri(url)) {
                         if (hitTestResult == null) {
                             view.loadUrl(url);
@@ -126,22 +128,29 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                     } return super.shouldOverrideUrlLoading(view, url);   
                 }
 
-                //public void onPageStarted(WebView v, String url, Bitmap favicon) {
-                //    super.onPageStarted(v, url, favicon);
-                //}
+                public void onPageStarted(WebView v, String url, Bitmap favicon) {
+                    super.onPageStarted(v, url, favicon);
+                    Main.menus.get(Main.pages.indexOf(v)).setState(5, false);
+                }
 
                 public void onPageFinished(WebView v, String url) {
                     super.onPageFinished(v, url);
 
-                    //历史记录
-                    S.addIndex("hnm" , "hn", v.getTitle());
-                    S.addIndex("hm" , "h", url);
-                    S.addIndex("htm" , "ht", "" + System.currentTimeMillis());
-                    
                     if (!getSettings().getLoadsImagesAutomatically()) getSettings().setLoadsImagesAutomatically(true);
+
+                    int hm = S.get("hm", 0) - 1;
+                    long time = System.currentTimeMillis();
+                    if (url.equals("about:blank") || v.getTitle().equals("about:blank")) return;
+                    if (url.equals(S.get("h" + hm, "")) && v.getTitle().equals(S.get("hn" + hm, ""))) return;
+                    //历史记录
+                    if (v.getTitle().equals(""))
+                        S.addIndex("hnm" , "hn", S.getString(R.string.lang56));
+                    else
+                        S.addIndex("hnm" , "hn", v.getTitle());
+                    S.addIndex("hm" , "h", url);
+                    S.addIndex("htm" , "ht", "" + time);
                 }
 
-                @Override
                 public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                     //handler.cancel(); // Android默认的处理方式
                     handler.proceed(); // 接受所有网站的证书
@@ -166,8 +175,19 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                     i.setData(Uri.parse(url));
                     Main.me.startActivity(i);
                 }
-            }); 
-         
+            });
+            
+        setOnDragListener(new View.OnDragListener() {
+                @Override
+                public boolean onDrag(View view, DragEvent dragEvent) {
+                    if (dragEvent.getAction() == DragEvent.ACTION_DROP) {
+                        String c = dragEvent.getClipData().getItemAt(0).getText().toString();
+                        loadUrl(HeyHelper.toWeb(c));
+                    }
+                    return true;
+                }
+            });
+
     }
 
     /*

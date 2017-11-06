@@ -3,22 +3,28 @@ package omark.hey;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
 import android.content.pm.PackageManager;
-import java.util.List;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.Toast;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class S {
     static Editor e;
     static SharedPreferences s;
     static Context c;
 
-    public static void init(Context context, String name) {
+    public static S init(Context context, String name) {
         s = context.getSharedPreferences(name, 0);//Context.MODE_WORLD_READABLE);// + Context.MODE_WORLD_WRITEABLE);
         e = s.edit();
         c = context;
+        return new S();
     }
 
     //Get
@@ -32,8 +38,6 @@ public class S {
         return s == null ? def : s.getLong(name, def);
     } public static int get(String name, int def) {
         return s == null ? def : s.getInt(name, def);
-    } public static Set<String> get(String name, Set<String> def) {
-        return s == null ? def : s.getStringSet(name, def);
     }
 
     public static Map<String, ?> getAll() {
@@ -42,18 +46,21 @@ public class S {
     }
 
     //Put
-    public static void put(String name, String def) {
+    public static S put(String name, String def) {
         if (e != null) e.putString(name, def);
-    } public static void put(String name, boolean def) {
+        return new S();
+    } public static S put(String name, boolean def) {
         if (e != null) e.putBoolean(name, def);
-    } public static void put(String name, float def) {
+        return new S();
+    } public static S put(String name, float def) {
         if (e != null) e.putFloat(name, def);
-    } public static void put(String name, long def) {
+        return new S();
+    } public static S put(String name, long def) {
         if (e != null) e.putLong(name, def);
-    } public static void put(String name, int def) {
+        return new S();
+    } public static S put(String name, int def) {
         if (e != null) e.putInt(name, def);
-    } public static void put(String name, Set<String> def) {
-        if (e != null) e.putStringSet(name, def);
+        return new S();
     }
 
     public static boolean contains(String name) {
@@ -66,14 +73,15 @@ public class S {
     }
 
     //此系列函数效率低，请谨慎使用
-    public static void addIndex(String max_name, String name, String value) {
+    public static S addIndex(String max_name, String name, String value) {
         final int n = get(max_name, 0);
 
         put(name + n, value);
         put(max_name, n + 1);
 
         ok();
-    } public static void delIndex(String max_name, String name, int index) {
+        return new S();
+    } public static S delIndex(String max_name, String name, int index) {
         try {
             final int n = get(max_name, 0);
             List<String> a = new ArrayList<String>();
@@ -92,17 +100,49 @@ public class S {
         } catch (Exception e) {
             Toast.makeText(c, "EXT.ERROR:" + e, Toast.LENGTH_LONG);
         }
+        return new S();
     }
 
-    public static void ok() {
+    public static S ok() {
         if (e != null) e.apply();
+        return new S();
     }
 
     public static boolean okay() {
         if (e != null) return e.commit();
         return false;
     }
+    
+    public static void storePic(String key, Bitmap bitmap) {
+        if (key == null || key.isEmpty() || bitmap == null) return;
+        FileOutputStream fos = null;
+        try {
+            fos = c.openFileOutput(key, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (FileNotFoundException e) {
 
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.flush();
+                    fos.close();
+                } catch (IOException e) {
+
+                }
+            }
+        }
+    } public static Bitmap getStorePic(String key) {
+        if (key == null || key.isEmpty()) return null;
+        FileInputStream fin = null;
+        Bitmap bitmap = null;
+        try {
+            fin = c.openFileInput(key);
+            bitmap = BitmapFactory.decodeStream(fin);
+        } catch (FileNotFoundException e) {
+
+        }
+        return bitmap;
+    }
 
     public static int getColor(int resid) {
         return c.getResources().getColor(resid);

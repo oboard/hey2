@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.MotionEvent;
+import android.os.Build;
 
 public class HeySetting extends RelativeLayout {
     
@@ -24,6 +25,7 @@ public class HeySetting extends RelativeLayout {
     } public void init(Context c) {
         if (getTag() == null) return;
         setClipChildren(false);
+        setClickable(true);
         View mView = new View(c);
         mView.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -33,7 +35,7 @@ public class HeySetting extends RelativeLayout {
             }
         });
        
-        if (getBackground() == null) {
+        if (getBackground() == null && Build.VERSION.SDK_INT > 14) {
             int[] attrsArray = { android.R.attr.selectableItemBackground };
             TypedArray typedArray = c.obtainStyledAttributes(attrsArray);
             mView.setBackgroundResource(typedArray.getResourceId(0, attrsArray[0]));

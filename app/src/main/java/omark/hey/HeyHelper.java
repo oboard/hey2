@@ -55,4 +55,15 @@ public class HeyHelper {
         Typeface font = Typeface.createFromAsset(textview.getContext().getResources().getAssets(), ttf + ".ttf"); 
         textview.setTypeface(font);
     }
+    
+    public static String toWeb(String s) {
+        String url = s;
+        if (!HeyWeb.isUri(url))  {
+            if (url.indexOf(".") != -1) 
+                url = "http://" + url;
+            else
+                url = HeyHelper.getSearch(url);
+        }
+        return url;
+    }
 }

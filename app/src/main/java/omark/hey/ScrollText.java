@@ -53,6 +53,8 @@ public class ScrollText extends TextView {
                     isUp = true;
                     handler.sendEmptyMessageDelayed(0, 500);
                 }
+                Main.back_icon.setVisibility(View.VISIBLE);
+                Main.forward_icon.setVisibility(View.VISIBLE);
                 break;
                 //触摸事件的第二步，这时候的x,y已经随着滑动操作产生了变化，用变化后的坐标减去首次触摸时的坐标得到相对的偏移量
             case MotionEvent.ACTION_MOVE:
@@ -107,6 +109,9 @@ public class ScrollText extends TextView {
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
                 }
 
+                Main.back_icon.setVisibility(View.GONE);
+                Main.forward_icon.setVisibility(View.GONE);
+                
                 isUp = false;
                 //刷新view，这里很重要，如果不执行，下面的
                 //  computeScroll 方法就不会执行 computeScroll 方法是由 onDraw 方法调用的，而刷新 View 会调用 onDraw。

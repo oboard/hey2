@@ -2,6 +2,7 @@ package omark.hey;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,8 +19,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,22 +47,18 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import omark.hey.control.HeyProgress;
 import omark.hey.control.HeySetting;
-import android.renderscript.Float2;
-import android.webkit.WebViewClient;
-import android.view.View.OnTouchListener;
-import android.os.Looper;
 
 public class Main extends Activity {
     static Main me;
@@ -73,6 +72,7 @@ public class Main extends Activity {
     static RelativeLayout root, ground, manager, manager_ground;
     static HeyProgress progressbar;
     static HeyWeb web;
+    static ImageView background;
     static TextView multi_text, back_icon, forward_icon, manager_back;
     static TextView[] manager_tab_button = new TextView[3];
     static ListView bookmark_list, history_list;
@@ -85,6 +85,7 @@ public class Main extends Activity {
     static ArrayList<Drawable> multitop = new ArrayList<Drawable>();
     static ArrayList<Integer> multibottom = new ArrayList<Integer>();
     static ArrayList<TextView> multitext = new ArrayList<TextView>();
+    static ArrayList<HeyMenu> menus = new ArrayList<HeyMenu>();
     static HeyBookmark bookmark;
     static HeyHistory history;
     static Bitmap lastimage;
@@ -93,18 +94,16 @@ public class Main extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        //创建
-        clipboard = new HeyClipboard(this);
-        bookmark = new HeyBookmark();
-        history = new HeyHistory();
-
+        
         S.init(this, "main");
+        
         if (S.get("first", true)) {
-            S.put("first", false);
-            S.put("home", HeyHelper.DEFAULT_HOME);
-            S.put("search" , HeyHelper.DEFAULT_SEARCH);
-            S.put("pagecolor", true);
+            S.put("first", false)
+                .put("home", HeyHelper.DEFAULT_HOME)
+                .put("search" , HeyHelper.DEFAULT_SEARCH)
+                .put("searchindex" , 0)
+                .put("pagecolor", true)
+                .ok();
 
             /*
              //兼容H5？？
@@ -114,10 +113,8 @@ public class Main extends Activity {
              S.put("h5_app_ui_stbar", "#888888");
              S.put("h5_app_ui_bg", "#ffffff");
              */
-            S.ok();
         }
 
-        ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
 
         me = this;
         popn = findViewById(R.id.main_popn);
@@ -130,8 +127,10 @@ public class Main extends Activity {
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
         manager = (RelativeLayout)findViewById(R.id.main_manager);
+        background = (ImageView)findViewById(R.id.main_background);
         progressbar = (HeyProgress)findViewById(R.id.main_progress);
         manager_ground = (RelativeLayout)findViewById(R.id.main_manager_ground);
+        ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
 
         //4.4以上透明
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -141,7 +140,11 @@ public class Main extends Activity {
             ground.setClipToPadding(true);
         }
 
-        menu.setAdapter(new HeyMenu().getAdapter());
+        //创建
+        clipboard = new HeyClipboard(this);
+        bookmark = new HeyBookmark();
+        history = new HeyHistory();
+        
         menu.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, final View v, final int i, long l) {
@@ -149,7 +152,6 @@ public class Main extends Activity {
                     //点击菜单后，滚回去～
                     View viewGroup = (View)dock.getParent();
                     viewGroup.scrollTo(0, 0); //.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
-
                     switch (i) {
                         case 0:
                             web = addPage("");
@@ -181,9 +183,10 @@ public class Main extends Activity {
                             new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
                                 .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int i) {
-                                        S.addIndex("bnm" , "bn", t1.getText().toString());
-                                        S.addIndex("bm" , "b", t2.getText().toString());
-                                        S.addIndex("btm" , "bt", "" + System.currentTimeMillis());
+                                        S.addIndex("bnm" , "bn", t1.getText().toString())
+                                            .addIndex("bm" , "b", t2.getText().toString())
+                                            .addIndex("btm" , "bt", "" + System.currentTimeMillis());
+
                                         bookmark_list.setAdapter(bookmark.getAdapter());
                                         Toast.makeText(Main.this, R.string.lang20, Toast.LENGTH_SHORT).show();
                                     }
@@ -191,7 +194,13 @@ public class Main extends Activity {
                             break;
                         case 5:
                             //开发者模式
-                            web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='https://cdn.bootcss.com/eruda/1.2.6/eruda.min.js'; document.body.appendChild(script);script.onload=function(){eruda.init()}})()");
+                            if (!menus.get(webindex).getState(i)) {
+                                web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='http://eruda.liriliri.io/eruda.min.js';document.body.appendChild(script);script.onload=function(){eruda.init()};})()");
+                                menus.get(webindex).setState(i, true);
+                            } else {
+                                web.loadUrl("javascript:(function(){eruda.destroy()})()");
+                                menus.get(webindex).setState(i, false);
+                            }
                             break;
                         default:
                             Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
@@ -205,12 +214,7 @@ public class Main extends Activity {
                     if (actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                         String url = v.getText().toString();
                         if (!url.equals("")) {
-                            if (!HeyWeb.isUri(url))  {
-                                if (url.indexOf(".") != -1) 
-                                    url = "http://" + url;
-                                else
-                                    url = HeyHelper.getSearch(url);
-                            }
+                            url = HeyHelper.toWeb(url);
                             //转到页面
                             web.loadUrl(url);
                             onManagerBackClick(null);
@@ -247,7 +251,7 @@ public class Main extends Activity {
         multi_text = (TextView)findViewById(R.id.main_multi_text);
         addMulti();//
 
-        multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
+        //multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
 
         manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0); 
         manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1); 
@@ -259,9 +263,10 @@ public class Main extends Activity {
             HeyHelper.setFont(tvv, "m");
         }
 
+        onIntent(null);
         onIntent(getIntent());
 
-        onChangeBackground(Color.TRANSPARENT, new ColorDrawable(S.getColor(R.color.colorPrimary)));
+        onChangeBackground(Color.TRANSPARENT, getHeyBackground());
 
         bookmark_list.setAdapter(bookmark.getAdapter());
         bookmark_list.setOnItemClickListener(new OnItemClickListener() {
@@ -283,17 +288,17 @@ public class Main extends Activity {
                     new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang11)
                         .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int i) {
-                                S.put("bn" + index, t1.getText().toString());
-                                S.put("b" + index, t2.getText().toString());
-                                S.put("bt" + index, "" + System.currentTimeMillis());
-                                S.ok();
+                                S.put("bn" + index, t1.getText().toString())
+                                    .put("b" + index, t2.getText().toString())
+                                    .put("bt" + index, "" + System.currentTimeMillis())
+                                    .ok();
                                 bookmark_list.setAdapter(bookmark.getAdapter());
                             }
                         }).setNeutralButton(R.string.lang10, new DialogInterface.OnClickListener() {   
                             public void onClick(DialogInterface dialog, int i) {
-                                S.delIndex("bm", "b", index);
-                                S.delIndex("bnm", "bn", index);
-                                S.delIndex("btm", "bt", index);
+                                S.delIndex("bm", "b", index)
+                                    .delIndex("bnm", "bn", index)
+                                    .delIndex("btm", "bt", index);
                                 bookmark_list.setAdapter(bookmark.getAdapter());
                             }
                         }).show();
@@ -322,17 +327,17 @@ public class Main extends Activity {
                     new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang11)
                         .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int i) {
-                                S.put("hn" + index, t1.getText().toString());
-                                S.put("h" + index, t2.getText().toString());
-                                S.put("ht" + index, "" + System.currentTimeMillis());
-                                S.ok();
+                                S.put("hn" + index, t1.getText().toString())
+                                    .put("h" + index, t2.getText().toString())
+                                    .put("ht" + index, "" + System.currentTimeMillis())
+                                    .ok();
                                 history_list.setAdapter(history.getAdapter());
                             }
                         }).setNeutralButton(R.string.lang10, new DialogInterface.OnClickListener() {   
                             public void onClick(DialogInterface dialog, int i) {
-                                S.delIndex("hm", "h", index);
-                                S.delIndex("hnm", "hn", index);
-                                S.delIndex("htm", "ht", index);
+                                S.delIndex("hm", "h", index)
+                                    .delIndex("hnm", "hn", index)
+                                    .delIndex("htm", "ht", index);
                                 history_list.setAdapter(history.getAdapter());
                             }
                         }).show();
@@ -346,39 +351,89 @@ public class Main extends Activity {
             case R.id.setting_1:
                 final EditText et = new EditText(this);
                 et.setText(S.get("home", HeyHelper.DEFAULT_HOME));
-                new AlertDialog.Builder(this).setView(et).setTitle(R.string.lang11)
+                new AlertDialog.Builder(this).setView(et).setTitle(v.getTag().toString())
                     .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int i) {
-                            S.put("home", et.getText().toString());
-                            S.ok();
+                            S.put("home", et.getText().toString())
+                                .ok();
                         }
                     }).setNeutralButton(R.string.lang1, new DialogInterface.OnClickListener() {   
                         public void onClick(DialogInterface dialog, int i) {
-                            S.put("home", HeyHelper.DEFAULT_HOME);
-                            S.ok();
+                            S.put("home", HeyHelper.DEFAULT_HOME)
+                                .ok();
                         }
                     }).show();
                 break;
             case R.id.setting_2:
-                S.put("pagecolor", ((HeySetting)v).isChecked());
-                S.ok();
+                S.put("pagecolor", ((HeySetting)v).isChecked())
+                    .ok();
+                break;
+            case R.id.setting_3:
+                final String[] se = {
+                    "Bing",
+                    "Google",
+                    "Baidu",
+                    "Sogou",
+                    "Yandex",
+                    "Yahoo",
+                    "360"
+                };
+                final String[] su = {
+                    HeyHelper.DEFAULT_SEARCH,
+                    "https://google.com.hk/search?q=",
+                    "https://baidu.com/s?word=",
+                    "https://sogou.com/web?query=",
+                    "https://yandex.com/search/?text=",
+                    "https://search.yahoo.com/search?p=",
+                    "https://so.com/s?q="
+                };
+                new AlertDialog.Builder(this).setTitle(v.getTag().toString()).setSingleChoiceItems(se, S.get("searchindex", 0), new DialogInterface.OnClickListener() { 
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            S.put("search", su[which])
+                                .put("searchindex", which)
+                                .ok();
+                                
+                            dialog.dismiss();
+                        } 
+                    }).show();
+                break;
+            case R.id.setting_4:
+                new AlertDialog.Builder(this).setTitle(v.getTag().toString())
+                    .setItems(new String[] {
+                        S.getString(R.string.lang1),
+                        S.getString(R.string.lang13)
+                    }, new DialogInterface.OnClickListener() { 
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            S.put("background", which).ok();
+                            if (which == 0) return;
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(intent, 1);
+                        }
+                    }).show();
                 break;
         }
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
         if (f == Color.TRANSPARENT)
-            Main.root.setBackground(b);
+            Main.background.setImageDrawable(b);
         else
-            Main.root.setBackgroundColor(f);
+            Main.background.setImageDrawable(new ColorDrawable(f));
 
         int c = f;
         if (f == Color.TRANSPARENT) {
             if (b instanceof ColorDrawable)
                 c = ((ColorDrawable)b).getColor();
             else if (b instanceof BitmapDrawable) {
-                Bitmap hb = ((BitmapDrawable)b).getBitmap();
-                c = hb.getPixel(hb.getWidth() / 2, 0);
+                //Bitmap hb = ((BitmapDrawable)b).getBitmap();
+                //c = hb.getPixel(hb.getWidth() / 2, 0);
+                blacker.setVisibility(View.VISIBLE);
+                return;
             }
         }
         if (HeyHelper.isLightColor(c))
@@ -407,8 +462,6 @@ public class Main extends Activity {
             web = addPage(intent.getData().toString());
         } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
             web = addPage(HeyHelper.getSearch(intent.getStringExtra("query")));
-        } else {
-            web = addPage("");
         }
     }
 
@@ -465,6 +518,8 @@ public class Main extends Activity {
             progressbar.setVisibility(View.GONE);
         else
             progressbar.setProgress(web.getProgress());
+        menu.setAdapter(menus.get(webindex).getAdapter());
+        
         dock.setText(web.getTitle());
         onDockClick(null);
     } public void onDockClick(View v) {
@@ -480,16 +535,16 @@ public class Main extends Activity {
             if (v != null) return;
 
             hidePage();
+            dock.setVisibility(View.GONE);
             scaleAni(false);
         } else {
+            dock.setVisibility(View.VISIBLE);
             scaleAni(true);
         }
 
     }
 
     private void scaleAni(boolean open) {
-        back_icon.setVisibility(View.GONE);
-        forward_icon.setVisibility(View.GONE);
         if (open) {
             AnimationSet aniA = new AnimationSet(true);
             aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
@@ -500,9 +555,6 @@ public class Main extends Activity {
                     public void onAnimationStart(Animation ani) {}
                     public void onAnimationRepeat(Animation ani) {}
                     public void onAnimationEnd(Animation ani) {
-                        back_icon.setVisibility(View.VISIBLE);
-                        forward_icon.setVisibility(View.VISIBLE);
-
                         multi_scroll_box.setVisibility(View.GONE);
                     }
                 });
@@ -518,6 +570,7 @@ public class Main extends Activity {
             multi_scroll_box.setVisibility(View.VISIBLE);
             multi_box.setVisibility(View.GONE);
 
+            if (S.get("pagecolor", true))
             onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
         } else {
             AnimationSet aniA = new AnimationSet(true);
@@ -529,9 +582,6 @@ public class Main extends Activity {
                     public void onAnimationStart(Animation ani) {}
                     public void onAnimationRepeat(Animation ani) {}
                     public void onAnimationEnd(Animation ani) {
-                        back_icon.setVisibility(View.VISIBLE);
-                        forward_icon.setVisibility(View.VISIBLE);
-
                         web.setVisibility(View.GONE);
                     }
                 });
@@ -546,7 +596,7 @@ public class Main extends Activity {
             web.setVisibility(View.VISIBLE);
             multi_scroll_box.setVisibility(View.VISIBLE);
             multi_box.setVisibility(View.VISIBLE);
-            root.setBackgroundColor(S.getColor(R.color.colorPrimary));
+            root.setBackgroundDrawable(getHeyBackground());
         }
     } public void onDockLongClick(View v) {
         text.setText(web.getUrl());
@@ -562,13 +612,12 @@ public class Main extends Activity {
                         bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
                     else
                         FastBlur.jBlur(bitmap, 25, true);
-                    manager.setBackground(new BitmapDrawable(bitmap));
+                    manager.setBackgroundDrawable(new BitmapDrawable(bitmap));
 
                     final AlphaAnimation tranA = new AlphaAnimation(0, 1);
                     tranA.setDuration(320);
                     manager.startAnimation(tranA);
                     manager.setVisibility(View.VISIBLE);
-                    onChangeBackground(Color.TRANSPARENT, new BitmapDrawable(bitmap));
                 }
             });
     } public void onManagerBackClick(View v) {
@@ -582,6 +631,7 @@ public class Main extends Activity {
                 public void onAnimationRepeat(Animation ani) {}
                 public void onAnimationEnd(Animation ani) {
                     manager.setVisibility(View.GONE);
+                    if (S.get("pagecolor", true))
                     onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }
             });
@@ -632,7 +682,7 @@ public class Main extends Activity {
     public HeyWeb addPage(String uri) {
         final String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
         final HeyWeb new_web = new HeyWeb(this);
-        new_web.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        new_web.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.FILL_PARENT));
         new_web.loadUrl(link);
         new_web.setVisibility(View.VISIBLE);
         new_web.setWebChromeClient(new HeyWebChrome());
@@ -641,7 +691,7 @@ public class Main extends Activity {
         desktop.addView(new_web);
         pages.add(new_web);
 
-        multitop.add(new ColorDrawable(S.getColor(R.color.colorPrimary)));
+        multitop.add(getHeyBackground());
         multibottom.add(0x01000000);
         multiimages.add(null);
 
@@ -650,6 +700,9 @@ public class Main extends Activity {
         multi_box.setVisibility(View.GONE);
 
         webindex = pages.size() - 1;
+        
+        menus.add(new HeyMenu(menu));
+        menu.setAdapter(menus.get(webindex).getAdapter());
 
         AnimationSet aniA = new AnimationSet(true);
         aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
@@ -661,7 +714,7 @@ public class Main extends Activity {
     }  public HeyWeb addPageB(String uri) {
         String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
         HeyWeb new_web = new HeyWeb(this);
-        new_web.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        new_web.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.FILL_PARENT));
         new_web.loadUrl(link);
         new_web.setVisibility(View.GONE);
         new_web.setWebChromeClient(new HeyWebChrome());
@@ -670,9 +723,10 @@ public class Main extends Activity {
         desktop.addView(new_web);
         pages.add(new_web);
 
-        multitop.add(new ColorDrawable(S.getColor(R.color.colorPrimary)));
+        multitop.add(getHeyBackground());
         multibottom.add(0x01000000);
         multiimages.add(getWebDrawingB());
+        menus.add(new HeyMenu(menu));
 
         if (pages.size() > multi.size() * 2) addMulti();
         multi_scroll_box.setVisibility(View.GONE);
@@ -735,7 +789,7 @@ public class Main extends Activity {
         int count = multi.size();
         multi.add((LinearLayout)LayoutInflater.from(this).inflate(R.layout.multi, null));
         multi_scroll.addView(multi.get(count));
-        multi.get(count).findViewById(R.id.multi_root).setLayoutParams(new LinearLayout.LayoutParams(getWindowManager().getDefaultDisplay().getWidth() / 2, LinearLayout.LayoutParams.MATCH_PARENT));
+        multi.get(count).findViewById(R.id.multi_root).setLayoutParams(new LinearLayout.LayoutParams(getWindowManager().getDefaultDisplay().getWidth() / 2, LinearLayout.LayoutParams.FILL_PARENT));
         multitext.add((TextView)multi.get(count).findViewById(R.id.multi_text0));
         multitext.add((TextView)multi.get(count).findViewById(R.id.multi_text1));
         //multitext.add((TextView)multi.get(count).findViewById(R.id.multi_text2));
@@ -760,11 +814,19 @@ public class Main extends Activity {
             multiimage.get(i).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(i), dip2px(this, 2)));
             multiimage.get(i).setTag(i);
         }
+    } public void aniMulti(int fristindex) {
+        final TranslateAnimation tranA = new TranslateAnimation(0, 0, getWindow().getDecorView().getHeight() / 4, 0);
+        tranA.setDuration(320);
+
+        for (int i = fristindex; i < pages.size(); i++) {
+            multitext.get(i).setAnimation(tranA);
+            multiimage.get(i).setAnimation(tranA);
+        }
+        tranA.startNow();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         desktop.removeAllViews();
         for (int i = 0; i < pages.size(); i++) {
             HeyWeb page = pages.get(i);
@@ -778,6 +840,13 @@ public class Main extends Activity {
                 page = null;
             }
         }
+        super.onDestroy();
+    }
+    
+    public Drawable getHeyBackground() {
+        Drawable d = new ColorDrawable(S.getColor(R.color.colorPrimary));
+        if (S.get("background", 0) == 1) d = new BitmapDrawable(S.getStorePic("background"));
+        return d;
     }
 
     public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
@@ -796,7 +865,7 @@ public class Main extends Activity {
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
 
-        lastimage = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        lastimage = Bitmap.createBitmap(bitmap, 0, (int)desktop.getY(), view.getWidth(), view.getHeight() - getNavigationBarHeight(this) - (int)desktop.getY());
 
         return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - (int)desktop.getY() - getNavigationBarHeight(this));
     } public Bitmap getWebDrawingB() {
@@ -861,7 +930,7 @@ public class Main extends Activity {
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("image/*");
-        startActivityForResult(Intent.createChooser(i, "File Chooser"), 333);
+        startActivityForResult(Intent.createChooser(i, "File Chooser"), 3);
     }
 
     public void openFileChooserImplForAndroid5(ValueCallback<Uri[]> uploadMsg) {
@@ -874,20 +943,20 @@ public class Main extends Activity {
         chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
         chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
 
-        startActivityForResult(chooserIntent, 335);
+        startActivityForResult(chooserIntent, 5);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 333) {
+        if (requestCode == 3) {
             if (null == mUploadMessage)
                 return;
             Uri result = intent == null || resultCode != RESULT_OK ? null: intent.getData();
             mUploadMessage.onReceiveValue(result);
             mUploadMessage = null;
 
-        } else if (requestCode == 335) {
+        } else if (requestCode == 5) {
             if (null == mUploadMessageForAndroid5)
                 return;
             Uri result = (intent == null || resultCode != RESULT_OK) ? null: intent.getData();
@@ -897,6 +966,16 @@ public class Main extends Activity {
                 mUploadMessageForAndroid5.onReceiveValue(new Uri[]{});
             }
             mUploadMessageForAndroid5 = null;
+        } else if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Uri uri = intent.getData();
+                ContentResolver cr = this.getContentResolver();
+                try {
+                    S.storePic("background", BitmapFactory.decodeStream(cr.openInputStream(uri)));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -942,16 +1021,17 @@ class HeyWebChrome extends WebChromeClient {
 
             int webi = Main.pages.indexOf(v);
             Main.multitext.get(webi).setText(title);
+
+            if (!S.get("pagecolor", true)) return;
             Main.multibottom.set(webi, 0x01000000);
-            if (S.get("pagecolor", true))
-                v.loadUrl("javascript:(function(){" +
-                          "try{" +
-                          "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
-                          "}catch(e){" +
-                          "Context.onReceivedThemeColor(\"\"," + webi + ");" +
-                          "}" +
-                          "})()");
-            v.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='https://cdn.bootcss.com/eruda/1.2.6/eruda.min.js'; document.body.appendChild(script);})()");
+            v.loadUrl("javascript:(function(){" +
+                      "try{" +
+                      "Context.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + webi + ");" +
+                      "}catch(e){" +
+                      "Context.onReceivedThemeColor(\"\"," + webi + ");" +
+                      "}" +
+                      "})()");
+            //v.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='https://cdn.bootcss.com/eruda/1.2.6/eruda.min.js'; document.body.appendChild(script);})()");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1024,6 +1104,5 @@ class HeyWebChrome extends WebChromeClient {
         Main.me.openFileChooserImplForAndroid5(uploadMsg);
         return true;
     }
-
 
 }

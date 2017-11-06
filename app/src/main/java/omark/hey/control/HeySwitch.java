@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.graphics.Xfermode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.PorterDuff;
+import android.graphics.RectF;
 
 public class HeySwitch extends CheckBox {
     float fx = 0, fy = 0;
@@ -28,7 +29,7 @@ public class HeySwitch extends CheckBox {
         super(context, attr);
         init(context);
     } public void init(Context c) {
-        setBackground(null);
+        setBackgroundDrawable(null);
         //w = (int)dip2px(c, 40);
         //h = (int)dip2px(c, 16);
     }
@@ -68,20 +69,25 @@ public class HeySwitch extends CheckBox {
         paint.setAntiAlias(true);
         paint.setColor(color);
      
+        RectF[] r = {
+            new RectF(0, 0, h, h),
+            new RectF(w - h, 0, w, h)
+        };
+        
         //画外部
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(2);
-        canvas.drawArc(0, 0, h, h, 90, 180, false, paint);
-        canvas.drawArc(w - h, 0, w, h, -90, 180, false, paint);
+        canvas.drawArc(r[0], 90, 180, false, paint);
+        canvas.drawArc(r[1], -90, 180, false, paint);
         canvas.drawLine(h / 2, 0, w - h / 2, 0, paint);
         canvas.drawLine(h / 2, h, w - h / 2, h, paint);
 
         //画内部
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(blendColor(color, Color.TRANSPARENT, fx + fy));
-        canvas.drawArc(0, 0, h, h, 90, 180, false, paint);
-        canvas.drawArc(w - h, 0, w, h, -90, 180, false, paint);
-        canvas.drawRect(h / 2, 0 , w - h / 2 , h, paint);
+        canvas.drawArc(r[0], 90, 180, false, paint);
+        canvas.drawArc(r[1], -90, 180, false, paint);
+        canvas.drawRect(h / 2, 0, w - h / 2, h, paint);
 
         //画状态球
         paint.setStyle(Paint.Style.FILL);

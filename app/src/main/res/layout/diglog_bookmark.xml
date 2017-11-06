@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
+	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
     android:padding="5dp">
@@ -14,7 +14,7 @@
 	<EditText
         android:id="@+id/diglog_bookmark_1"
 		android:layout_height="wrap_content"
-		android:layout_width="match_parent"/>
+		android:layout_width="fill_parent"/>
 
 	<TextView
 		android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
 	<EditText
         android:id="@+id/diglog_bookmark_2"
 		android:layout_height="wrap_content"
-		android:layout_width="match_parent"/>
+		android:layout_width="fill_parent"/>
 
 </LinearLayout>
 

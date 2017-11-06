@@ -35,7 +35,7 @@ public class FastBlur {
             bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);  
 
 
-        if (radius < 1) return (null);  
+        if (radius < 1) return (null);
 
 
         int w = bitmap.getWidth();

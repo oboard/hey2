@@ -32,9 +32,9 @@ public class ScrollImage extends ImageView {
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                float offsetx = viewGroup.getScrollX() + lastX - x;
+                //float offsetx = viewGroup.getScrollX() + lastX - x;
                 float offsety = viewGroup.getScrollY() + lastY - y;
-                if (Math.abs(offsetx) < 50 && Math.abs(offsety) > 20) {
+                if (Math.abs(offsety) > 20) {
                     getParent().requestDisallowInterceptTouchEvent(true);//通知父控件勿拦截本控件touch事件
                     float max = dip2px(mContext, viewGroup.getHeight() / 1.5f);
                     if (offsety > max)
@@ -53,8 +53,10 @@ public class ScrollImage extends ImageView {
                 break;
             case MotionEvent.ACTION_UP:
                 if (Math.abs(viewGroup.getScrollY()) > viewGroup.getHeight() / 2) {
-                    Main.me.removePage(Main.multiimage.indexOf(this));
+                    int i = Main.multiimage.indexOf(this);
+                    Main.me.removePage(i);
                     Main.me.freshMulti();
+                    Main.me.aniMulti(i);
                 } else if (Math.abs(viewGroup.getScrollY()) > dip2px(mContext, 20)) {
                     scroller.abortAnimation();
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
