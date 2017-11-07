@@ -182,7 +182,17 @@
 
 				</LinearLayout>
 
+                <TextView
+                    android:id="@+id/main_manager_back"
+                    android:gravity="center"
+                    android:textSize="24sp"
+                    android:layout_height="48dp"
+                    android:layout_width="48dp"
+                    android:clickable="true"
+					android:onClick="onManagerBackClick"/>
+
 				<EditText
+                    android:layout_marginLeft="48dp"
 					android:padding="5dp"
 					android:layout_height="48dp"
 					android:layout_width="fill_parent"
@@ -242,16 +252,6 @@
 					</LinearLayout>
 
 				</FrameLayout>
-
-				<TextView
-					android:id="@+id/main_manager_back"
-					android:gravity="center"
-					android:textSize="24sp"
-					android:layout_height="48dp"
-					android:layout_width="48dp"
-					android:layout_alignParentBottom="true"
-                    android:clickable="true"
-					android:onClick="onManagerBackClick"/>
 
 			</RelativeLayout>
 

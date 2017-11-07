@@ -94,9 +94,9 @@ public class Main extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
+
         S.init(this, "main");
-        
+
         if (S.get("first", true)) {
             S.put("first", false)
                 .put("home", HeyHelper.DEFAULT_HOME)
@@ -144,7 +144,7 @@ public class Main extends Activity {
         clipboard = new HeyClipboard(this);
         bookmark = new HeyBookmark();
         history = new HeyHistory();
-        
+
         menu.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, final View v, final int i, long l) {
@@ -394,7 +394,7 @@ public class Main extends Activity {
                             S.put("search", su[which])
                                 .put("searchindex", which)
                                 .ok();
-                                
+
                             dialog.dismiss();
                         } 
                     }).show();
@@ -476,7 +476,10 @@ public class Main extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (pages.size() == 0) web = addPage(""); 
+        if (pages.size() == 0) {
+            web = addPage("");
+            dock.setVisibility(View.VISIBLE);
+        }
         if (multi_scroll_box.getVisibility() == View.VISIBLE) {
             onDockClick(null);
         } else if (manager.getVisibility() == View.VISIBLE) {
@@ -519,7 +522,7 @@ public class Main extends Activity {
         else
             progressbar.setProgress(web.getProgress());
         menu.setAdapter(menus.get(webindex).getAdapter());
-        
+
         dock.setText(web.getTitle());
         onDockClick(null);
     } public void onDockClick(View v) {
@@ -571,7 +574,7 @@ public class Main extends Activity {
             multi_box.setVisibility(View.GONE);
 
             if (S.get("pagecolor", true))
-            onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+                onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
         } else {
             AnimationSet aniA = new AnimationSet(true);
             aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
@@ -632,7 +635,7 @@ public class Main extends Activity {
                 public void onAnimationEnd(Animation ani) {
                     manager.setVisibility(View.GONE);
                     if (S.get("pagecolor", true))
-                    onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+                        onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }
             });
 
@@ -700,7 +703,7 @@ public class Main extends Activity {
         multi_box.setVisibility(View.GONE);
 
         webindex = pages.size() - 1;
-        
+
         menus.add(new HeyMenu(menu));
         menu.setAdapter(menus.get(webindex).getAdapter());
 
@@ -756,6 +759,7 @@ public class Main extends Activity {
         multitop = new ArrayList<Drawable>();
         multibottom = new ArrayList<Integer>();
         multitext = new ArrayList<TextView>();
+        menus = new ArrayList<HeyMenu>();
         multi_scroll.removeAllViews();
         addMulti();
         webindex = - 1;
@@ -777,6 +781,7 @@ public class Main extends Activity {
         multiimages.remove(index);
         multibottom.remove(index);
         multitop.remove(index);
+        menus.remove(index);
 
         if (pages.size() <= 1) return;
 
@@ -842,7 +847,7 @@ public class Main extends Activity {
         }
         super.onDestroy();
     }
-    
+
     public Drawable getHeyBackground() {
         Drawable d = new ColorDrawable(S.getColor(R.color.colorPrimary));
         if (S.get("background", 0) == 1) d = new BitmapDrawable(S.getStorePic("background"));

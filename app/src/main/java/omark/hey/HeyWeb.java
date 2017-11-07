@@ -140,7 +140,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
                     int hm = S.get("hm", 0) - 1;
                     long time = System.currentTimeMillis();
-                    if (url.equals("about:blank") || v.getTitle().equals("about:blank")) return;
+                    if (url.equals("about:blank") || v.getTitle().equals("about:blank")) {
+                        loadUrl("javascript:document.title = 'Hey'");
+                        return;
+                    }
                     if (url.equals(S.get("h" + hm, "")) && v.getTitle().equals(S.get("hn" + hm, ""))) return;
                     //历史记录
                     if (v.getTitle().equals(""))
@@ -232,7 +235,12 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     }
 
     public static boolean isUri(String url) {
-        return (url.startsWith("http")) || url.startsWith("file") || (url.startsWith("content") || (url.startsWith("javascript")));
+        return url.startsWith("http:") ||
+        url.startsWith("https:") ||
+        url.startsWith("file:") ||
+        url.startsWith("content:") ||
+        url.startsWith("javascript:") ||
+        url.startsWith("about:");
     }
 
     @Override public boolean onLongClick(final View v) {  

@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
 	android:versionCode="32"
-	android:versionName="2.0 beta4">
+	android:versionName="2.0 beta5">
 
 	<uses-sdk
 		android:minSdkVersion="7"
@@ -34,16 +34,21 @@
 		android:name="android.permission.SET_PREFERRED_APPLICATIONS"/>
 
 	<application
+		android:name=".App"
 		android:allowBackup="true"
 		android:label="@string/name"
-		android:resizeableActivity="true">
+		android:resizeableActivity="true"
+		android:hardwareAccelerated="true">
+
+		<activity
+			android:name=".Crash"
+			android:process=":Crash"/>
 
 		<activity
 			android:name=".Main"
 			android:launchMode="singleTask"
 			android:label="@string/name"
 			android:theme="@style/AppTheme"
-			android:hardwareAccelerated="true"
 			android:alwaysRetainTaskState="true"
 			android:supportsPictureInPicture="true"
 			android:windowSoftInputMode="adjustPan"

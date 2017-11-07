@@ -9,7 +9,7 @@ android {
         minSdkVersion 7
         targetSdkVersion 22
         versionCode 32
-        versionName "2.0 beta4"
+        versionName "2.0 beta5"
     }
 
     buildTypes {
