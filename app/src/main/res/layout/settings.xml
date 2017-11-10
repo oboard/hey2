@@ -27,6 +27,13 @@
         android:layout_width="fill_parent"
         android:tag="@string/lang22"/>
     
+    <omark.hey.control.HeySetting
+        android:id="@+id/setting_5"
+        android:onClick="onSettingClick"
+        android:layout_height="48dp"
+        android:layout_width="fill_parent"
+        android:tag="@string/lang12"/>
+    
 	<omark.hey.control.HeySetting
 		android:id="@+id/setting_2"
         android:onClick="onSettingClick"

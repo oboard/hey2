@@ -10,6 +10,7 @@ import java.util.Map;
 import android.widget.RelativeLayout;
 import android.graphics.drawable.ColorDrawable;
 import android.widget.GridView;
+import android.webkit.JavascriptInterface;
 
 public class HeyMenu {
     // 图片封装为一个数组
@@ -39,6 +40,9 @@ public class HeyMenu {
             S.getString(R.string.lang37),
             S.getString(R.string.lang27),
             S.getString(R.string.lang17),
+            S.getString(R.string.lang62),
+            S.getString(R.string.lang59),
+            S.getString(R.string.lang60),
             S.getString(R.string.lang36)
         };
 
@@ -48,6 +52,9 @@ public class HeyMenu {
             0xE80D,
             0xE88A,
             0xE867,
+            0xE06B,
+            0xE3E9,
+            0xE3A8,
             0xE86F
         };
 
@@ -79,21 +86,26 @@ public class HeyMenu {
                      }*/
                 }
             });
-            
+
     }
-    
+
     public SimpleAdapter getAdapter() {
         return sa;
     }
 
+    @JavascriptInterface
     public boolean getState(int index) {
         return data_list.get(index).get("back");
-    } public void setState(int index, boolean o) {
+    }
+
+    @JavascriptInterface
+    public void setState(int index, boolean o) {
         data_list.get(index).replace("back", o);
         sa.notifyDataSetChanged();
     }
-    
-    public void addItem(int icon, String text, String code) {
+
+    @JavascriptInterface
+    public void add(int icon, String text, String code) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("text", text);
         map.put("icon", icon);
@@ -110,6 +122,13 @@ public class HeyMenu {
             map.put("text", text[i]);
             map.put("icon", icon[i]);
             map.put("back", false);
+            try {
+                if (icon[i] == 0xE3E9)
+                    map.put("back", Main.pages.get(Main.menus.indexOf(this)).getSettings().getDomStorageEnabled());
+                else if (icon[i] == 0xE3A8)
+                    map.put("back", Main.night.getTag());
+            } catch (Exception e) {
+            }
             data_code.add("");
             date_list.add(map);
         }

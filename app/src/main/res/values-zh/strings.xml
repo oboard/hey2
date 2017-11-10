@@ -22,14 +22,12 @@
     <string name="lang17">添加书签</string>
     <string name="lang18">刷新</string>
     <string name="lang19">翻译</string>
-    
     <string name="lang20">已加入书签</string>
-    <string name="lang21">操作失败(＠_＠;)</string>
+    <string name="lang21">失败</string>
     <string name="lang22">背景</string>
     <string name="lang23">透明</string>
     <string name="lang24">平面</string>
-    <string name="lang25">网页沉浸</string>
-    
+    <string name="lang25">网页沉浸</string> 
     <string name="lang26">设置</string>
     <string name="lang27">主页</string>
     <string name="lang28">定制</string>
@@ -39,15 +37,11 @@
     <string name="lang32">其他</string>
     <string name="lang33">关于</string>
     <string name="lang34">书签</string>
-    
     <string name="lang35">底栏</string>
     <string name="lang36">开发者</string>
-    
     <string name="lang37">分享</string>
-    
     <string name="lang38">历史记录</string>
     <string name="lang39">清空历史记录</string>
-    
     <string name="lang40">打开图片</string>
     <string name="lang41">保存图片</string>
     <string name="lang42">新页面"</string>
@@ -58,16 +52,18 @@
     <string name="lang47">打开页面"</string>
     <string name="lang48">显示搜索框</string>
     <string name="lang49">隐藏搜索框</string>
-    
     <string name="lang50">新脚本</string>
     <string name="lang51">获得脚本</string>
-    
     <string name="lang52">新页面打开</string>
     <string name="lang53">复制链接</string>
     <string name="lang54">后台打开</string>
-    
     <string name="lang55">下载</string>
     <string name="lang56">标题</string>
     <string name="lang57">链接</string>
+    <string name="lang58">无标题</string>
+    <string name="lang59">真空模式</string>
+    <string name="lang60">夜灯</string>
+    <string name="lang61">分屏</string>
+    <string name="lang62">悬浮窗</string>
     
 </resources>

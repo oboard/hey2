@@ -6,23 +6,22 @@ import android.os.Looper;
 import android.webkit.JavascriptInterface;
 
 public class HeyApi {
-
+ 
+    public int mIndex = 0;
+    public HeyApi(int index) {
+        mIndex = index;
+    }
+    
     @JavascriptInterface
     public void onReceivedThemeColor(final String color, final int webi) {   
         
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
-                    /*if (S.get("pagecolor", true) && webi == Main.webindex) {
-                     Bitmap b = Main.me.getWebDrawing();
-                     Main.multitop.set(webi - 1, new BitmapDrawable(Bitmap.createBitmap(b, 0, 0, b.getWidth(), 1)));
-                     }*/
-                    //if (Main.multibottom.get(webi) != Color.TRANSPARENT) {
                     if (!color.equals("")) {
                         Main.multibottom.set(webi, Color.parseColor(color));
                     } else {
                         Main.multibottom.set(webi, Color.TRANSPARENT);
                     }
-                    //}
                     if (webi == Main.webindex) Main.onChangeBackground(Main.multibottom.get(webi), Main.multitop.get(webi));
                 }
             });
@@ -51,8 +50,8 @@ public class HeyApi {
     
     @JavascriptInterface
     public void set(String name, String value) {
-        S.put("h5_" + name, value);
-        S.ok();
+        S.put("h5_" + name, value)
+        .ok();
     }
     
     @JavascriptInterface
@@ -129,9 +128,9 @@ public class HeyApi {
         
         return S.get("h5_" + name, def);
     }
-
+    
     @JavascriptInterface
-    public void cmd(String str) {
-
+    public String cmd(String str) {
+        return str;
     }
 }

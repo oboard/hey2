@@ -25,15 +25,10 @@ import android.view.DragEvent;
 import android.content.ClipData;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
-    public static String htmlSource;
-    public static ArrayList<String> images = new ArrayList<String>();
 
-    // 获取 img 标签正则
-    private static final String IMAGE_URL_TAG = "<img.*src=(.*?)[^>]*?>";
-    // 获取 src 路径的正则
-    private static final String IMAGE_URL_CONTENT = "http:\"?(.*?)(\"|>|\\s+)";
+    public HeyApi mApi;
 
-    //private OnScrollChangedCallback mOnScrollChangedCallback;
+    private OnScrollChangedCallback mOnScrollChangedCallback;
 
     public HeyWeb(final Context context) {
         super(context);
@@ -103,8 +98,9 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         }
 
         //HeyApi
-        addJavascriptInterface(new HeyApi(), "Context");
-        addJavascriptInterface(new HeyApi(), "H5EXT");
+        mApi = new HeyApi(Main.pages.indexOf(this));
+        addJavascriptInterface(mApi, "CONTEXT");
+        addJavascriptInterface(mApi, "H5EXT");
 
         //设置WebClient
         setWebViewClient(new WebViewClient() {
@@ -124,13 +120,17 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             getContext().startActivity(intent);
                         } catch (Exception e) {}
-                        Toast.makeText(getContext(), url, Toast.LENGTH_SHORT);
-                    } return super.shouldOverrideUrlLoading(view, url);   
+                        return true;
+                    } return super.shouldOverrideUrlLoading(view, url);
                 }
 
                 public void onPageStarted(WebView v, String url, Bitmap favicon) {
                     super.onPageStarted(v, url, favicon);
+                    try {
                     Main.menus.get(Main.pages.indexOf(v)).setState(5, false);
+                    } catch (Exception e) {
+                        //有的时候啊，找不到"对象"
+                    }
                 }
 
                 public void onPageFinished(WebView v, String url) {
@@ -138,20 +138,20 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
                     if (!getSettings().getLoadsImagesAutomatically()) getSettings().setLoadsImagesAutomatically(true);
 
-                    int hm = S.get("hm", 0) - 1;
-                    long time = System.currentTimeMillis();
-                    if (url.equals("about:blank") || v.getTitle().equals("about:blank")) {
-                        loadUrl("javascript:document.title = 'Hey'");
-                        return;
+                    if (getSettings().getDomStorageEnabled()) {
+                        int hm = S.get("hm", 0) - 1;
+                        long time = System.currentTimeMillis();
+                        if (url.equals("about:blank") || v.getTitle().equals("about:blank")) {
+                            loadUrl("javascript:document.title = 'Hey'");
+                            return;
+                        }
+                        if (url.equals(S.get("h" + hm, "")) && v.getTitle().equals(S.get("hn" + hm, ""))) return;
+                        String t = S.getString(R.string.lang58);
+                        //历史记录
+                        if (!v.getTitle().equals(""))
+                            t =  v.getTitle();
+                        S.addIndexX("hm", new String[] {"h", "hn", "ht"}, new String[] {url, t, "" + time});
                     }
-                    if (url.equals(S.get("h" + hm, "")) && v.getTitle().equals(S.get("hn" + hm, ""))) return;
-                    //历史记录
-                    if (v.getTitle().equals(""))
-                        S.addIndex("hnm" , "hn", S.getString(R.string.lang56));
-                    else
-                        S.addIndex("hnm" , "hn", v.getTitle());
-                    S.addIndex("hm" , "h", url);
-                    S.addIndex("htm" , "ht", "" + time);
                 }
 
                 public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
@@ -179,7 +179,8 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                     Main.me.startActivity(i);
                 }
             });
-            
+
+        //设置拖拽
         setOnDragListener(new View.OnDragListener() {
                 @Override
                 public boolean onDrag(View view, DragEvent dragEvent) {
@@ -193,57 +194,38 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
     }
 
-    /*
-     @Override protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
-     super.onScrollChanged(l, t, oldl, oldt);
-     //普通webview
-     if (mOnScrollChangedCallback != null) mOnScrollChangedCallback.onScroll(this, l, t);
-     } public OnScrollChangedCallback getOnScrollChangedCallback() {
-     return mOnScrollChangedCallback;
-     } public void setOnScrollChangedCallback(final OnScrollChangedCallback onScrollChangedCallback) {
-     mOnScrollChangedCallback = onScrollChangedCallback;
-     } public interface OnScrollChangedCallback {
-     void onScroll(WebView v, int l, int t);
-     }
-     */
 
-
-    /***
-     * 获取页面所有图片对应的地址对象，
-     * 例如 <img src="http://sc1.hao123img.com/data/f44d0aab7bc35b8767de3c48706d429e" />
-     * @param HTML WebView 加载的 HTML 文本
-     * @return
-     */
-    private ArrayList<String> getAllImageUrlFromHtml(String html) {
-        Matcher matcher = Pattern.compile(IMAGE_URL_TAG).matcher(html);
-        ArrayList<String> listImgUrl = new ArrayList<String>();
-        while (matcher.find()) {
-            listImgUrl.add(matcher.group());
-        }
-        //从图片对应的地址对象中解析出 src 标签对应的内容
-        getAllImageUrlFormSrcObject(listImgUrl);
-        return listImgUrl;
-    } private ArrayList<String> getAllImageUrlFormSrcObject(ArrayList<String> listImageUrl) {
-        ArrayList<String> listImgSrc = new ArrayList<String>();
-        for (String image : listImageUrl) {
-            Matcher matcher = Pattern.compile(IMAGE_URL_CONTENT).matcher(image);
-            while (matcher.find()) {
-                listImgSrc.add(matcher.group().substring(0, matcher.group().length() - 1));
-            }
-        }
-        return listImgSrc;
+    @Override
+    protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        //普通webview
+        if (mOnScrollChangedCallback != null) mOnScrollChangedCallback.onScroll(this, l, t);
     }
+
+    public OnScrollChangedCallback getOnScrollChangedCallback() {
+        return mOnScrollChangedCallback;
+    }
+
+    public void setOnScrollChangedCallback(final OnScrollChangedCallback onScrollChangedCallback) {
+        mOnScrollChangedCallback = onScrollChangedCallback;
+    }
+
+    public interface OnScrollChangedCallback {
+        void onScroll(WebView v, int l, int t);
+    }
+
 
     public static boolean isUri(String url) {
         return url.startsWith("http:") ||
-        url.startsWith("https:") ||
-        url.startsWith("file:") ||
-        url.startsWith("content:") ||
-        url.startsWith("javascript:") ||
-        url.startsWith("about:");
+            url.startsWith("https:") ||
+            url.startsWith("file:") ||
+            url.startsWith("content:") ||
+            url.startsWith("javascript:") ||
+            url.startsWith("about:");
     }
 
-    @Override public boolean onLongClick(final View v) {  
+    @Override
+    public boolean onLongClick(final View v) {  
         final HitTestResult result = ((WebView)v).getHitTestResult();  
         if (null == result) return false;  
 
@@ -281,17 +263,25 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         //绑定菜单项的点击事件
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 public boolean onMenuItemClick(MenuItem i) {
-                    if (i.getTitle().equals(getContext().getString(R.string.lang53)))  //复制链接
+                    if (i.getTitle().equals(S.getString(R.string.lang53)))
+                    //复制链接
                         Main.clipboard.set(result.getExtra());
-                    else if (i.getTitle().equals(getContext().getString(R.string.lang52))) {
+                    else if (i.getTitle().equals(S.getString(R.string.lang52))) {
                         //新页面打开
                         Main.me.onDockClick(v);
                         Main.web = Main.me.addPage(result.getExtra());
-                    } else if (i.getTitle().equals(getContext().getString(R.string.lang54))) {
+                    } else if (i.getTitle().equals(S.getString(R.string.lang54))) {
                         //后台打开
                         Main.me.addPageB(result.getExtra());
-                    } else if (i.getTitle().equals(getContext().getString(R.string.lang40))) 
+                    } else if (i.getTitle().equals(S.getString(R.string.lang40)))
+                    //Open
                         loadUrl(result.getExtra());
+                    else if (i.getTitle().equals(S.getString(R.string.lang41))) {
+                        //Save
+                        Intent io = new Intent(Intent.ACTION_VIEW);
+                        io.setData(Uri.parse(result.getExtra()));
+                        Main.me.startActivity(io);
+                    }
 
                     return true;
                 }

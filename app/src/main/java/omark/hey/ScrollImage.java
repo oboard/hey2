@@ -5,6 +5,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Scroller;
+import android.view.animation.DecelerateInterpolator;
 
 public class ScrollImage extends ImageView {
 
@@ -15,7 +16,7 @@ public class ScrollImage extends ImageView {
     Context mContext;
     public ScrollImage(Context context, AttributeSet attrs) {
         super(context, attrs);
-        scroller = new Scroller(context);
+        scroller = new Scroller(context, new DecelerateInterpolator());
         mContext = context;
     }
 
@@ -65,7 +66,6 @@ public class ScrollImage extends ImageView {
                     performClick();
                 }
                 viewGroup.setAlpha(1);
-                Main.multi_text.setText("" + Main.pages.size());
                 break;
             case MotionEvent.ACTION_CANCEL:
                 viewGroup.setAlpha(1);

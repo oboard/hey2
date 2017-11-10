@@ -81,6 +81,7 @@ public class HeySwitch extends CheckBox {
         canvas.drawArc(r[1], -90, 180, false, paint);
         canvas.drawLine(h / 2, 0, w - h / 2, 0, paint);
         canvas.drawLine(h / 2, h, w - h / 2, h, paint);
+        
 
         //画内部
         paint.setStyle(Paint.Style.FILL);

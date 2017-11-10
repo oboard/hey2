@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hey Browser</string>
+    <string name="name2">Hey Browser</string>
 
     <string name="lang1">Others</string>
     <string name="lang2">Plug-in</string>
@@ -66,8 +66,15 @@
     <string name="lang53">Copy Link</string>
     <string name="lang54">Open in Background</string>
 
-    <string name="lang55">Diwnloads</string>
+    <string name="lang55">Download</string>
+    <string name="lang56">Title</string>
+    <string name="lang57">Link</string>
+    <string name="lang58">No Title</string>
+    <string name="lang59">Vacuum Mode</string>
+    <string name="lang60">Night Light</string>
+    <string name="lang61">Multi Screen</string>
+    <string name="lang62">Floating Windows</string>
 
 </resources>
 
-<!--Raku 英语 2017.10.29-->
+<!--Raku 英语 2017.11.08-->

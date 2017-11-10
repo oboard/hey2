@@ -23,7 +23,8 @@ public final class R {
         public static final int colorPrimaryDark=0x7f060000;
     }
     public static final class drawable {
-        public static final int shadow=0x7f020000;
+        public static final int icon=0x7f020000;
+        public static final int shadow=0x7f020001;
     }
     public static final class id {
         public static final int bookmark_item_title=0x7f0a0000;
@@ -37,45 +38,55 @@ public final class R {
         public static final int main_back_icon=0x7f0a000c;
         public static final int main_background=0x7f0a0009;
         public static final int main_blacker=0x7f0a000a;
+        public static final int main_button_left=0x7f0a0014;
+        public static final int main_button_number=0x7f0a0016;
+        public static final int main_button_right=0x7f0a0015;
         public static final int main_desktop=0x7f0a0010;
         public static final int main_dock=0x7f0a0013;
         public static final int main_forward_icon=0x7f0a000d;
         public static final int main_ground=0x7f0a000e;
-        public static final int main_manager=0x7f0a0017;
-        public static final int main_manager_back=0x7f0a001d;
-        public static final int main_manager_bookmark_list=0x7f0a0021;
-        public static final int main_manager_ground=0x7f0a0018;
-        public static final int main_manager_history_list=0x7f0a0023;
-        public static final int main_manager_p1=0x7f0a0020;
-        public static final int main_manager_p2=0x7f0a0022;
-        public static final int main_manager_p3=0x7f0a0024;
-        public static final int main_manager_t=0x7f0a0019;
-        public static final int main_manager_t0=0x7f0a001a;
-        public static final int main_manager_t1=0x7f0a001b;
-        public static final int main_manager_t2=0x7f0a001c;
-        public static final int main_manager_tab=0x7f0a001f;
+        public static final int main_manager=0x7f0a001a;
+        public static final int main_manager_back=0x7f0a0022;
+        public static final int main_manager_bookmark_list=0x7f0a0025;
+        public static final int main_manager_ground=0x7f0a001b;
+        public static final int main_manager_history_list=0x7f0a0027;
+        public static final int main_manager_p1=0x7f0a0024;
+        public static final int main_manager_p2=0x7f0a0026;
+        public static final int main_manager_p3=0x7f0a0028;
+        public static final int main_manager_t=0x7f0a001c;
+        public static final int main_manager_t0=0x7f0a001d;
+        public static final int main_manager_t1=0x7f0a001e;
+        public static final int main_manager_t2=0x7f0a001f;
+        public static final int main_manager_tab=0x7f0a0023;
+        public static final int main_manager_th=0x7f0a0020;
         public static final int main_menu=0x7f0a000f;
-        public static final int main_multi_box=0x7f0a0015;
+        public static final int main_multi_box=0x7f0a0018;
         public static final int main_multi_scroll=0x7f0a0012;
         public static final int main_multi_scroll_box=0x7f0a0011;
-        public static final int main_multi_text=0x7f0a0016;
+        public static final int main_multi_text=0x7f0a0019;
+        public static final int main_night=0x7f0a0029;
         public static final int main_popn=0x7f0a000b;
-        public static final int main_progress=0x7f0a0014;
+        public static final int main_progress=0x7f0a0017;
         public static final int main_root=0x7f0a0008;
-        public static final int main_text=0x7f0a001e;
-        public static final int menu_item_icon=0x7f0a0026;
-        public static final int menu_item_on=0x7f0a0025;
-        public static final int menu_item_text=0x7f0a0027;
-        public static final int multi_image0=0x7f0a002a;
-        public static final int multi_image1=0x7f0a002c;
-        public static final int multi_root=0x7f0a0028;
-        public static final int multi_text0=0x7f0a0029;
-        public static final int multi_text1=0x7f0a002b;
-        public static final int setting_1=0x7f0a002e;
-        public static final int setting_2=0x7f0a0031;
-        public static final int setting_3=0x7f0a002f;
-        public static final int setting_4=0x7f0a0030;
-        public static final int settings_root=0x7f0a002d;
+        public static final int main_text=0x7f0a0021;
+        public static final int menu_item_icon=0x7f0a002b;
+        public static final int menu_item_on=0x7f0a002a;
+        public static final int menu_item_text=0x7f0a002c;
+        public static final int multi_image0=0x7f0a0031;
+        public static final int multi_image1=0x7f0a002f;
+        public static final int multi_root=0x7f0a002d;
+        public static final int multi_text0=0x7f0a0030;
+        public static final int multi_text1=0x7f0a002e;
+        public static final int setting_1=0x7f0a0033;
+        public static final int setting_2=0x7f0a0037;
+        public static final int setting_3=0x7f0a0034;
+        public static final int setting_4=0x7f0a0035;
+        public static final int setting_5=0x7f0a0036;
+        public static final int settings_root=0x7f0a0032;
+        public static final int window_bar=0x7f0a0039;
+        public static final int window_close=0x7f0a003a;
+        public static final int window_frame=0x7f0a003b;
+        public static final int window_root=0x7f0a0038;
     }
     public static final class layout {
         public static final int bookmark_item=0x7f030000;
@@ -86,6 +97,7 @@ public final class R {
         public static final int menu_item=0x7f030005;
         public static final int multi=0x7f030006;
         public static final int settings=0x7f030007;
+        public static final int window=0x7f030008;
     }
     public static final class menu {
         public static final int link=0x7f090000;
@@ -146,11 +158,17 @@ public final class R {
         public static final int lang55=0x7f070038;
         public static final int lang56=0x7f070039;
         public static final int lang57=0x7f07003a;
+        public static final int lang58=0x7f07003b;
+        public static final int lang59=0x7f07003c;
         public static final int lang6=0x7f070007;
+        public static final int lang60=0x7f07003d;
+        public static final int lang61=0x7f07003e;
+        public static final int lang62=0x7f07003f;
         public static final int lang7=0x7f070008;
         public static final int lang8=0x7f070009;
         public static final int lang9=0x7f07000a;
         public static final int name=0x7f070000;
+        public static final int name2=0x7f070040;
     }
     public static final class style {
         public static final int AppTheme=0x7f080000;

@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
 	android:versionCode="32"
-	android:versionName="2.0 beta5">
+	android:versionName="U-2.0 beta6">
 
 	<uses-sdk
 		android:minSdkVersion="7"
@@ -16,16 +16,19 @@
 		android:name="android.permission.SET_ORIENTATION"/>
 
 	<uses-permission
+		android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+	<uses-permission
 		android:name="android.permission.CHANGE_CONFIGURATION"/>
 
 	<uses-permission
 		android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
 	<uses-permission
-		android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+		android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 	<uses-permission
-		android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+		android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 	<uses-permission
 		android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
@@ -37,6 +40,7 @@
 		android:name=".App"
 		android:allowBackup="true"
 		android:label="@string/name"
+		android:icon="@drawable/icon"
 		android:resizeableActivity="true"
 		android:hardwareAccelerated="true">
 
@@ -46,13 +50,14 @@
 
 		<activity
 			android:name=".Main"
-			android:launchMode="singleTask"
-			android:label="@string/name"
-			android:theme="@style/AppTheme"
-			android:alwaysRetainTaskState="true"
-			android:supportsPictureInPicture="true"
+			android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
 			android:windowSoftInputMode="adjustPan"
-			android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard">
+			android:supportsPictureInPicture="true"
+			android:alwaysRetainTaskState="true"
+			android:launchMode="singleTask"
+			android:theme="@style/AppTheme"
+			android:icon="@drawable/icon"
+			android:label="@string/name">
 
 			<intent-filter>
 

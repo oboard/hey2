@@ -81,6 +81,15 @@ public class S {
 
         ok();
         return new S();
+    } public static S addIndexX(String max_name, String[] name, String[] value) {
+        final int n = get(max_name, 0);
+        for (int i = 0; i < name.length; i++) {
+            put(name[i] + n, value[i]);
+        }
+        put(max_name, n + 1);
+
+        ok();
+        return new S();
     } public static S delIndex(String max_name, String name, int index) {
         try {
             final int n = get(max_name, 0);
@@ -100,6 +109,14 @@ public class S {
         } catch (Exception e) {
             Toast.makeText(c, "EXT.ERROR:" + e, Toast.LENGTH_LONG);
         }
+        return new S();
+    } public static S delIndexX(String max_name, String[] name, int index) {
+        final int n = get(max_name, 0);
+        for (int i = 0; i < name.length; i++) {
+            delIndex(max_name, name[i], index);
+        }
+        put(max_name, n - 1);
+        ok();
         return new S();
     }
 

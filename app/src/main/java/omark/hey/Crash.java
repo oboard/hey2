@@ -45,6 +45,7 @@ public class Crash extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.crash);
+        setTitle("Error");
         TextView message = (TextView) findViewById(R.id.crash_message);
 
         Throwable e = (Throwable) getIntent().getSerializableExtra(EXTRA_E);
@@ -79,6 +80,7 @@ public class Crash extends Activity {
                 @Override
                 public boolean onLongClick(View view) {
                          (new HeyClipboard(Crash.this)).set(msg);
+                         Toast.makeText(Crash.this, "copy~", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
