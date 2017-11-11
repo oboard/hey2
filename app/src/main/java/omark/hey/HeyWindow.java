@@ -57,7 +57,7 @@ public class HeyWindow extends LinearLayout {
         //总是出现在应用程序窗口之上。
         lp.type = WindowManager.LayoutParams.TYPE_PHONE;
 
-        lp.flags = WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
         //悬浮窗默认显示的位置
         lp.gravity = Gravity.START | Gravity.TOP;
@@ -71,7 +71,6 @@ public class HeyWindow extends LinearLayout {
         lp.y = (sh + view.getLayoutParams().height) / 2;
 
         lp.format = PixelFormat.RGBA_8888;
-        setBackgroundDrawable(new BitmapDrawable());
         mWindowManager.addView(this, lp);
     }
 
@@ -82,14 +81,14 @@ public class HeyWindow extends LinearLayout {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             //获得焦点
-                            new Handler().post(new Runnable() {
+                            /*new Handler().post(new Runnable() {
                                     public void run() {
                                         if (root.getParent() != null) {
                                             lp.flags = WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
                                             mWindowManager.updateViewLayout(HeyWindow.this, lp);
                                         }
                                     }
-                                });
+                                });*/
 
                             if (!initViewPlace) {
                                 initViewPlace = true;
@@ -107,17 +106,6 @@ public class HeyWindow extends LinearLayout {
                             x = event.getRawX();
                             y = event.getRawY();
                             updateViewPosition();
-                            break;
-                        case MotionEvent.ACTION_OUTSIDE:
-                            //失去焦点
-                            new Handler().post(new Runnable() {
-                                    public void run() {
-                                        if (root.getParent() != null) {
-                                            lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
-                                            mWindowManager.updateViewLayout(HeyWindow.this, lp);
-                                        }
-                                    }
-                                });
                             break;
                     }
                     return true;

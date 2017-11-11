@@ -44,7 +44,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -56,6 +55,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +105,7 @@ public class Main extends Activity {
                 .put("search" , HeyHelper.DEFAULT_SEARCH)
                 .put("searchindex" , 0)
                 .put("pagecolor", true)
+                .put("style", 1)
                 .ok();
 
             /*
@@ -133,6 +134,7 @@ public class Main extends Activity {
         progressbar = (HeyProgress)findViewById(R.id.main_progress);
         manager_ground = (RelativeLayout)findViewById(R.id.main_manager_ground);
         ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
+        night.setTag(false);
 
         //4.4以上透明
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -147,7 +149,7 @@ public class Main extends Activity {
         bookmark = new HeyBookmark();
         history = new HeyHistory();
         HeyWindowManager.init();
-        
+
         final AlphaAnimation alphaA = new AlphaAnimation(1, 0);
         alphaA.setDuration(320);
         alphaA.setFillAfter(true);
@@ -252,7 +254,7 @@ public class Main extends Activity {
                         case 8:
                             //开发者模式
                             if (!menus.get(webindex).getState(i)) {
-                                web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='http://eruda.liriliri.io/eruda.min.js';document.body.appendChild(script);script.onload=function(){eruda.init()};})()");
+                                web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='http://eruda.liriliri.io/eruda.min.js';document.body.appendChild(script);script.onload=function(){eruda.init();eruda.show();};})()");
                                 menus.get(webindex).setState(i, true);
                             } else {
                                 web.loadUrl("javascript:(function(){eruda.destroy()})()");
@@ -345,7 +347,7 @@ public class Main extends Activity {
                     onManagerBackClick(null);
                 }
             });
-        bookmark_list.setOnItemLongClickListener(new OnItemLongClickListener() {
+        bookmark_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView view, View v, final int index, long l) {
                     final LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
@@ -381,7 +383,7 @@ public class Main extends Activity {
                     onManagerBackClick(null);
                 }
             });
-        history_list.setOnItemLongClickListener(new OnItemLongClickListener() {
+        history_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView view, View v, final int i, long l) {
                     final int index = history.data_list.size() - i - 1;
@@ -506,7 +508,7 @@ public class Main extends Activity {
                     .setSingleChoiceItems(new String[] {
                         S.getString(R.string.lang14),
                         S.getString(R.string.lang15)
-                    }, S.get("style", 0), new DialogInterface.OnClickListener() { 
+                    }, S.get("style", 1), new DialogInterface.OnClickListener() { 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             S.put("style", which).ok();
@@ -535,6 +537,11 @@ public class Main extends Activity {
                 break;
         }
         dock.setVisibility(View.VISIBLE);
+
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)desktop.getLayoutParams();
+        lp.setMargins(0, 0, 0, (int)dip2px(Main.me, 48));
+        desktop.setLayoutParams(lp);
+        dock.getLayoutParams().height = (int)dip2px(Main.me, 48);
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
@@ -592,6 +599,10 @@ public class Main extends Activity {
         }
     };
 
+    public void onBackPressed(View v) {
+        onBackPressed();
+    }
+
     @Override
     public void onBackPressed() {
         if (pages.size() == 0) {
@@ -644,8 +655,6 @@ public class Main extends Activity {
         dock.setText(web.getTitle());
         onDockClick(null);
     } public void onDockClick(View v) {
-        multi_text.setText("" + pages.size());
-        button_number.setText(multi_text.getText());
         if (multi_scroll_box.getVisibility() == View.GONE || v != null) {
 
             Bitmap l = getWebDrawing();
@@ -853,6 +862,8 @@ public class Main extends Activity {
         aniA.setDuration(320);
         new_web.startAnimation(aniA);
 
+        multi_text.setText("" + pages.size());
+        button_number.setText(multi_text.getText());
         return new_web;
     }  public HeyWeb addPageB(String uri) {
         String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
@@ -878,6 +889,8 @@ public class Main extends Activity {
         multiimage.get(pages.size() - 1).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(pages.size() - 1), dip2px(this, 2)));
         multiimage.get(pages.size() - 1).setTag(pages.size() - 1);
 
+        multi_text.setText("" + pages.size());
+        button_number.setText(multi_text.getText());
         return new_web;
     } public void hidePage() {
         for (Object page : pages.toArray()) {
@@ -904,6 +917,8 @@ public class Main extends Activity {
         addMulti();
         webindex = - 1;
 
+        multi_text.setText("" + pages.size());
+        button_number.setText(multi_text.getText());
         onDockClick(dock);
         web = addPage("");
     } public void removePage(int index) {
@@ -922,6 +937,9 @@ public class Main extends Activity {
         multibottom.remove(index);
         multitop.remove(index);
         menus.remove(index);
+
+        multi_text.setText("" + pages.size());
+        button_number.setText(multi_text.getText());
 
         if (pages.size() <= 1) return;
 
@@ -961,14 +979,15 @@ public class Main extends Activity {
             multiimage.get(i).setTag(i);
         }
     } public void aniMulti(int fristindex) {
-        final TranslateAnimation tranA = new TranslateAnimation(0, 0, -getWindow().getDecorView().getHeight() / 4, 0);
-        tranA.setDuration(320);
+        final AnimationSet aniA = new AnimationSet(true);
+        aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
+        aniA.addAnimation(new AlphaAnimation(0f, 1f));
+        aniA.setDuration(320);
 
         for (int i = fristindex; i < pages.size(); i++) {
-            multitext.get(i).setAnimation(tranA);
-            multiimage.get(i).setAnimation(tranA);
+            ((View)multitext.get(i).getParent()).setAnimation(aniA);
         }
-        tranA.startNow();
+        aniA.startNow();
     }
 
     @Override
@@ -995,9 +1014,31 @@ public class Main extends Activity {
         return d;
     }
 
+    long timerst = 0;
+    float yy = 0;
     public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
+        final float h1 = dip2px(Main.this, 48), h2 = dip2px(Main.this, 24);
         return (new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent moe) {
+                if (moe.getAction() != MotionEvent.ACTION_DOWN) {
+                    if (Math.abs(yy - moe.getY()) > h2) {
+                        if (yy > moe.getY()) {
+                            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)desktop.getLayoutParams();
+                            lp.setMargins(0, 0, 0, (int)h2);
+                            desktop.setLayoutParams(lp);
+                            dock.getLayoutParams().height = (int)h2;
+                            if (S.get("style", 1) == 0) {
+                                button_left.setVisibility(View.GONE);
+                                button_right.setVisibility(View.INVISIBLE);
+                            }
+                        } else {
+                            if (S.get("style", 1) == 0) freshDock();
+                        }
+                        yy = moe.getY();
+                    }
+                } else {
+                    yy = moe.getY();
+                }
                 popn.setX(w.getX() + moe.getX());
                 popn.setY(w.getY() + moe.getY());
                 return false;

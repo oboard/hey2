@@ -35,7 +35,7 @@ public class ScrollImage extends ImageView {
             case MotionEvent.ACTION_MOVE:
                 //float offsetx = viewGroup.getScrollX() + lastX - x;
                 float offsety = viewGroup.getScrollY() + lastY - y;
-                if (Math.abs(offsety) > 20) {
+                if (Math.abs(offsety) > dip2px(mContext, 20)) {
                     getParent().requestDisallowInterceptTouchEvent(true);//通知父控件勿拦截本控件touch事件
                     float max = dip2px(mContext, viewGroup.getHeight() / 1.5f);
                     if (offsety > max)
@@ -43,7 +43,7 @@ public class ScrollImage extends ImageView {
                     else if (offsety < -max)
                         offsety = -max;
                     
-                    viewGroup.setAlpha(0.5f);
+                    viewGroup.setAlpha(1 - Math.abs(offsety) / max);
                     viewGroup.scrollTo(0, (int)offsety);
                     invalidate();
                 } else {
@@ -62,12 +62,9 @@ public class ScrollImage extends ImageView {
                     scroller.abortAnimation();
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
                     invalidate();
-                } else if (viewGroup.getAlpha() != 0.5f){
+                } else if (viewGroup.getAlpha() >= 0.99f){
                     performClick();
                 }
-                viewGroup.setAlpha(1);
-                break;
-            case MotionEvent.ACTION_CANCEL:
                 viewGroup.setAlpha(1);
                 break;
         }
