@@ -25,10 +25,8 @@ public class HeyWindow extends LinearLayout {
     HeyWindowManager mHeyWindowManager;
     WindowManager mWindowManager;
     Context mContext;
-    FrameLayout root;
-    TextView close;
-    LinearLayout bar;
-    FrameLayout view;
+    FrameLayout root, bar, view;
+    TextView close, back, title;
 
     float mTouchStartX, mTouchStartY, x, y;
     boolean initViewPlace = false;
@@ -39,10 +37,15 @@ public class HeyWindow extends LinearLayout {
 
         mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         mHeyWindowManager = HeyWindowManager.me;
-        bar = (LinearLayout)findViewById(R.id.window_bar);
+        bar = (FrameLayout)findViewById(R.id.window_bar);
         root = (FrameLayout)findViewById(R.id.window_root);
         view = (FrameLayout)findViewById(R.id.window_frame);
         close = (TextView)findViewById(R.id.window_close);
+        back = (TextView)findViewById(R.id.window_back);
+        title = (TextView)findViewById(R.id.window_title);
+        HeyHelper.setFont(back, "m");
+        HeyHelper.setFont(close, "m");
+        
         mContext = context;
         initLayoutParams();
         initEvent();
@@ -65,7 +68,7 @@ public class HeyWindow extends LinearLayout {
         //悬浮窗的宽高
         lp.width = (int)(sw / 1.5);
         lp.height = (int)(sh / 1.5);
-
+        
         //指定位置
         lp.x = (sw + view.getLayoutParams().width) / 2;
         lp.y = (sh + view.getLayoutParams().height) / 2;

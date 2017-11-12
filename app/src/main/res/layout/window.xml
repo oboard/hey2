@@ -3,30 +3,52 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:padding="2dp"
-	android:background="#000000"
-    android:id="@+id/window_root">
+	android:padding="1dp"
+	android:background="@color/colorAccent"
+	android:id="@+id/window_root">
 
-	<LinearLayout
-        android:id="@+id/window_bar"
+	<FrameLayout
+		android:id="@+id/window_bar"
 		android:layout_height="32dp"
 		android:layout_width="fill_parent"
-		android:orientation="horizontal"
-		android:gravity="right"
-		android:background="#FEFEFE">
+		android:background="@color/colorPrimary">
 
 		<TextView
 			android:background="?android:attr/selectableItemBackground"
 			android:layout_height="fill_parent"
-			android:id="@+id/window_close"
-			android:textColor="#000000"
 			android:layout_width="48dp"
-            android:clickable="true"
+			android:id="@+id/window_back"
+			android:textColor="@color/colorBackground"
+			android:clickable="true"
 			android:gravity="center"
-			android:textSize="24sp"
-			android:text="×"/>
+			android:textSize="16sp"
+			android:text="&#xE5C4;"/>
+        
+        <TextView
+            android:id="@+id/window_title"
+            android:layout_height="fill_parent"
+			android:layout_width="fill_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+			android:textColor="@color/colorBackground"
+			android:textSize="16sp"/>
 
-	</LinearLayout>
+		<TextView
+			android:background="?android:attr/selectableItemBackground"
+			android:layout_height="fill_parent"
+			android:layout_gravity="right"
+			android:id="@+id/window_close"
+			android:textColor="@color/colorBackground"
+			android:layout_width="48dp"
+			android:clickable="true"
+			android:gravity="center"
+			android:textSize="16sp"
+			android:text="&#xE5CD;"/>
+
+	</FrameLayout>
 
 	<FrameLayout
 		android:layout_height="fill_parent"

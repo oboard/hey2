@@ -66,4 +66,13 @@ public class HeyHelper {
         }
         return url;
     }
+    
+    public static int blendColor(int colorA, int colorB, float ratio) {  
+        final float inverseRatio = 1f - ratio;
+        float a = (Color.alpha(colorA) * ratio) + (Color.alpha(colorB) * inverseRatio);
+        float r = (Color.red(colorA) * ratio) + (Color.red(colorB) * inverseRatio);
+        float g = (Color.green(colorA) * ratio) + (Color.green(colorB) * inverseRatio);
+        float b = (Color.blue(colorA) * ratio) + (Color.blue(colorB) * inverseRatio);
+        return Color.argb((int) a, (int) r, (int) g, (int) b);
+    }
 }

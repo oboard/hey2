@@ -23,7 +23,7 @@
             android:id="@+id/multi_text1"/>
 
         <omark.hey.ScrollImage
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:onClick="onMultiClick"
             android:id="@+id/multi_image1"
             android:layout_height="wrap_content"

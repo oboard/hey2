@@ -32,7 +32,8 @@
 		android:layout_width="24dp"
 		android:layout_height="24dp"
 		android:layout_centerVertical="true"
-		android:visibility="gone"/>
+		android:visibility="gone"
+        android:text="&#xE5C4;"/>
 
 	<TextView
 		android:id="@+id/main_forward_icon"
@@ -43,7 +44,8 @@
 		android:layout_height="24dp"
 		android:layout_centerVertical="true"
 		android:layout_alignParentRight="true"
-		android:visibility="gone"/>
+		android:visibility="gone"
+        android:text="&#xE5C8;"/>
 
 	<RelativeLayout
 		android:id="@+id/main_ground"
@@ -265,7 +267,8 @@
 						android:layout_height="48dp"
 						android:layout_width="48dp"
 						android:clickable="true"
-						android:onClick="onManagerBackClick"/>
+						android:onClick="onManagerBackClick"
+                        android:text="&#xE5CE;"/>
 
 				</FrameLayout>
 

@@ -13,16 +13,15 @@ public class HeyApi {
     }
     
     @JavascriptInterface
-    public void onReceivedThemeColor(final String color, final int webi) {   
+    public void onReceivedThemeColor(final String color, final int index) {   
         
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
-                    if (!color.equals("")) {
-                        Main.multibottom.set(webi, Color.parseColor(color));
-                    } else {
-                        Main.multibottom.set(webi, Color.TRANSPARENT);
-                    }
-                    if (webi == Main.webindex) Main.onChangeBackground(Main.multibottom.get(webi), Main.multitop.get(webi));
+                    if (!color.equals(""))
+                        Main.multibottom.set(index, Color.parseColor(color));
+                    else
+                        Main.multibottom.set(index, Color.TRANSPARENT);
+                    if (index == Main.webindex) Main.onChangeBackground(Main.multibottom.get(index), Main.multitop.get(index));
                 }
             });
     }

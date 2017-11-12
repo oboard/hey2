@@ -105,7 +105,7 @@ public class Main extends Activity {
                 .put("search" , HeyHelper.DEFAULT_SEARCH)
                 .put("searchindex" , 0)
                 .put("pagecolor", true)
-                .put("style", 1)
+                .put("style", 0)
                 .ok();
 
             /*
@@ -295,11 +295,8 @@ public class Main extends Activity {
         button_number = (TextView)findViewById(R.id.main_button_number);
 
         manager_back.setTextColor(S.getColor(R.color.colorPrimary));
-        manager_back.setText(String.valueOf((char)((Integer)0xE5CE).intValue()));
         back_icon.setTextColor(S.getColor(R.color.colorBackground));
-        back_icon.setText(String.valueOf((char)((Integer)0xE5C4).intValue()));
         forward_icon.setTextColor(S.getColor(R.color.colorBackground));
-        forward_icon.setText(String.valueOf((char)((Integer)0xE5C8).intValue()));
         button_left.setText(String.valueOf((char)((Integer)0xE6DD).intValue()));
         button_right.setText(String.valueOf((char)((Integer)0xE3FA).intValue()));
 
@@ -508,7 +505,7 @@ public class Main extends Activity {
                     .setSingleChoiceItems(new String[] {
                         S.getString(R.string.lang14),
                         S.getString(R.string.lang15)
-                    }, S.get("style", 1), new DialogInterface.OnClickListener() { 
+                    }, S.get("style", 0), new DialogInterface.OnClickListener() { 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             S.put("style", which).ok();
@@ -522,7 +519,7 @@ public class Main extends Activity {
     }
 
     public static void freshDock() {
-        switch (S.get("style", 1)) {
+        switch (S.get("style", 0)) {
             case 0:
                 button_left.setVisibility(View.VISIBLE);
                 button_right.setVisibility(View.VISIBLE);
@@ -608,18 +605,22 @@ public class Main extends Activity {
         if (pages.size() == 0) {
             web = addPage("");
             freshDock();
-        }
-        if (multi_scroll_box.getVisibility() == View.VISIBLE) {
-            onDockClick(null);
-        } else if (manager.getVisibility() == View.VISIBLE) {
-            onManagerBackClick(null);
         } else {
+            if (HeyWebChrome.mCustomView != null)
+                if (HeyWebChrome.mCustomView.getVisibility() == View.VISIBLE)
+                    new HeyWebChrome().onHideCustomView();
+        }
+        if (multi_scroll_box.getVisibility() == View.VISIBLE)
+            onDockClick(null);
+        else if (manager.getVisibility() == View.VISIBLE)
+            onManagerBackClick(null);
+        else {
             if (web.canGoBack()) {
                 web.goBack();
 
                 web.loadUrl("javascript:document.title = " + web.getTitle());
             } else {
-                if (pages.size() != 1) {
+                if (pages.size() != 1)
                     if (!isExit) {
                         isExit = true;
                         handler.sendEmptyMessageDelayed(0, 1500);
@@ -628,15 +629,13 @@ public class Main extends Activity {
                         removePage(webindex);
                         freshMulti();
                     }
-
-                } else {
+                else {
                     if (!isExit) {
                         isExit = true;
                         handler.sendEmptyMessageDelayed(0, 1500);
                         Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else
                         finish();
-                    }
                 }
             }
         }
@@ -1027,12 +1026,12 @@ public class Main extends Activity {
                             lp.setMargins(0, 0, 0, (int)h2);
                             desktop.setLayoutParams(lp);
                             dock.getLayoutParams().height = (int)h2;
-                            if (S.get("style", 1) == 0) {
+                            if (S.get("style", 0) == 0) {
                                 button_left.setVisibility(View.GONE);
                                 button_right.setVisibility(View.INVISIBLE);
                             }
                         } else {
-                            if (S.get("style", 1) == 0) freshDock();
+                            if (S.get("style", 0) == 0) freshDock();
                         }
                         yy = moe.getY();
                     }
@@ -1171,8 +1170,9 @@ public class Main extends Activity {
 
 class HeyWebChrome extends WebChromeClient {
 
-    private View mCustomView;
-    private CustomViewCallback mCustomViewCallback;
+    //全屏视频
+    public static View mCustomView;
+    public CustomViewCallback mCustomViewCallback;
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
         super.onShowCustomView(view, callback);
