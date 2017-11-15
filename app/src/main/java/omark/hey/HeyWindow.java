@@ -27,8 +27,9 @@ public class HeyWindow extends LinearLayout {
     Context mContext;
     FrameLayout root, bar, view;
     TextView close, back, title;
+    View size;
 
-    float mTouchStartX, mTouchStartY, x, y;
+    float mX, mY, sX, sY, x, y, w, h;
     boolean initViewPlace = false;
 
     public HeyWindow(Context context) {
@@ -43,9 +44,10 @@ public class HeyWindow extends LinearLayout {
         close = (TextView)findViewById(R.id.window_close);
         back = (TextView)findViewById(R.id.window_back);
         title = (TextView)findViewById(R.id.window_title);
+        size = findViewById(R.id.window_size);
         HeyHelper.setFont(back, "m");
         HeyHelper.setFont(close, "m");
-        
+
         mContext = context;
         initLayoutParams();
         initEvent();
@@ -68,7 +70,7 @@ public class HeyWindow extends LinearLayout {
         //悬浮窗的宽高
         lp.width = (int)(sw / 1.5);
         lp.height = (int)(sh / 1.5);
-        
+
         //指定位置
         lp.x = (sw + view.getLayoutParams().width) / 2;
         lp.y = (sh + view.getLayoutParams().height) / 2;
@@ -85,23 +87,23 @@ public class HeyWindow extends LinearLayout {
                         case MotionEvent.ACTION_DOWN:
                             //获得焦点
                             /*new Handler().post(new Runnable() {
-                                    public void run() {
-                                        if (root.getParent() != null) {
-                                            lp.flags = WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
-                                            mWindowManager.updateViewLayout(HeyWindow.this, lp);
-                                        }
-                                    }
-                                });*/
+                             public void run() {
+                             if (root.getParent() != null) {
+                             lp.flags = WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+                             mWindowManager.updateViewLayout(HeyWindow.this, lp);
+                             }
+                             }
+                             });*/
 
                             if (!initViewPlace) {
                                 initViewPlace = true;
                                 //获取初始位置
-                                mTouchStartX += event.getRawX() - lp.x;
-                                mTouchStartY += event.getRawY() - lp.y;
+                                mX += event.getRawX() - lp.x;
+                                mY += event.getRawY() - lp.y;
                             } else {
                                 //根据上次手指离开的位置与此次点击的位置进行初始位置微调
-                                mTouchStartX += event.getRawX() - x;
-                                mTouchStartY += event.getRawY() - y;
+                                mX += event.getRawX() - x;
+                                mY += event.getRawY() - y;
                             }
                             break;
                         case MotionEvent.ACTION_MOVE:
@@ -120,12 +122,42 @@ public class HeyWindow extends LinearLayout {
                     mHeyWindowManager.removeWindow(mContext, HeyWindow.this);
                 }
             });
+
+        size.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            sX = event.getRawX();
+                            sY = event.getRawY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            // 获取相对屏幕的坐标，以屏幕右下角为原点
+                            w = lp.width + event.getRawX() - sX;
+                            h = lp.height + event.getRawY() - sY;
+                            updateViewSize();
+                            break;
+                    }
+                    sX = event.getRawX();
+                    sY = event.getRawY();
+                    return true;
+                }
+            });
     }
 
     //更新浮动窗口位置
+    private void updateViewSize() {
+        int min = 128;
+        if (w < min) w = min;
+        if (h < min) h = min;
+        
+        lp.width = (int) w;
+        lp.height = (int) h;
+        mWindowManager.updateViewLayout(this, lp);
+    }
     private void updateViewPosition() {
-        lp.x = (int) (x - mTouchStartX);
-        lp.y = (int) (y - mTouchStartY);
+        lp.x = (int) (x - mX);
+        lp.y = (int) (y - mY);
         mWindowManager.updateViewLayout(this, lp);
     }
 }

@@ -61,31 +61,38 @@ public final class R {
         public static final int main_multi_scroll=0x7f090012;
         public static final int main_multi_scroll_box=0x7f090011;
         public static final int main_multi_text=0x7f090019;
-        public static final int main_night=0x7f090029;
+        public static final int main_night=0x7f09002a;
         public static final int main_popn=0x7f09000b;
         public static final int main_progress=0x7f090017;
         public static final int main_root=0x7f090008;
+        public static final int main_simulation=0x7f090029;
         public static final int main_text=0x7f090021;
-        public static final int menu_item_icon=0x7f09002b;
-        public static final int menu_item_on=0x7f09002a;
-        public static final int menu_item_text=0x7f09002c;
-        public static final int multi_image0=0x7f090031;
-        public static final int multi_image1=0x7f09002f;
-        public static final int multi_root=0x7f09002d;
-        public static final int multi_text0=0x7f090030;
-        public static final int multi_text1=0x7f09002e;
-        public static final int setting_1=0x7f090033;
-        public static final int setting_2=0x7f090037;
-        public static final int setting_3=0x7f090034;
-        public static final int setting_4=0x7f090035;
-        public static final int setting_5=0x7f090036;
-        public static final int settings_root=0x7f090032;
-        public static final int window_back=0x7f09003a;
-        public static final int window_bar=0x7f090039;
-        public static final int window_close=0x7f09003c;
-        public static final int window_frame=0x7f09003d;
-        public static final int window_root=0x7f090038;
-        public static final int window_title=0x7f09003b;
+        public static final int menu_item_icon=0x7f09002c;
+        public static final int menu_item_on=0x7f09002b;
+        public static final int menu_item_text=0x7f09002d;
+        public static final int multi_image0=0x7f090032;
+        public static final int multi_image1=0x7f090030;
+        public static final int multi_root=0x7f09002e;
+        public static final int multi_text0=0x7f090031;
+        public static final int multi_text1=0x7f09002f;
+        public static final int setting_1=0x7f090034;
+        public static final int setting_2=0x7f090038;
+        public static final int setting_3=0x7f090035;
+        public static final int setting_4=0x7f090036;
+        public static final int setting_5=0x7f090037;
+        public static final int settings_root=0x7f090033;
+        public static final int simulation_a=0x7f09003c;
+        public static final int simulation_back=0x7f09003a;
+        public static final int simulation_d=0x7f09003d;
+        public static final int simulation_root=0x7f090039;
+        public static final int simulation_u=0x7f09003b;
+        public static final int window_back=0x7f090040;
+        public static final int window_bar=0x7f09003f;
+        public static final int window_close=0x7f090042;
+        public static final int window_frame=0x7f090043;
+        public static final int window_root=0x7f09003e;
+        public static final int window_size=0x7f090044;
+        public static final int window_title=0x7f090041;
     }
     public static final class layout {
         public static final int bookmark_item=0x7f030000;
@@ -96,7 +103,8 @@ public final class R {
         public static final int menu_item=0x7f030005;
         public static final int multi=0x7f030006;
         public static final int settings=0x7f030007;
-        public static final int window=0x7f030008;
+        public static final int simulation=0x7f030008;
+        public static final int window=0x7f030009;
     }
     public static final class menu {
         public static final int link=0x7f080000;
@@ -163,11 +171,14 @@ public final class R {
         public static final int lang60=0x7f06003d;
         public static final int lang61=0x7f06003e;
         public static final int lang62=0x7f06003f;
+        public static final int lang63=0x7f060040;
+        public static final int lang64=0x7f060041;
+        public static final int lang65=0x7f060042;
         public static final int lang7=0x7f060008;
         public static final int lang8=0x7f060009;
         public static final int lang9=0x7f06000a;
         public static final int name=0x7f060000;
-        public static final int name2=0x7f060040;
+        public static final int name2=0x7f060043;
     }
     public static final class style {
         public static final int AppTheme=0x7f070000;

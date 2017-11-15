@@ -327,6 +327,18 @@
 
 		</RelativeLayout>
 
+        <FrameLayout
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/main_simulation"
+            android:visibility="gone">
+
+            <include
+                layout="@layout/simulation"/>
+
+        </FrameLayout>
+        
 	</RelativeLayout>
 
 	<View

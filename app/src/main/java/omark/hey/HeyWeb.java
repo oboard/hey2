@@ -23,10 +23,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.view.DragEvent;
 import android.content.ClipData;
+import android.webkit.WebChromeClient;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
 
     public HeyApi mApi;
+    public WebChromeClient mClient;
 
     private OnScrollChangedCallback mOnScrollChangedCallback;
 
@@ -194,7 +196,16 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
     }
 
-
+    @Override
+    public void setWebChromeClient(WebChromeClient client) {
+        super.setWebChromeClient(client);
+        mClient = client;
+    }
+    
+    public WebChromeClient getWebChromeClient() {
+        return mClient;
+    }
+    
     @Override
     protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);

@@ -12,6 +12,8 @@ import android.view.animation.BounceInterpolator;
 
 public class ScrollText extends TextView {
 
+    public static boolean isMenu = false;
+    
     boolean isUper = false;
 
     //按下view时所处的坐标
@@ -105,15 +107,16 @@ public class ScrollText extends TextView {
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
                 if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100)) {
                     isUper = true;
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 320);
-
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 225);
+                    
                     Main.button_right.setVisibility(View.GONE);
                     Main.button_number.setVisibility(View.GONE);
                 } else {
                     isUper = false;
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 225);
                     if (lastS != 3) Main.freshDock();
                 }
+                isMenu = isUper;
 
                 Main.back_icon.setVisibility(View.GONE);
                 Main.forward_icon.setVisibility(View.GONE);

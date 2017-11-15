@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+    android:id="@+id/simulation_root"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+
+	<FrameLayout
+		android:background="@color/colorPrimary"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:padding="10dp">
+
+		<TextView
+			android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="@string/lang63"
+			android:textColor="#ffffff"/>
+
+        <TextView
+            android:background="?android:attr/selectableItemBackground"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/simulation_back"
+            android:layout_gravity="right"
+            android:textColor="#ffffff"
+            android:text="&#xE5CE;"/>
+        
+	</FrameLayout>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_marginBottom="5dp"
+		android:text="@string/lang64"
+        android:layout_margin="10dp"
+		android:textColor="#000000"/>
+
+	<Spinner
+        android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/simulation_u"
+        android:layout_margin="10dp"
+		android:textColor="#000000"/>
+
+	<Spinner
+        android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/simulation_a"
+        android:layout_margin="10dp"
+		android:textColor="#000000"/>
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_marginBottom="5dp"
+		android:text="@string/lang65"
+        android:layout_margin="10dp"
+		android:textColor="#000000"/>
+
+	<Spinner
+        android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:id="@+id/simulation_d"
+        android:layout_margin="10dp"
+		android:textColor="#000000"/>
+
+</LinearLayout>
+

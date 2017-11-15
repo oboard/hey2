@@ -65,5 +65,7 @@
     <string name="lang60">夜灯</string>
     <string name="lang61">分屏</string>
     <string name="lang62">悬浮窗</string>
-    
+    <string name="lang63">仿真</string>
+    <string name="lang64">用户代理</string>
+    <string name="lang65">设备</string>
 </resources>

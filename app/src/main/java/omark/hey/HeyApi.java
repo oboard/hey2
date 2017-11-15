@@ -130,6 +130,10 @@ public class HeyApi {
     
     @JavascriptInterface
     public String cmd(String str) {
-        return str;
+        return "";
+    }
+    @JavascriptInterface
+    public String cmd(String str, String value) {
+        return "";
     }
 }

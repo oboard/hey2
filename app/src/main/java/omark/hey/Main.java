@@ -35,7 +35,6 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
@@ -55,12 +54,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import omark.hey.control.HeyProgress;
 import omark.hey.control.HeySetting;
+import android.widget.Spinner;
 
 public class Main extends Activity {
     static Main me;
@@ -70,12 +69,14 @@ public class Main extends Activity {
     static ScrollText dock;
     static EditText text;
     static GridView menu;
-    static FrameLayout desktop;
+    static FrameLayout desktop, simulation;
     static RelativeLayout root, ground, manager, manager_ground;
     static HeyProgress progressbar;
     static HeyWeb web;
     static ImageView background;
+    static Spinner simulation_u, simulation_a, simulation_d;
     static TextView multi_text, back_icon, forward_icon, manager_back, button_left, button_right, button_number, manager_th;
+    static TextView simulation_back;
     static TextView[] manager_tab_button = new TextView[3];
     static ListView bookmark_list, history_list;
     static LinearLayout multi_box, multi_scroll;
@@ -151,7 +152,7 @@ public class Main extends Activity {
         HeyWindowManager.init();
 
         final AlphaAnimation alphaA = new AlphaAnimation(1, 0);
-        alphaA.setDuration(320);
+        alphaA.setDuration(225);
         alphaA.setFillAfter(true);
         night.startAnimation(alphaA);
 
@@ -201,7 +202,7 @@ public class Main extends Activity {
                                     }
                                 }).show();
                             break;
-                        case 5:
+                        case 7:
                             HeyWindowManager.addWindow(Main.this.getApplicationContext());
                             HeyWindowManager.web_x.loadUrl(web.getUrl());
                             break;
@@ -229,11 +230,11 @@ public class Main extends Activity {
                                 CookieManager.getInstance().setAcceptCookie(true);
                             }
                             break;
-                        case 7:
+                        case 5:
                             //夜间模式
                             if (!menus.get(webindex).getState(i)) {
                                 final AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                                alphaA.setDuration(320);
+                                alphaA.setDuration(225);
                                 alphaA.setFillAfter(true);
                                 night.startAnimation(alphaA);
                                 night.setTag(true);
@@ -242,7 +243,7 @@ public class Main extends Activity {
                                 }
                             } else {
                                 final AlphaAnimation alphaA = new AlphaAnimation(1, 0);
-                                alphaA.setDuration(320);
+                                alphaA.setDuration(225);
                                 alphaA.setFillAfter(true);
                                 night.startAnimation(alphaA);
                                 night.setTag(false);
@@ -260,6 +261,21 @@ public class Main extends Activity {
                                 web.loadUrl("javascript:(function(){eruda.destroy()})()");
                                 menus.get(webindex).setState(i, false);
                             }
+                            break;
+                        case 9:
+                            //仿真
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    public void run() {
+                                        Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, simulation.getHeight(), lastimage.getWidth(), lastimage.getHeight() - simulation.getHeight());
+                                        bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
+                                        simulation.setBackgroundDrawable(new BitmapDrawable(bitmap));
+
+                                        final AlphaAnimation tranA = new AlphaAnimation(0, 1);
+                                        tranA.setDuration(225);
+                                        simulation.startAnimation(tranA);
+                                        simulation.setVisibility(View.VISIBLE);
+                                    }
+                                });
                             break;
                         default:
                             Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
@@ -279,7 +295,7 @@ public class Main extends Activity {
                             onManagerBackClick(null);
                             return true;
                         }
-                    }    
+                    }
                     return false;
                 }    
             });
@@ -407,6 +423,39 @@ public class Main extends Activity {
                     return true;
                 }
             });
+            
+            
+
+        simulation_u = (Spinner)findViewById(R.id.simulation_u);
+        simulation_u.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+        simulation_a = (Spinner)findViewById(R.id.simulation_a);
+        simulation_a.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+        simulation_d = (Spinner)findViewById(R.id.simulation_d);
+        simulation_d.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+        simulation_back = (TextView)findViewById(R.id.simulation_back);
+        HeyHelper.setFont(simulation_back, "m");
+        
     }
 
     public void onBarClick(View v) {
@@ -414,12 +463,13 @@ public class Main extends Activity {
             case R.id.main_button_left:
                 onDockClick(v);
                 if (Math.abs(ground.getScrollY()) <= dip2px(this, 48)) {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 160) - ground.getScrollY(), 320);
-
+                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 160) - ground.getScrollY(), 225);
+                    ScrollText.isMenu = true;
                     button_right.setVisibility(View.GONE);
                     button_number.setVisibility(View.GONE);
                 } else {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), -ground.getScrollY(), 320);
+                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), -ground.getScrollY(), 225);
+                    ScrollText.isMenu = false;
                     freshDock();
                 }
                 dock.invalidate();
@@ -605,11 +655,16 @@ public class Main extends Activity {
         if (pages.size() == 0) {
             web = addPage("");
             freshDock();
+            return;
         } else {
-            if (HeyWebChrome.mCustomView != null)
-                if (HeyWebChrome.mCustomView.getVisibility() == View.VISIBLE)
-                    new HeyWebChrome().onHideCustomView();
+            final HeyWebChrome hWC = (HeyWebChrome)web.getWebChromeClient();
+            if (hWC.mCustomView != null)
+                if (hWC.mCustomView.getVisibility() == View.VISIBLE) {
+                    hWC.onHideCustomView();
+                    return;
+                }
         }
+
         if (multi_scroll_box.getVisibility() == View.VISIBLE)
             onDockClick(null);
         else if (manager.getVisibility() == View.VISIBLE)
@@ -683,7 +738,7 @@ public class Main extends Activity {
             aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
             aniA.addAnimation(new AlphaAnimation(0f, 1f));
             aniA.setInterpolator(new DecelerateInterpolator());
-            aniA.setDuration(320);
+            aniA.setDuration(225);
             web.startAnimation(aniA);
             aniA.setAnimationListener(new Animation.AnimationListener() {
                     public void onAnimationStart(Animation ani) {}
@@ -698,7 +753,7 @@ public class Main extends Activity {
             aniB.addAnimation(new AlphaAnimation(1f, 0f));
             aniB.setInterpolator(new DecelerateInterpolator());
             aniB.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-            aniB.setDuration(320);
+            aniB.setDuration(225);
             multi_scroll_box.startAnimation(aniB);
 
             web.setVisibility(View.VISIBLE);
@@ -712,7 +767,7 @@ public class Main extends Activity {
             aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
             aniA.addAnimation(new AlphaAnimation(1f, 0f));
             aniA.setInterpolator(new DecelerateInterpolator());
-            aniA.setDuration(320);
+            aniA.setDuration(225);
             web.startAnimation(aniA);
             aniA.setAnimationListener(new Animation.AnimationListener() {
                     public void onAnimationStart(Animation ani) {}
@@ -727,7 +782,7 @@ public class Main extends Activity {
             aniB.addAnimation(new AlphaAnimation(0f, 1f));
             aniB.setInterpolator(new DecelerateInterpolator());
             aniB.setZAdjustment(AnimationSet.ZORDER_BOTTOM);
-            aniB.setDuration(320);
+            aniB.setDuration(225);
             multi_scroll_box.startAnimation(aniB);
 
             web.setVisibility(View.VISIBLE);
@@ -745,14 +800,11 @@ public class Main extends Activity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
                     Bitmap bitmap = lastimage;
-                    if (Build.VERSION.SDK_INT >= 16)
-                        bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
-                    else
-                        FastBlur.jBlur(bitmap, 25, true);
+                    bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
                     manager.setBackgroundDrawable(new BitmapDrawable(bitmap));
 
                     final AlphaAnimation tranA = new AlphaAnimation(0, 1);
-                    tranA.setDuration(320);
+                    tranA.setDuration(225);
                     manager.startAnimation(tranA);
                     manager.setVisibility(View.VISIBLE);
                 }
@@ -762,7 +814,7 @@ public class Main extends Activity {
         if (manager.getVisibility() == View.GONE) return;
 
         final AlphaAnimation tranA = new AlphaAnimation(1, 0);
-        tranA.setDuration(320);
+        tranA.setDuration(225);
         tranA.setAnimationListener(new Animation.AnimationListener() {
                 public void onAnimationStart(Animation ani) {}
                 public void onAnimationRepeat(Animation ani) {}
@@ -780,7 +832,7 @@ public class Main extends Activity {
          super.handleMessage(msg);
          manager.setVisibility(View.GONE);
          }
-         }.sendEmptyMessageDelayed(0, 320);*/
+         }.sendEmptyMessageDelayed(0, 225);*/
     } public void onManagerClick(View v) {
         final LinearLayout[] page = {
             (LinearLayout)findViewById(R.id.main_manager_p1),
@@ -858,7 +910,7 @@ public class Main extends Activity {
         AnimationSet aniA = new AnimationSet(true);
         aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
         aniA.addAnimation(new AlphaAnimation(0f, 1f));
-        aniA.setDuration(320);
+        aniA.setDuration(225);
         new_web.startAnimation(aniA);
 
         multi_text.setText("" + pages.size());
@@ -981,7 +1033,7 @@ public class Main extends Activity {
         final AnimationSet aniA = new AnimationSet(true);
         aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
         aniA.addAnimation(new AlphaAnimation(0f, 1f));
-        aniA.setDuration(320);
+        aniA.setDuration(2252);
 
         for (int i = fristindex; i < pages.size(); i++) {
             ((View)multitext.get(i).getParent()).setAnimation(aniA);
@@ -1013,28 +1065,54 @@ public class Main extends Activity {
         return d;
     }
 
-    long timerst = 0;
+    long yt = 0;
     float yy = 0;
     public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
         final float h1 = dip2px(Main.this, 48), h2 = dip2px(Main.this, 24);
         return (new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent moe) {
-                if (moe.getAction() != MotionEvent.ACTION_DOWN) {
+                if (moe.getAction() != MotionEvent.ACTION_DOWN && !ScrollText.isMenu) {
                     if (Math.abs(yy - moe.getY()) > h2) {
-                        if (yy > moe.getY()) {
-                            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)desktop.getLayoutParams();
-                            lp.setMargins(0, 0, 0, (int)h2);
-                            desktop.setLayoutParams(lp);
-                            dock.getLayoutParams().height = (int)h2;
-                            if (S.get("style", 0) == 0) {
-                                button_left.setVisibility(View.GONE);
-                                button_right.setVisibility(View.INVISIBLE);
+                        if (yt < System.currentTimeMillis()) {
+                            ValueAnimation valueA;
+                            if (yy > moe.getY()) {
+                                valueA = ValueAnimation.ofFloat(dock.getLayoutParams().height, h2);
+
+                                if (button_left.getVisibility() == View.VISIBLE && S.get("style", 0) == 0) {
+                                    button_left.setVisibility(View.GONE);
+                                    button_right.setVisibility(View.GONE);
+                                }
+                            } else {
+                                valueA = ValueAnimation.ofFloat(dock.getLayoutParams().height, h1);
+
+                                if (button_left.getVisibility() == View.GONE && S.get("style", 0) == 0) {
+                                    final AlphaAnimation aniA = new AlphaAnimation(0f, 1f);
+                                    button_left.setAnimation(aniA);
+                                    button_right.setAnimation(aniA);
+                                    aniA.setDuration(195);
+                                    aniA.startNow();
+
+                                    button_left.setVisibility(View.VISIBLE);
+                                    button_right.setVisibility(View.VISIBLE);
+                                }
                             }
-                        } else {
-                            if (S.get("style", 0) == 0) freshDock();
+                            dock.clearAnimation();
+                            valueA.setDuration(195);
+                            valueA.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+                                    public void onAnimationUpdate(ValueAnimation animaion) {
+                                        final RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)desktop.getLayoutParams();
+                                        final int a = (int) animaion.getAnimatedValue();
+                                        lp.setMargins(0, 0, 0, a);
+                                        desktop.setLayoutParams(lp);
+                                        dock.getLayoutParams().height = a;
+                                    }
+                                });
+                            dock.startAnimation(valueA);
+                            yt = 195 + System.currentTimeMillis();
                         }
                         yy = moe.getY();
                     }
+
                 } else {
                     yy = moe.getY();
                 }
@@ -1269,7 +1347,7 @@ class HeyWebChrome extends WebChromeClient {
 
                 if (View.GONE == Main.progressbar.getVisibility()) {
                     AlphaAnimation alphaA = new AlphaAnimation(0, 1);
-                    alphaA.setDuration(320);
+                    alphaA.setDuration(25);
                     Main.progressbar.startAnimation(alphaA);
 
                     Main.progressbar.setVisibility(View.VISIBLE);

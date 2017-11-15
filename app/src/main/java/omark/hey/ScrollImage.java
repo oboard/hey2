@@ -60,7 +60,7 @@ public class ScrollImage extends ImageView {
                     Main.me.aniMulti(i);
                 } else if (Math.abs(viewGroup.getScrollY()) > dip2px(mContext, 20)) {
                     scroller.abortAnimation();
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 225);
                     invalidate();
                 } else if (viewGroup.getAlpha() >= 0.99f){
                     performClick();

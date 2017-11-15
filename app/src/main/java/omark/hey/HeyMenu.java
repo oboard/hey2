@@ -40,10 +40,11 @@ public class HeyMenu {
             S.getString(R.string.lang37),
             S.getString(R.string.lang27),
             S.getString(R.string.lang17),
-            S.getString(R.string.lang62),
-            S.getString(R.string.lang59),
             S.getString(R.string.lang60),
-            S.getString(R.string.lang36)
+            S.getString(R.string.lang59),
+            S.getString(R.string.lang62),
+            S.getString(R.string.lang36),
+            S.getString(R.string.lang63)
         };
 
         icon = new int[] {
@@ -52,10 +53,11 @@ public class HeyMenu {
             0xE80D,
             0xE88A,
             0xE867,
-            0xE06B,
-            0xE3E9,
             0xE3A8,
-            0xE86F
+            0xE3E9,
+            0xE8AA,
+            0xE86F,
+            0xE54E
         };
 
         data_list = getData();

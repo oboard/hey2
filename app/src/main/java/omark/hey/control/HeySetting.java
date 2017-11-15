@@ -13,8 +13,8 @@ import android.os.Build;
 
 public class HeySetting extends RelativeLayout {
     
-    TextView mTextView;
-    HeySwitch mSwitch;
+    public TextView mTextView;
+    public HeySwitch mSwitch;
 
     public HeySetting(final Context context) {
         super(context);
@@ -77,8 +77,7 @@ public class HeySetting extends RelativeLayout {
         postInvalidate();
     }
     public void setChecked(boolean checked) {
-        mSwitch.setChecked(checked);
-        mSwitch.change();
+        mSwitch.changeTo(checked);
     }
     public boolean isChecked() {
         return mSwitch.isChecked();

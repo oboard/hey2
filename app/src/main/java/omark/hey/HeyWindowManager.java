@@ -39,17 +39,19 @@ public class HeyWindowManager {
         final HeyWeb webk = web_x;
         
         webk.setWebChromeClient(new HeyWindowWebChrome(window_x, webk));
-        webk.addJavascriptInterface(new HeyWindowWebChrome(), "CONTEXT_WINDOW");
+        webk.addJavascriptInterface(webk.getWebChromeClient(), "CONTEXT_WINDOW");
         window_x.view.addView(webk);
         windows.add(window_x);
 
         //返回按钮的事件
         window_x.back.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    if (HeyWindowWebChrome.mCustomView != null && HeyWindowWebChrome.mCustomView.getVisibility() == View.VISIBLE)
-                        new HeyWindowWebChrome().onHideCustomView();
+                    final HeyWindowWebChrome hWWC = ((HeyWindowWebChrome)webk.getWebChromeClient());
+                    if (hWWC.mCustomView != null && hWWC.mCustomView.getVisibility() == View.VISIBLE)
+                        hWWC.onHideCustomView();
                     else
                         webk.goBack();
+                    if (!webk.canGoBack()) v.setVisibility(View.GONE);
                 }
             });
 
@@ -80,18 +82,15 @@ public class HeyWindowManager {
 
 class HeyWindowWebChrome extends WebChromeClient {
 
+    public CustomViewCallback mCustomViewCallback;
+    public View mCustomView; //全屏视频
     public HeyWindow mWindow;
     public HeyWeb mWeb;
-    public HeyWindowWebChrome() {
-
-    }
     public HeyWindowWebChrome(HeyWindow window, HeyWeb web) {
         mWindow = window;
         mWeb = web;
     }
 
-    public static View mCustomView; //全屏视频
-    public CustomViewCallback mCustomViewCallback;
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
         super.onShowCustomView(view, callback);
@@ -106,25 +105,27 @@ class HeyWindowWebChrome extends WebChromeClient {
 
         mWeb.setVisibility(View.GONE);
         mWindow.view.addView(mCustomView);
+        mWindow.back.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onHideCustomView() {
         if (mCustomView == null) return;
 
-        mCustomViewCallback.onCustomViewHidden();
+        if (mCustomViewCallback != null) mCustomViewCallback.onCustomViewHidden();
         mCustomView.setVisibility(View.GONE);
         mCustomView = null;
 
         mWeb.setVisibility(View.VISIBLE);
         mWindow.view.removeView(mCustomView);
+        if (!mWeb.canGoBack()) mWindow.back.setVisibility(View.GONE);
         super.onHideCustomView();
     }
 
 
     public void onReceivedTitle(WebView v, String title) {
-        //((TextView)v.getTag()).setText(title);
         try {
+            if (mWeb.canGoBack()) mWindow.back.setVisibility(View.VISIBLE);
             if (title.equals("about:blank")) return;
             mWindow.title.setText(title);
             if (!S.get("pagecolor", true)) return;
@@ -151,7 +152,7 @@ class HeyWindowWebChrome extends WebChromeClient {
                         c = S.getColor(R.color.colorAccent);
                         
                     HeyWindowManager.windows.get(index).bar.setBackgroundColor(c);
-                    HeyWindowManager.windows.get(index).root.setBackgroundColor(HeyHelper.blendColor(c, Color.BLACK, 0.5f));
+                    HeyWindowManager.windows.get(index).root.setBackgroundColor(HeyHelper.blendColor(c, Color.BLACK, 0.9f));
                 }
             });
     }

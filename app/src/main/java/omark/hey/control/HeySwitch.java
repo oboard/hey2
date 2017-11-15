@@ -34,10 +34,18 @@ public class HeySwitch extends CheckBox {
         //h = (int)dip2px(c, 16);
     }
 
+    public void changeTo(boolean v) {
+        setChecked(v);
+        fy = 0;
+        Animation ani = new BarAnimation();
+        ani.setDuration(1);
+        ani.setInterpolator(new AccelerateDecelerateInterpolator());
+        startAnimation(ani);
+    }
     public void change() {
         fy = 0;
         Animation ani = new BarAnimation();
-        ani.setDuration(320);
+        ani.setDuration(196);
         ani.setInterpolator(new AccelerateDecelerateInterpolator());
         startAnimation(ani);
     }
