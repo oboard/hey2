@@ -56,7 +56,7 @@ public class ScrollText extends TextView {
 
                 if (!isUper) {
                     isUp = true;
-                    handler.sendEmptyMessageDelayed(0, 500);
+                    handler.sendEmptyMessageDelayed(0, 300);
                 }
                 if (Main.web.canGoBack())
                     Main.back_icon.setVisibility(View.VISIBLE);

@@ -60,6 +60,8 @@ import java.util.Map;
 import omark.hey.control.HeyProgress;
 import omark.hey.control.HeySetting;
 import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.view.animation.TranslateAnimation;
 
 public class Main extends Activity {
     static Main me;
@@ -266,14 +268,19 @@ public class Main extends Activity {
                             //仿真
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     public void run() {
-                                        Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, simulation.getHeight(), lastimage.getWidth(), lastimage.getHeight() - simulation.getHeight());
-                                        bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
-                                        simulation.setBackgroundDrawable(new BitmapDrawable(bitmap));
+                                        freshSimulation();
 
                                         final AlphaAnimation tranA = new AlphaAnimation(0, 1);
                                         tranA.setDuration(225);
                                         simulation.startAnimation(tranA);
                                         simulation.setVisibility(View.VISIBLE);
+
+                                        AnimationSet aniA = new AnimationSet(true);
+                                        aniA.addAnimation(new ScaleAnimation(1, 0.5f, 1f, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+                                        aniA.setInterpolator(new DecelerateInterpolator());
+                                        aniA.setFillAfter(true);
+                                        aniA.setDuration(225);
+                                        desktop.startAnimation(aniA);
                                     }
                                 });
                             break;
@@ -327,9 +334,7 @@ public class Main extends Activity {
         multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
         multi_text = (TextView)findViewById(R.id.main_multi_text);
-        addMulti();//
-
-        //multi_box.setBackgroundColor(S.getColor(R.color.colorPrimary));
+        addMulti();
 
         manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
         manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
@@ -423,19 +428,21 @@ public class Main extends Activity {
                     return true;
                 }
             });
-            
-            
 
+        simulation = (FrameLayout)findViewById(R.id.main_simulation);
         simulation_u = (Spinner)findViewById(R.id.simulation_u);
+        simulation_u.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, UserAgent.s));
         simulation_u.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                    simulation_a.setAdapter(new ArrayAdapter<String>(Main.this, android.R.layout.simple_spinner_item, UserAgent.ss[pos]));
                     Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
         simulation_a = (Spinner)findViewById(R.id.simulation_a);
+        simulation_a.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, UserAgent.ss[0]));
         simulation_a.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -454,8 +461,9 @@ public class Main extends Activity {
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
         simulation_back = (TextView)findViewById(R.id.simulation_back);
+        ripple_version(simulation_back);
         HeyHelper.setFont(simulation_back, "m");
-        
+
     }
 
     public void onBarClick(View v) {
@@ -568,6 +576,12 @@ public class Main extends Activity {
         }
     }
 
+    public static void freshSimulation() {
+        simulation.invalidate();
+        Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, (int)simulation.getY(), lastimage.getWidth(), (int)dip2px(Main.me, 300)); 
+        simulation.setBackgroundDrawable(new BitmapDrawable(FastBlur.rsBlur(Main.me, bitmap, 25)));
+    }
+
     public static void freshDock() {
         switch (S.get("style", 0)) {
             case 0:
@@ -669,7 +683,25 @@ public class Main extends Activity {
             onDockClick(null);
         else if (manager.getVisibility() == View.VISIBLE)
             onManagerBackClick(null);
-        else {
+        else if (simulation.getVisibility() == View.VISIBLE) {
+            final AlphaAnimation tranA = new AlphaAnimation(1, 0);
+            tranA.setDuration(225);
+            tranA.setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationStart(Animation ani) {}
+                    public void onAnimationRepeat(Animation ani) {}
+                    public void onAnimationEnd(Animation ani) {
+                        simulation.setVisibility(View.GONE);
+                    }
+                });
+            simulation.startAnimation(tranA);
+
+            AnimationSet aniA = new AnimationSet(true);
+            aniA.addAnimation(new ScaleAnimation(0.5f, 1f, 0.5f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+            aniA.setInterpolator(new DecelerateInterpolator());
+            aniA.setFillAfter(true);
+            aniA.setDuration(225);
+            desktop.startAnimation(aniA);
+        } else {
             if (web.canGoBack()) {
                 web.goBack();
 
@@ -898,7 +930,7 @@ public class Main extends Activity {
 
         multitop.add(getHeyBackground());
         multibottom.add(Color.TRANSPARENT);
-        multiimages.add(null);
+        multiimages.add(getWebDrawingB());
         menus.add(new HeyMenu(menu));
         menu.setAdapter(menus.get(webindex).getAdapter());
         pages.get(webindex).addJavascriptInterface(menus.get(webindex), "HEYMENU");
@@ -1133,8 +1165,11 @@ public class Main extends Activity {
 
         return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - (int)desktop.getY() - getNavigationBarHeight(this));
     } public Bitmap getWebDrawingB() {
-        Bitmap bitmap = getWebDrawing();
-        return HeyHelper.ColoBitmap(bitmap, Color.WHITE);
+        Display view = getWindowManager().getDefaultDisplay();
+        ColorDrawable drawable = new ColorDrawable(Color.WHITE);
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap); drawable.draw(canvas); //拿到这个bitmap了
+        return bitmap;
     } public void ripple_version(View view_children) {
         //版本兼容
         int[] attrsArray = {
