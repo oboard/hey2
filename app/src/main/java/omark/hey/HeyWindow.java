@@ -30,7 +30,7 @@ public class HeyWindow extends LinearLayout {
     View size;
 
     float mX, mY, sX, sY, x, y, w, h;
-    boolean initViewPlace = false;
+    boolean firstTouchDown = false;
 
     public HeyWindow(Context context) {
         super(context);
@@ -95,8 +95,8 @@ public class HeyWindow extends LinearLayout {
                              }
                              });*/
 
-                            if (!initViewPlace) {
-                                initViewPlace = true;
+                            if (!firstTouchDown) {
+                                firstTouchDown = true;
                                 //获取初始位置
                                 mX += event.getRawX() - lp.x;
                                 mY += event.getRawY() - lp.y;

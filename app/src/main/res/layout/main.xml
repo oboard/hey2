@@ -33,7 +33,7 @@
 		android:layout_height="24dp"
 		android:layout_centerVertical="true"
 		android:visibility="gone"
-        android:text="&#xE5C4;"/>
+		android:text=""/>
 
 	<TextView
 		android:id="@+id/main_forward_icon"
@@ -45,7 +45,7 @@
 		android:layout_centerVertical="true"
 		android:layout_alignParentRight="true"
 		android:visibility="gone"
-        android:text="&#xE5C8;"/>
+		android:text=""/>
 
 	<RelativeLayout
 		android:id="@+id/main_ground"
@@ -92,7 +92,7 @@
 				android:id="@+id/main_multi_scroll"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-                android:onClick="onBackPressed"/>
+				android:onClick="onBackPressed"/>
 
 		</HorizontalScrollView>
 
@@ -112,35 +112,37 @@
 			android:id="@+id/main_button_left"
 			android:textColor="#55ffffff"
 			android:gravity="center"
-            android:layout_alignTop="@id/main_dock"
-            android:layout_alignBottom="@id/main_dock"
+			android:layout_alignTop="@id/main_dock"
+			android:layout_alignBottom="@id/main_dock"
 			android:textSize="32sp"
 			android:layout_height="wrap_content"
 			android:layout_width="48dp"
 			android:background="?android:attr/selectableItemBackground"
 			android:clickable="true"
+            android:focusable="true"
 			android:onClick="onBarClick"/>
 
 		<TextView
 			android:id="@+id/main_button_right"
 			android:textColor="#55ffffff"
 			android:gravity="center"
-            android:layout_alignTop="@id/main_dock"
-            android:layout_alignBottom="@id/main_dock"
+			android:layout_alignTop="@id/main_dock"
+			android:layout_alignBottom="@id/main_dock"
 			android:layout_alignParentRight="true"
 			android:textSize="32sp"
 			android:layout_height="wrap_content"
 			android:layout_width="48dp"
 			android:background="?android:attr/selectableItemBackground"
 			android:clickable="true"
+            android:focusable="true"
 			android:onClick="onBarClick"/>
 
 		<TextView
 			android:id="@+id/main_button_number"
 			android:textColor="#AAffffff"
 			android:gravity="center"
-            android:layout_alignTop="@id/main_dock"
-            android:layout_alignBottom="@id/main_dock"
+			android:layout_alignTop="@id/main_dock"
+			android:layout_alignBottom="@id/main_dock"
 			android:layout_alignParentRight="true"
 			android:textSize="16sp"
 			android:layout_height="wrap_content"
@@ -164,7 +166,7 @@
 			android:gravity="center"
 			android:clickable="true"
 			android:visibility="gone"
-            android:onClick="onBackPressed">
+			android:onClick="onBackPressed">
 
 			<TextView
 				android:id="@+id/main_multi_text"
@@ -205,6 +207,7 @@
 						android:layout_width="48dp"
 						android:background="?android:attr/selectableItemBackground"
 						android:clickable="true"
+                        android:focusable="true"
 						android:onClick="onManagerClick"/>
 
 					<TextView
@@ -215,6 +218,7 @@
 						android:layout_width="48dp"
 						android:background="?android:attr/selectableItemBackground"
 						android:clickable="true"
+                        android:focusable="true"
 						android:onClick="onManagerClick"/>
 
 					<TextView
@@ -225,6 +229,7 @@
 						android:layout_width="48dp"
 						android:background="?android:attr/selectableItemBackground"
 						android:clickable="true"
+                        android:focusable="true"
 						android:onClick="onManagerClick"/>
 
 				</LinearLayout>
@@ -239,6 +244,7 @@
 					android:background="?android:attr/selectableItemBackground"
 					android:layout_alignParentRight="true"
 					android:clickable="true"
+                    android:focusable="true"
 					android:onClick="onManagerClick"
 					android:visibility="gone"/>
 
@@ -268,7 +274,7 @@
 						android:layout_width="48dp"
 						android:clickable="true"
 						android:onClick="onManagerBackClick"
-                        android:text="&#xE5CE;"/>
+						android:text=""/>
 
 				</FrameLayout>
 
@@ -285,19 +291,30 @@
 					android:layout_marginBottom="48dp"
 					android:layout_below="@id/main_manager_tab">
 
-					<LinearLayout
+					<FrameLayout
 						android:id="@+id/main_manager_p1"
 						android:layout_height="fill_parent"
-						android:layout_width="fill_parent">
+						android:layout_width="fill_parent"
+						android:gravity="center">
 
 						<ListView
 							android:id="@+id/main_manager_bookmark_list"
 							android:layout_height="fill_parent"
 							android:layout_width="fill_parent"/>
 
-					</LinearLayout>
+						<TextView
+							android:textAppearance="?android:attr/textAppearanceMedium"
+							android:id="@+id/main_nomarkbook"
+							android:layout_height="fill_parent"
+							android:layout_width="fill_parent"
+							android:text="@string/lang69"
+							android:clickable="true"
+                            android:focusable="true"
+							android:gravity="center"/>
 
-					<LinearLayout
+					</FrameLayout>
+
+					<FrameLayout
 						android:id="@+id/main_manager_p2"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
@@ -308,9 +325,9 @@
 							android:layout_height="fill_parent"
 							android:layout_width="fill_parent"/>
 
-					</LinearLayout>
+					</FrameLayout>
 
-					<LinearLayout
+					<FrameLayout
 						android:id="@+id/main_manager_p3"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
@@ -319,7 +336,7 @@
 						<include
 							layout="@layout/settings"/>
 
-					</LinearLayout>
+					</FrameLayout>
 
 				</FrameLayout>
 
@@ -327,18 +344,18 @@
 
 		</RelativeLayout>
 
-        <FrameLayout
-            android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:id="@+id/main_simulation"
-            android:visibility="gone">
+		<FrameLayout
+			android:layout_alignParentBottom="true"
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:id="@+id/main_simulation"
+			android:visibility="gone">
 
-            <include
-                layout="@layout/simulation"/>
+			<include
+				layout="@layout/simulation"/>
 
-        </FrameLayout>
-        
+		</FrameLayout>
+
 	</RelativeLayout>
 
 	<View

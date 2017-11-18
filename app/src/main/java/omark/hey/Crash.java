@@ -20,9 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by yaerin on 10/28/17.
- */
 public class Crash extends Activity {
 
     private static final String EXTRA_E = "e";
@@ -51,18 +48,18 @@ public class Crash extends Activity {
         Throwable e = (Throwable) getIntent().getSerializableExtra(EXTRA_E);
 
         String env =
-            "########RuntimeEnviormentInormation#######\n" +
-            "crashTime = " + dateFormat.format(new Date()) + "\n" +
-            "model = " + Build.MODEL + "\n" +
-            "android = " + Build.VERSION.RELEASE + "(" + Build.VERSION.SDK_INT + ")\n" +
-            "brand = " + Build.BRAND + "\n" +
-            "manufacturer = " + Build.MANUFACTURER + "\n" +
-            "board = " + Build.BOARD + "\n" +
-            "hardware = " + Build.HARDWARE + "\n" +
-            "device = " + Build.DEVICE + "\n" +
-            "version = " + getVersionName() + "(" + getVersionCode() + ")\n" +
-            "supportAbis = " + getSupportAbis() + "\n" +
-            "display = " + Build.DISPLAY + "\n";
+            "Runtime Enviorment Inormation\n\n" +
+            "CrashTime = " + dateFormat.format(new Date()) + "\n" +
+            "Model = " + Build.MODEL + "\n" +
+            "Android = " + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK_INT + ")\n" +
+            "Brand = " + Build.BRAND + "\n" +
+            "Manufacturer = " + Build.MANUFACTURER + "\n" +
+            "Board = " + Build.BOARD + "\n" +
+            "Hardware = " + Build.HARDWARE + "\n" +
+            "Device = " + Build.DEVICE + "\n" +
+            "Version = " + getVersionName() + " (" + getVersionCode() + ")\n" +
+            "SupportAbis = " + getSupportAbis() + "\n" +
+            "Display = " + Build.DISPLAY + "\n\n\n";
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         e.printStackTrace(printWriter);
@@ -72,7 +69,7 @@ public class Crash extends Activity {
             cause = cause.getCause();
         }
         printWriter.close();
-        String stack = "############ForceCloseCrashLog############\n" + writer.toString();
+        String stack = "Force Close Crash Log\n\n" + writer.toString();
         final String msg = env + stack;
 
         message.setText(msg);

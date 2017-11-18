@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="omark.hey">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="omark.hey">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SET_ORIENTATION"/>
@@ -11,15 +10,23 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS" />
+
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
         
     <application
         android:name=".App"
+        android:supportsRtl="true"
         android:allowBackup="true"
         android:label="@string/name"
         android:icon="@drawable/icon"
         android:resizeableActivity="true"
-        android:hardwareAccelerated="true">
+        android:hardwareAccelerated="true"
+        android:roundIcon="@drawable/icon">
         
+        <activity android:name=".About"/>
+
         <activity
             android:name=".Crash"
             android:process=":Crash" />
@@ -34,9 +41,19 @@
             android:theme="@style/AppTheme"
             android:icon="@drawable/icon"
             android:label="@string/name">
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="omark.hey" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             
             <!--这就是添加打开方式的办法了(๑•̀ㅂ•́)و✧-->
@@ -69,6 +86,12 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
+			</intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.WEB_SEARCH" />
                 <action android:name="android.intent.action.MEDIA_SEARCH" />

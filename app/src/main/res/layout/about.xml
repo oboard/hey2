@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/lang33">
+        
+        <Preference
+            android:title="@string/app_name"
+            android:summary="U-2.0"/>
+
+        <Preference
+            android:title="测试群"
+            android:summary="676176107"/>
+        
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/lang36">
+
+        <Preference
+            android:title="一块小板子 (oboard)"
+            android:summary="QQ 2232442466"/>
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/lang66">
+        
+        <Preference
+            android:title="小青光"
+            android:summary="@string/lang19"/> 
+
+        <Preference
+            android:title="神楽坂花火"
+            android:summary="@string/lang67"/>
+
+        <Preference
+            android:title="w568w"
+            android:summary="@string/lang68"/>
+
+        <Preference
+            android:title="hyzhhsh"
+            android:summary="@string/lang68"/>
+
+        <Preference
+            android:title="DefiedParty"
+            android:summary="@string/lang68"/>
+
+        <Preference
+            android:title="Zero cheng"
+            android:summary="@string/lang68"/>
+    
+        <Preference
+            android:title="Curium"
+            android:summary="@string/lang68"/>
+        
+    </PreferenceCategory>
+   
+</PreferenceScreen>

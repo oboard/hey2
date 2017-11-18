@@ -8,39 +8,46 @@
 
 	<omark.hey.control.HeySetting
 		android:id="@+id/setting_1"
-        android:onClick="onSettingClick"
+		android:onClick="onSettingClick"
 		android:layout_height="48dp"
 		android:layout_width="fill_parent"
 		android:tag="@string/lang27"/>
 
-    <omark.hey.control.HeySetting
-        android:id="@+id/setting_3"
-        android:onClick="onSettingClick"
-        android:layout_height="48dp"
-        android:layout_width="fill_parent"
-        android:tag="@string/lang29"/>
-    
-    <omark.hey.control.HeySetting
-        android:id="@+id/setting_4"
-        android:onClick="onSettingClick"
-        android:layout_height="48dp"
-        android:layout_width="fill_parent"
-        android:tag="@string/lang22"/>
-    
-    <omark.hey.control.HeySetting
-        android:id="@+id/setting_5"
-        android:onClick="onSettingClick"
-        android:layout_height="48dp"
-        android:layout_width="fill_parent"
-        android:tag="@string/lang12"/>
-    
+	<omark.hey.control.HeySetting
+		android:id="@+id/setting_3"
+		android:onClick="onSettingClick"
+		android:layout_height="48dp"
+		android:layout_width="fill_parent"
+		android:tag="@string/lang29"/>
+
+	<omark.hey.control.HeySetting
+		android:id="@+id/setting_4"
+		android:onClick="onSettingClick"
+		android:layout_height="48dp"
+		android:layout_width="fill_parent"
+		android:tag="@string/lang22"/>
+
+	<omark.hey.control.HeySetting
+		android:id="@+id/setting_5"
+		android:onClick="onSettingClick"
+		android:layout_height="48dp"
+		android:layout_width="fill_parent"
+		android:tag="@string/lang12"/>
+
 	<omark.hey.control.HeySetting
 		android:id="@+id/setting_2"
-        android:onClick="onSettingClick"
+		android:onClick="onSettingClick"
 		android:layout_height="48dp"
 		android:layout_width="fill_parent"
 		android:tag="@string/lang25"
-		android:alpha="0.9"/>
+		android:translationX="100dp"/>
+
+	<omark.hey.control.HeySetting
+		android:id="@+id/setting_6"
+		android:onClick="onSettingClick"
+		android:layout_height="48dp"
+		android:layout_width="fill_parent"
+		android:tag="@string/lang33"/>
 
 </LinearLayout>
 

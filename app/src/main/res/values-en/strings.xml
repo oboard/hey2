@@ -71,10 +71,16 @@
     <string name="lang57">Link</string>
     <string name="lang58">No Title</string>
     <string name="lang59">Vacuum Mode</string>
-    <string name="lang60">Night Light</string>
+    <string name="lang60">Night Mode</string>
     <string name="lang61">Multi Screen</string>
     <string name="lang62">Floating Windows</string>
-
+    <string name="lang63">Virtual</string>
+    <string name="lang64">User Agent</string>
+    <string name="lang65">Size</string>
+    <string name="lang66">Thanks</string>
+    <string name="lang67">Technology</string>
+    <string name="lang68">Test</string>
+    <string name="lang69">No Bookmarks</string>
 </resources>
 
-<!--Raku 英语 2017.11.08-->
+<!--Raku 英语 2017.11.18-->

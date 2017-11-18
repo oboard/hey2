@@ -52,8 +52,7 @@ public class HeyHelper {
     }
     
     public static void setFont(TextView textview, String ttf) {
-        Typeface font = Typeface.createFromAsset(textview.getContext().getResources().getAssets(), ttf + ".ttf"); 
-        textview.setTypeface(font);
+        textview.setTypeface(Typeface.createFromAsset(textview.getContext().getResources().getAssets(), ttf + ".txt"));
     }
     
     public static String toWeb(String s) {

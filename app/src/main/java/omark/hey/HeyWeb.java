@@ -148,6 +148,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                             return;
                         }
                         if (url.equals(S.get("h" + hm, "")) && v.getTitle().equals(S.get("hn" + hm, ""))) return;
+                        if (url.equals(S.get("h" + hm, "")) && v.getTitle().equals(url)) return;
                         String t = S.getString(R.string.lang58);
                         //历史记录
                         if (!v.getTitle().equals(""))

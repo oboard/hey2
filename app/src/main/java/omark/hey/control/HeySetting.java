@@ -51,12 +51,12 @@ public class HeySetting extends RelativeLayout {
         
         mSwitch = new HeySwitch(c);
         //mSwitch.setClickable(false);
-        if (getAlpha() < 1)
+        if (getTranslationX() > 1)
             mSwitch.setVisibility(View.VISIBLE);
         else
             mSwitch.setVisibility(View.GONE);
             
-        setAlpha(1);
+        setTranslationX(1);
         
         MarginLayoutParams lpm = new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);
         lpm.setMargins(10, 0, 24, 0);

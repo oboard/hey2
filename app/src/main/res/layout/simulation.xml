@@ -5,8 +5,8 @@
 	android:layout_width="fill_parent"
 	android:background="#AAffffff"
 	android:orientation="vertical"
-	android:layout_height="300dp"
-    android:clickable="true">
+	android:layout_height="240dp"
+	android:clickable="true">
 
 	<FrameLayout
 		android:background="@color/colorPrimary"
@@ -14,7 +14,7 @@
 		android:layout_height="wrap_content">
 
 		<TextView
-            android:layout_margin="10dp"
+			android:layout_margin="10dp"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
@@ -25,13 +25,14 @@
 			android:background="?android:attr/selectableItemBackground"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="10dp"
+			android:layout_marginRight="10dp"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:id="@+id/simulation_back"
 			android:onClick="onBackPressed"
 			android:textColor="#ffffff"
-            android:clickable="true"
+			android:clickable="true"
+            android:focusable="true"
 			android:text=""/>
 
 	</FrameLayout>
@@ -55,21 +56,6 @@
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:id="@+id/simulation_a"
-		android:layout_margin="10dp"
-		android:textColor="#000000"/>
-
-	<TextView
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:layout_marginBottom="5dp"
-		android:text="@string/lang65"
-		android:layout_margin="10dp"
-		android:textColor="#000000"/>
-
-	<Spinner
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:id="@+id/simulation_d"
 		android:layout_margin="10dp"
 		android:textColor="#000000"/>
 

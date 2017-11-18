@@ -78,7 +78,7 @@ public class Main extends Activity {
     static ImageView background;
     static Spinner simulation_u, simulation_a, simulation_d;
     static TextView multi_text, back_icon, forward_icon, manager_back, button_left, button_right, button_number, manager_th;
-    static TextView simulation_back;
+    static TextView simulation_back, nomarkbook;
     static TextView[] manager_tab_button = new TextView[3];
     static ListView bookmark_list, history_list;
     static LinearLayout multi_box, multi_scroll;
@@ -98,7 +98,6 @@ public class Main extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
 
         S.init(this, "main");
 
@@ -110,7 +109,6 @@ public class Main extends Activity {
                 .put("pagecolor", true)
                 .put("style", 0)
                 .ok();
-
             /*
              //兼容H5？？
              S.put("h5_app_ui_pgbar", "#dedede");
@@ -120,6 +118,24 @@ public class Main extends Activity {
              S.put("h5_app_ui_bg", "#ffffff");
              */
         }
+
+        try {
+            if (getIntent().getAction().equals("omark.hey.bookmark")) {
+                LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
+                final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
+                new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
+                    .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int i) {
+                            S.addIndexX("bm" , new String[] {"b", "bn", "bt"}, new String[] {t2.getText().toString(), t1.getText().toString(), "" + System.currentTimeMillis()});
+                            finish();
+                        }
+                    }).show();
+            }
+        } catch (Exception e) {}
+        setContentView(R.layout.main);
+
+
+
 
         me = this;
         popn = findViewById(R.id.main_popn);
@@ -191,7 +207,7 @@ public class Main extends Activity {
                             break;
                         case 4:
                             LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
-                            final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);;   
+                            final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
                             t1.setText(web.getTitle());
                             t2.setText(web.getUrl());
                             new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
@@ -281,6 +297,7 @@ public class Main extends Activity {
                                         aniA.setFillAfter(true);
                                         aniA.setDuration(225);
                                         desktop.startAnimation(aniA);
+
                                     }
                                 });
                             break;
@@ -335,7 +352,8 @@ public class Main extends Activity {
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
         multi_text = (TextView)findViewById(R.id.main_multi_text);
         addMulti();
-
+        
+        nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
         manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
         manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
         manager_tab_button[2] = (TextView)findViewById(R.id.main_manager_t2);
@@ -436,7 +454,8 @@ public class Main extends Activity {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                     simulation_a.setAdapter(new ArrayAdapter<String>(Main.this, android.R.layout.simple_spinner_item, UserAgent.ss[pos]));
-                    Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
+                    setUA(UserAgent.ssr()[pos][0]);
+                    web.reload();
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
@@ -446,20 +465,21 @@ public class Main extends Activity {
         simulation_a.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
+                    setUA(UserAgent.ssr()[(int)simulation_u.getSelectedItemPosition()][pos]);
+                    web.reload();
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
-            });
-        simulation_d = (Spinner)findViewById(R.id.simulation_d);
-        simulation_d.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {}
-            });
+            });/*
+         simulation_d = (Spinner)findViewById(R.id.simulation_d);
+         simulation_d.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+         @Override
+         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+         Toast.makeText(Main.this, "你点击的是:" + pos, 2000).show();
+         }
+         @Override
+         public void onNothingSelected(AdapterView<?> parent) {}
+         });*/
         simulation_back = (TextView)findViewById(R.id.simulation_back);
         ripple_version(simulation_back);
         HeyHelper.setFont(simulation_back, "m");
@@ -573,13 +593,20 @@ public class Main extends Activity {
                         }
                     }).show();
                 break;
+            case R.id.setting_6:
+                startActivity(new Intent(this, About.class));
+                break;
         }
     }
 
     public static void freshSimulation() {
         simulation.invalidate();
-        Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, (int)simulation.getY(), lastimage.getWidth(), (int)dip2px(Main.me, 300)); 
+        try {
+        Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, (int)simulation.getY(), lastimage.getWidth(), (int)(dip2px(Main.me, 240)));
         simulation.setBackgroundDrawable(new BitmapDrawable(FastBlur.rsBlur(Main.me, bitmap, 25)));
+        } catch(Exception e) {
+            simulation.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        }
     }
 
     public static void freshDock() {
@@ -603,6 +630,15 @@ public class Main extends Activity {
         lp.setMargins(0, 0, 0, (int)dip2px(Main.me, 48));
         desktop.setLayoutParams(lp);
         dock.getLayoutParams().height = (int)dip2px(Main.me, 48);
+    }
+
+    public static void setUA(String s) {
+        for (Object p : pages.toArray()) {
+            HeyWeb page = (HeyWeb)p;
+            if (page != null) {
+                page.getSettings().setUserAgentString(s);
+            }
+        }
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
@@ -828,7 +864,10 @@ public class Main extends Activity {
         text.requestFocus();
         keyboardState(true);
         history_list.setAdapter(history.getAdapter());
-
+        if (bookmark.getData().size() > 0)
+            nomarkbook.setVisibility(View.GONE);
+        else
+            nomarkbook.setVisibility(View.VISIBLE);
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
                     Bitmap bitmap = lastimage;
@@ -866,17 +905,17 @@ public class Main extends Activity {
          }
          }.sendEmptyMessageDelayed(0, 225);*/
     } public void onManagerClick(View v) {
-        final LinearLayout[] page = {
-            (LinearLayout)findViewById(R.id.main_manager_p1),
-            (LinearLayout)findViewById(R.id.main_manager_p2),
-            (LinearLayout)findViewById(R.id.main_manager_p3)
+        final FrameLayout[] page = {
+            (FrameLayout)findViewById(R.id.main_manager_p1),
+            (FrameLayout)findViewById(R.id.main_manager_p2),
+            (FrameLayout)findViewById(R.id.main_manager_p3)
         };
 
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)manager_tab.getLayoutParams();  
         params.setMargins((int)v.getX(), 0, 0, 0);
         manager_tab.setLayoutParams(params);
 
-        for (LinearLayout l : page) {
+        for (FrameLayout l : page) {
             l.setVisibility(View.GONE);
         }
 
@@ -1065,7 +1104,7 @@ public class Main extends Activity {
         final AnimationSet aniA = new AnimationSet(true);
         aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
         aniA.addAnimation(new AlphaAnimation(0f, 1f));
-        aniA.setDuration(2252);
+        aniA.setDuration(225);
 
         for (int i = fristindex; i < pages.size(); i++) {
             ((View)multitext.get(i).getParent()).setAnimation(aniA);
@@ -1193,9 +1232,9 @@ public class Main extends Activity {
         //}
     } public static void keyboardState(boolean open) {
         InputMethodManager i = (InputMethodManager)Main.me.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (open) {
+        if (open)
             i.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
-        } else {
+        else {
             View view = Main.me.getWindow().peekDecorView();
             if (view != null) i.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
@@ -1245,7 +1284,6 @@ public class Main extends Activity {
         startActivityForResult(chooserIntent, 5);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == 3) {
@@ -1259,11 +1297,11 @@ public class Main extends Activity {
             if (null == mUploadMessageForAndroid5)
                 return;
             Uri result = (intent == null || resultCode != RESULT_OK) ? null: intent.getData();
-            if (result != null) {
+            if (result != null)
                 mUploadMessageForAndroid5.onReceiveValue(new Uri[]{result});
-            } else {
+            else
                 mUploadMessageForAndroid5.onReceiveValue(new Uri[]{});
-            }
+           
             mUploadMessageForAndroid5 = null;
         } else if (requestCode == 1) {
             if (resultCode == RESULT_OK) {

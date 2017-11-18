@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <shortcut
+        android:enabled="true"
+        android:shortcutId="addmarkbook"
+        android:shortcutLongLabel="@string/lang17"
+        android:shortcutShortLabel="@string/lang17"
+        android:shortcutDisabledMessage="@string/lang17">
+
+        <intent
+            android:targetClass="omark.hey.Main"
+            android:action="omark.hey.markbook"
+            android:targetPackage="omark.hey" />
+        
+        <categories android:name="android.shortcut.conversation" />
+            
+    </shortcut>
+    
+</shortcuts>

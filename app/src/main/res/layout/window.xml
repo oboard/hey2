@@ -25,6 +25,7 @@
                 android:id="@+id/window_back"
                 android:textColor="@color/colorBackground"
                 android:clickable="true"
+                android:focusable="true"
                 android:gravity="center"
                 android:textSize="16sp"
                 android:text="&#xE5C4;"
@@ -54,6 +55,7 @@
                     android:textColor="@color/colorBackground"
                     android:layout_width="48dp"
                     android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:textSize="16sp"
                     android:text="&#xE5CD;"/>
