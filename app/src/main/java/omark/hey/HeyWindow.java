@@ -2,22 +2,15 @@ package omark.hey;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.view.Display;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.os.Handler;
-import android.os.Looper;
-import android.graphics.drawable.BitmapDrawable;
+import android.widget.TextView;
 
 public class HeyWindow extends LinearLayout {
 

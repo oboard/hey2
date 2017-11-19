@@ -1,16 +1,14 @@
 package omark.hey;
 
 import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.widget.GridView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import android.widget.RelativeLayout;
-import android.graphics.drawable.ColorDrawable;
-import android.widget.GridView;
-import android.webkit.JavascriptInterface;
 
 public class HeyMenu {
     // 图片封装为一个数组
@@ -102,7 +100,8 @@ public class HeyMenu {
 
     @JavascriptInterface
     public void setState(int index, boolean o) {
-        data_list.get(index).replace("back", o);
+        data_list.get(index).put("back", o);
+            
         sa.notifyDataSetChanged();
     }
 

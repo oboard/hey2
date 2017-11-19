@@ -43,6 +43,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -51,6 +52,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.FileNotFoundException;
@@ -59,9 +61,6 @@ import java.util.List;
 import java.util.Map;
 import omark.hey.control.HeyProgress;
 import omark.hey.control.HeySetting;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.view.animation.TranslateAnimation;
 
 public class Main extends Activity {
     static Main me;
@@ -352,7 +351,7 @@ public class Main extends Activity {
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
         multi_text = (TextView)findViewById(R.id.main_multi_text);
         addMulti();
-        
+
         nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
         manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
         manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
@@ -544,7 +543,7 @@ public class Main extends Activity {
                     HeyHelper.DEFAULT_SEARCH,
                     "https://google.com.hk/search?q=",
                     "https://baidu.com/s?word=",
-                    "https://sogou.com/web?query=",
+                    "https://sogo.com/web?query=",
                     "https://yandex.com/search/?text=",
                     "https://search.yahoo.com/search?p=",
                     "https://so.com/s?q="
@@ -602,9 +601,9 @@ public class Main extends Activity {
     public static void freshSimulation() {
         simulation.invalidate();
         try {
-        Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, (int)simulation.getY(), lastimage.getWidth(), (int)(dip2px(Main.me, 240)));
-        simulation.setBackgroundDrawable(new BitmapDrawable(FastBlur.rsBlur(Main.me, bitmap, 25)));
-        } catch(Exception e) {
+            Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, (int)simulation.getY(), lastimage.getWidth(), (int)(dip2px(Main.me, 240)));
+            simulation.setBackgroundDrawable(new BitmapDrawable(FastBlur.rsBlur(Main.me, bitmap, 25)));
+        } catch (Exception e) {
             simulation.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         }
     }
@@ -1301,7 +1300,7 @@ public class Main extends Activity {
                 mUploadMessageForAndroid5.onReceiveValue(new Uri[]{result});
             else
                 mUploadMessageForAndroid5.onReceiveValue(new Uri[]{});
-           
+
             mUploadMessageForAndroid5 = null;
         } else if (requestCode == 1) {
             if (resultCode == RESULT_OK) {

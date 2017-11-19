@@ -184,7 +184,6 @@ public final class R {
         public static final int lang8=0x7f070009;
         public static final int lang9=0x7f07000a;
         public static final int name=0x7f070000;
-        public static final int name2=0x7f070047;
     }
     public static final class style {
         public static final int AppTheme=0x7f080000;

@@ -7,23 +7,18 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.DragEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.webkit.DownloadListener;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import android.view.DragEvent;
-import android.content.ClipData;
-import android.webkit.WebChromeClient;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
 
