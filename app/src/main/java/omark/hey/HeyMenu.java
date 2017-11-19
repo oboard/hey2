@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import android.webkit.CookieManager;
 
 public class HeyMenu {
     // 图片封装为一个数组
@@ -125,7 +126,7 @@ public class HeyMenu {
             map.put("back", false);
             try {
                 if (icon[i] == 0xE3E9)
-                    map.put("back", Main.pages.get(Main.menus.indexOf(this)).getSettings().getDomStorageEnabled());
+                    map.put("back", Main.vmode);
                 else if (icon[i] == 0xE3A8)
                     map.put("back", Main.night.getTag());
             } catch (Exception e) {

@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.PopupMenu;
 import java.lang.reflect.Method;
+import android.webkit.CookieManager;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
 
@@ -124,9 +125,9 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 public void onPageStarted(WebView v, String url, Bitmap favicon) {
                     super.onPageStarted(v, url, favicon);
                     try {
-                    Main.menus.get(Main.pages.indexOf(v)).setState(5, false);
+                        Main.menus.get(Main.pages.indexOf(v)).setState(8, false);
                     } catch (Exception e) {
-                        //有的时候啊，找不到"对象"
+                        //找不到朋友
                     }
                 }
 
@@ -135,7 +136,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
                     if (!getSettings().getLoadsImagesAutomatically()) getSettings().setLoadsImagesAutomatically(true);
 
-                    if (getSettings().getDomStorageEnabled()) {
+                    if (!Main.vmode) {
                         int hm = S.get("hm", 0) - 1;
                         long time = System.currentTimeMillis();
                         if (url.equals("about:blank") || v.getTitle().equals("about:blank")) {
@@ -197,11 +198,11 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         super.setWebChromeClient(client);
         mClient = client;
     }
-    
+
     public WebChromeClient getWebChromeClient() {
         return mClient;
     }
-    
+
     @Override
     protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);

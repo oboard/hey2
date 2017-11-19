@@ -3,6 +3,7 @@
     
     <shortcut
         android:enabled="true"
+        android:icon="@drawable/icon"
         android:shortcutId="addmarkbook"
         android:shortcutLongLabel="@string/lang17"
         android:shortcutShortLabel="@string/lang17"
@@ -15,6 +16,57 @@
         
         <categories android:name="android.shortcut.conversation" />
             
+    </shortcut>
+    
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/icon"
+        android:shortcutId="markbook"
+        android:shortcutLongLabel="@string/lang34"
+        android:shortcutShortLabel="@string/lang34"
+        android:shortcutDisabledMessage="@string/lang34">
+
+        <intent
+            android:targetClass="omark.hey.Main"
+            android:action="omark.hey.markbook"
+            android:targetPackage="omark.hey" />
+
+        <categories android:name="android.shortcut.conversation" />
+
+    </shortcut>
+    
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/icon"
+        android:shortcutId="add"
+        android:shortcutLongLabel="@string/lang42"
+        android:shortcutShortLabel="@string/lang42"
+        android:shortcutDisabledMessage="@string/lang42">
+
+        <intent
+            android:targetClass="omark.hey.Main"
+            android:action="omark.hey.add"
+            android:targetPackage="omark.hey" />
+
+        <categories android:name="android.shortcut.conversation" />
+
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/icon"
+        android:shortcutId="add2"
+        android:shortcutLongLabel="@string/lang70"
+        android:shortcutShortLabel="@string/lang70"
+        android:shortcutDisabledMessage="@string/lang70">
+
+        <intent
+            android:targetClass="omark.hey.Main"
+            android:action="omark.hey.add2"
+            android:targetPackage="omark.hey" />
+
+        <categories android:name="android.shortcut.conversation" />
+
     </shortcut>
     
 </shortcuts>

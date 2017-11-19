@@ -118,6 +118,7 @@
                 <data android:pathPattern="/.*\.mhtml" />
                 <data android:pathPattern="/.*\.mht" />
             </intent-filter>
+            
         </activity>
         
         <meta-data

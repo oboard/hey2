@@ -181,6 +181,7 @@ public final class R {
         public static final int lang68=0x7f070045;
         public static final int lang69=0x7f070046;
         public static final int lang7=0x7f070008;
+        public static final int lang70=0x7f070047;
         public static final int lang8=0x7f070009;
         public static final int lang9=0x7f07000a;
         public static final int name=0x7f070000;

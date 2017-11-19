@@ -65,6 +65,7 @@ import omark.hey.control.HeySetting;
 public class Main extends Activity {
     static Main me;
     static int webindex = - 1;
+    static boolean vmode = false;
     static View popn, manager_tab, blacker, night;
     static HeyClipboard clipboard;
     static ScrollText dock;
@@ -118,19 +119,6 @@ public class Main extends Activity {
              */
         }
 
-        try {
-            if (getIntent().getAction().equals("omark.hey.bookmark")) {
-                LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
-                final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
-                new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
-                    .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int i) {
-                            S.addIndexX("bm" , new String[] {"b", "bn", "bt"}, new String[] {t2.getText().toString(), t1.getText().toString(), "" + System.currentTimeMillis()});
-                            finish();
-                        }
-                    }).show();
-            }
-        } catch (Exception e) {}
         setContentView(R.layout.main);
 
 
@@ -225,27 +213,7 @@ public class Main extends Activity {
                             break;
                         case 6:
                             //真空模式
-                            if (!menus.get(webindex).getState(i)) {
-                                //关掉缓存和Cookies...
-                                for (int k = 0; k < pages.size(); k++) {
-                                    HeyWeb page = pages.get(k);
-                                    page.getSettings().setAppCacheEnabled(false);
-                                    page.getSettings().setDatabaseEnabled(false);
-                                    page.getSettings().setDomStorageEnabled(false);
-                                    menus.get(k).setState(i, true);
-                                }
-                                CookieManager.getInstance().setAcceptCookie(false);
-
-                            } else {
-                                for (int j = 0; j < pages.size(); j++) {
-                                    HeyWeb page = pages.get(j);
-                                    page.getSettings().setAppCacheEnabled(true);
-                                    page.getSettings().setDatabaseEnabled(true);
-                                    page.getSettings().setDomStorageEnabled(true);
-                                    menus.get(j).setState(i, false);
-                                }
-                                CookieManager.getInstance().setAcceptCookie(true);
-                            }
+                            setVmode(!menus.get(webindex).getState(i));
                             break;
                         case 5:
                             //夜间模式
@@ -351,6 +319,7 @@ public class Main extends Activity {
         multi_box = (LinearLayout)findViewById(R.id.main_multi_box);
         multi_text = (TextView)findViewById(R.id.main_multi_text);
         addMulti();
+        addMulti();
 
         nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
         manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
@@ -367,8 +336,9 @@ public class Main extends Activity {
         manager_th.setText(String.valueOf((char)((Integer)0xE872).intValue()));
         HeyHelper.setFont(manager_th, "m");
 
-        onIntent(null);
         onIntent(getIntent());
+        if (webindex < 0)
+            onIntent(null);
 
         onChangeBackground(Color.TRANSPARENT, getHeyBackground());
         freshDock();
@@ -483,6 +453,19 @@ public class Main extends Activity {
         ripple_version(simulation_back);
         HeyHelper.setFont(simulation_back, "m");
 
+    }
+
+    public void setVmode(boolean b) {
+        //关掉缓存和Cookies...
+        for (int k = 0; k < pages.size(); k++) {
+            HeyWeb page = pages.get(k);
+            page.getSettings().setAppCacheEnabled(!b);
+            page.getSettings().setDatabaseEnabled(!b);
+            page.getSettings().setDomStorageEnabled(!b);
+            menus.get(k).setState(6, b);
+        }
+        CookieManager.getInstance().setAcceptCookie(!b);
+        vmode = b;
     }
 
     public void onBarClick(View v) {
@@ -676,14 +659,40 @@ public class Main extends Activity {
             web = addPage("");
             return;
         }
-        String action = intent.getAction();
-        if (Intent.ACTION_SEND.equals(action)) {
-            web = addPage(HeyHelper.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
-        } else if (Intent.ACTION_VIEW.equals(action)) {
-            web = addPage(intent.getData().toString());
-        } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
-            web = addPage(HeyHelper.getSearch(intent.getStringExtra("query")));
-        }
+        try {
+            switch (intent.getAction()) {
+                case Intent.ACTION_SEND:
+                    web = addPage(HeyHelper.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
+                    break;
+                case Intent.ACTION_VIEW:
+                    web = addPage(intent.getData().toString());
+                    break;
+                case Intent.ACTION_WEB_SEARCH:
+                    web = addPage(HeyHelper.getSearch(intent.getStringExtra("query")));
+                    break;
+                case "omark.hey.addbookmark":
+                    LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
+                    final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
+                    new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
+                        .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int i) {
+                                S.addIndexX("bm" , new String[] {"b", "bn", "bt"}, new String[] {t2.getText().toString(), t1.getText().toString(), "" + System.currentTimeMillis()});
+                                finish();
+                            }
+                        }).show();
+                    break;
+                case "omark.hey.bookmark":
+                    onDockLongClick(null);
+                    break;
+                case "omark.hey.add2":
+                    setVmode(true);
+                    break;
+                case "omark.hey.add":
+                    onIntent(getIntent());
+                    break;
+            }
+        } catch (Exception e) {}
+
     }
 
     Boolean isExit = false;

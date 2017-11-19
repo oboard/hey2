@@ -6,22 +6,27 @@ import android.os.Looper;
 import android.webkit.JavascriptInterface;
 
 public class HeyApi {
- 
+
     public int mIndex = 0;
     public HeyApi(int index) {
         mIndex = index;
     }
-    
+
     @JavascriptInterface
     public void onReceivedThemeColor(final String color, final int index) {   
-        
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
-                    if (!color.equals(""))
-                        Main.multibottom.set(index, Color.parseColor(color));
-                    else
-                        Main.multibottom.set(index, Color.TRANSPARENT);
-                    if (index == Main.webindex) Main.onChangeBackground(Main.multibottom.get(index), Main.multitop.get(index));
+                    try {
+                        if (!color.equals(""))
+                            Main.multibottom.set(index, Color.parseColor(color));
+                        else
+                            Main.multibottom.set(index, Color.TRANSPARENT);
+                        if (index == Main.webindex) Main.onChangeBackground(Main.multibottom.get(index), Main.multitop.get(index));
+                    } catch (IndexOutOfBoundsException e) {
+                        //多半是关闭的太快了
+                    }
+
                 }
             });
     }
@@ -46,13 +51,13 @@ public class HeyApi {
         }
         return "";
     }
-    
+
     @JavascriptInterface
     public void set(String name, String value) {
         S.put("h5_" + name, value)
-        .ok();
+            .ok();
     }
-    
+
     @JavascriptInterface
     public String get(String name) {
         switch (name) {
@@ -114,7 +119,7 @@ public class HeyApi {
         }
         return S.get("h5_" + name, name);
     }
-    
+
     @JavascriptInterface
     public String get(char[] name) {
         return get(name.toString());
@@ -124,10 +129,10 @@ public class HeyApi {
     public String get(String name, String def) {
         switch (name) {
         }
-        
+
         return S.get("h5_" + name, def);
     }
-    
+
     @JavascriptInterface
     public String cmd(String str) {
         return "";
