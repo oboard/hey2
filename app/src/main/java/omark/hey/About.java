@@ -12,9 +12,8 @@ public class About extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         this.addPreferencesFromResource(R.layout.about);
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB)
             getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {

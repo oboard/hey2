@@ -2,11 +2,11 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
-	android:versionCode="35"
-	android:versionName="U-2.0 beta9">
+	android:versionCode="36"
+	android:versionName="U-2.0 beta10">
 
 	<uses-sdk
-		android:minSdkVersion="21"
+		android:minSdkVersion="16"
 		android:targetSdkVersion="22"/>
 
 	<uses-permission

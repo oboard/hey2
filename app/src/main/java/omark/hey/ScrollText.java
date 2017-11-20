@@ -8,12 +8,13 @@ import android.view.View;
 import android.widget.Scroller;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
-import android.view.animation.BounceInterpolator;
+import android.view.animation.AccelerateInterpolator;
 
-public class ScrollText extends TextView {
+public class ScrollText extends TextView
+{
 
     public static boolean isMenu = false;
-    
+
     boolean isUper = false;
 
     //按下view时所处的坐标
@@ -22,18 +23,21 @@ public class ScrollText extends TextView {
     //滑动~
     Scroller scroller;
 
-    public ScrollText(Context context, AttributeSet attrs) {
+    public ScrollText(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
-        scroller = new Scroller(context, new BounceInterpolator());
+        scroller = new Scroller(context, new AccelerateInterpolator());
         dip10 = (int)Main.dip2px(context, 10);
     }
 
     Boolean isUp = true;
     public Handler handler = new Handler(){
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(Message msg)
+        {
             super.handleMessage(msg);
-            if (isUp) {
+            if (isUp)
+            {
                 Main.me.onDockClick(null);
                 Main.back_icon.setVisibility(View.GONE);
                 Main.forward_icon.setVisibility(View.GONE);
@@ -44,17 +48,20 @@ public class ScrollText extends TextView {
     };
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event)
+    {
         View viewGroup = (View)getParent();
         int x = (int)event.getX(), y = (int)event.getY();
 
-        switch (event.getAction()) {
+        switch (event.getAction())
+        {
             case MotionEvent.ACTION_DOWN:
                 lastX = x;
                 lastY = y;
                 Main.me.onDockClick(this);
 
-                if (!isUper) {
+                if (!isUper)
+                {
                     isUp = true;
                     handler.sendEmptyMessageDelayed(0, 300);
                 }
@@ -67,15 +74,18 @@ public class ScrollText extends TextView {
                 if (lastS == 3) break;
                 int offsetx = viewGroup.getScrollX() + lastX - x;
                 int offsety = viewGroup.getScrollY() + lastY - y;
-                if (Math.abs(offsetx) > dip10 || Math.abs(offsety) > dip10) {
+                if (Math.abs(offsetx) > dip10 || Math.abs(offsety) > dip10)
+                {
                     isUp = false;
-                    if (lastS == 0) {
+                    if (lastS == 0)
+                    {
                         if (Math.abs(offsetx) >= Math.abs(offsety))
                             lastS = 1;
                         else
                             lastS = 2;
                     }
-                    if (lastS == 1) {
+                    if (lastS == 1)
+                    {
                         int max = (int)Main.dip2px(this.getContext(), 60);
                         //this.setText("" + offsetx + "max:" + max);
                         if (offsetx > max)
@@ -83,35 +93,45 @@ public class ScrollText extends TextView {
                         else if (offsetx < -max) 
                             offsetx = -max;
                         viewGroup.scrollTo(offsetx, 0);
-                    } else {
+                    }
+                    else
+                    {
                         int max = (int)Main.dip2px(this.getContext(), 160);
                         if (offsety > max) offsety = max;
                         viewGroup.scrollTo(0, offsety);
                     }
-                } else 
+                }
+                else 
                     viewGroup.scrollTo(0, 0);
                 break;
             case MotionEvent.ACTION_UP:
                 HeyWeb web = Main.web;
-                if (web != null) {
-                    if (viewGroup.getScrollX() > Main.dip2px(this.getContext(), 50)) {
+                if (web != null)
+                {
+                    if (viewGroup.getScrollX() > Main.dip2px(this.getContext(), 50))
+                    {
                         web.goForward();
 
                         web.loadUrl("javascript:document.title = " + web.getTitle());
-                    } else if (viewGroup.getScrollX() < -Main.dip2px(this.getContext(), 50)) {
+                    }
+                    else if (viewGroup.getScrollX() < -Main.dip2px(this.getContext(), 50))
+                    {
                         web.goBack();
 
                         web.loadUrl("javascript:document.title = " + web.getTitle());
                     }
                 }
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
-                if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100)) {
+                if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100))
+                {
                     isUper = true;
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 225);
-                    
+
                     Main.button_right.setVisibility(View.GONE);
                     Main.button_number.setVisibility(View.GONE);
-                } else {
+                }
+                else
+                {
                     isUper = false;
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 225);
                     if (lastS != 3) Main.freshDock();
@@ -131,8 +151,10 @@ public class ScrollText extends TextView {
     }
 
     @Override
-    public void computeScroll() {
-        if (scroller.computeScrollOffset()) {
+    public void computeScroll()
+    {
+        if (scroller.computeScrollOffset())
+        {
             ((View)getParent()).scrollTo(scroller.getCurrX(), scroller.getCurrY());
             // 再次刷新 view 也等于是在循环执行此方法 直到 computeScrollOffset 判断到达目的坐标为止，
             invalidate();

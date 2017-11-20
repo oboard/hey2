@@ -5,7 +5,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Scroller;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 
 public class ScrollImage extends ImageView {
 
@@ -16,7 +16,7 @@ public class ScrollImage extends ImageView {
     Context mContext;
     public ScrollImage(Context context, AttributeSet attrs) {
         super(context, attrs);
-        scroller = new Scroller(context, new DecelerateInterpolator());
+        scroller = new Scroller(context, new AccelerateInterpolator());
         mContext = context;
     }
 

@@ -659,6 +659,7 @@ public class Main extends Activity {
             web = addPage("");
             return;
         }
+        if (intent.getAction() == null) return;
         try {
             switch (intent.getAction()) {
                 case Intent.ACTION_SEND:
@@ -688,7 +689,7 @@ public class Main extends Activity {
                     setVmode(true);
                     break;
                 case "omark.hey.add":
-                    onIntent(getIntent());
+                    onIntent(null);
                     break;
             }
         } catch (Exception e) {}
@@ -787,12 +788,15 @@ public class Main extends Activity {
     } public void onDockClick(View v) {
         if (multi_scroll_box.getVisibility() == View.GONE || v != null) {
 
-            Bitmap l = getWebDrawing();
-            multiimages.set(webindex, l);
-            multiimage.get(webindex).setImageBitmap(HeyHelper.getRoundedCornerBitmap(l, dip2px(this, 2)));
-            multiimage.get(webindex).setTag(webindex);
-            multitext.get(webindex).setText(web.getTitle());
-
+            try {
+                Bitmap l = getWebDrawing();
+                multiimages.set(webindex, l);
+                multiimage.get(webindex).setImageBitmap(HeyHelper.getRoundedCornerBitmap(l, dip2px(this, 2)));
+                multiimage.get(webindex).setTag(webindex);
+                multitext.get(webindex).setText(web.getTitle());
+            } catch (Exception e) {
+                //手速过快
+            }
             if (v != null) return;
 
             hidePage();

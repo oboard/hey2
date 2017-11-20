@@ -67,10 +67,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         webSettings.setDisplayZoomControls(false);
         webSettings.setUseWideViewPort(true);
         webSettings.setJavaScriptEnabled(true);
-        //webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setPluginState(WebSettings.PluginState.ON);
         webSettings.setLoadWithOverviewMode(true);
-        webSettings.setCacheMode(webSettings.LOAD_NO_CACHE);
+        //webSettings.setCacheMode(webSettings.LOAD_NO_CACHE);
         webSettings.setCacheMode(webSettings.LOAD_DEFAULT);
         webSettings.setDefaultTextEncodingName("UTF-8");
 
