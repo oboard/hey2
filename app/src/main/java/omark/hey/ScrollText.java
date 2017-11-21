@@ -125,7 +125,7 @@ public class ScrollText extends TextView
                 if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100))
                 {
                     isUper = true;
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 225);
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 195);
 
                     Main.button_right.setVisibility(View.GONE);
                     Main.button_number.setVisibility(View.GONE);
@@ -133,7 +133,7 @@ public class ScrollText extends TextView
                 else
                 {
                     isUper = false;
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 225);
+                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 195);
                     if (lastS != 3) Main.freshDock();
                 }
                 isMenu = isUper;

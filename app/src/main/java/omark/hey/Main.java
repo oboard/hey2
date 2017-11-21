@@ -473,12 +473,12 @@ public class Main extends Activity {
             case R.id.main_button_left:
                 onDockClick(v);
                 if (Math.abs(ground.getScrollY()) <= dip2px(this, 48)) {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 160) - ground.getScrollY(), 225);
+                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 160) - ground.getScrollY(), 195);
                     ScrollText.isMenu = true;
                     button_right.setVisibility(View.GONE);
                     button_number.setVisibility(View.GONE);
                 } else {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), -ground.getScrollY(), 225);
+                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), -ground.getScrollY(), 195);
                     ScrollText.isMenu = false;
                     freshDock();
                 }
