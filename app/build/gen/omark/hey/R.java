@@ -101,12 +101,13 @@ public final class R {
         public static final int crash=0x7f030002;
         public static final int diglog_bookmark=0x7f030003;
         public static final int history_item=0x7f030004;
-        public static final int main=0x7f030005;
-        public static final int menu_item=0x7f030006;
-        public static final int multi=0x7f030007;
-        public static final int settings=0x7f030008;
-        public static final int simulation=0x7f030009;
-        public static final int window=0x7f03000a;
+        public static final int home=0x7f030005;
+        public static final int main=0x7f030006;
+        public static final int menu_item=0x7f030007;
+        public static final int multi=0x7f030008;
+        public static final int settings=0x7f030009;
+        public static final int simulation=0x7f03000a;
+        public static final int window=0x7f03000b;
     }
     public static final class menu {
         public static final int link=0x7f090000;
