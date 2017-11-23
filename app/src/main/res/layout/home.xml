@@ -6,12 +6,29 @@
 	android:orientation="vertical"
 	android:gravity="center"
 	android:padding="10dp">
+    
+    <omark.hey.HeyWeb
+        android:id="@+id/home_logo"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"/>
 
-	<EditText
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
-		android:maxLines="1"
-        android:singleLine="true"/>
+    <omark.hey.CardView
+        android:layout_height="48dp"
+		android:layout_width="fill_parent">
+        
+        <EditText
+            android:id="@+id/home_text"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:maxLines="1"
+            android:singleLine="true"/>
+
+    </omark.hey.CardView>
+
+    <omark.hey.HeyWeb
+        android:id="@+id/home_bookmark"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"/>
 
 </LinearLayout>
 

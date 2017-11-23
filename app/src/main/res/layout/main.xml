@@ -86,7 +86,8 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_marginBottom="48dp"
-			android:visibility="gone">
+			android:visibility="gone"
+            android:scrollbars="none">
 
 			<LinearLayout
 				android:id="@+id/main_multi_scroll"
@@ -139,53 +140,78 @@
 
 		<TextView
 			android:id="@+id/main_button_number"
-			android:textColor="#AAffffff"
-			android:gravity="center"
 			android:layout_alignTop="@id/main_dock"
 			android:layout_alignBottom="@id/main_dock"
 			android:layout_alignParentRight="true"
-			android:textSize="16sp"
 			android:layout_height="wrap_content"
+			android:textColor="#AAffffff"
 			android:layout_width="48dp"
 			android:clickable="false"
-			android:text="1"
-			android:textStyle="bold"/>
+			android:gravity="center"
+			android:textStyle="bold"
+			android:textSize="16sp"
+			android:text="1"/>
 
 		<omark.hey.control.HeyProgress
 			style="?android:attr/progressBarStyleHorizontal"
-			android:id="@+id/main_progress"
-			android:layout_height="2dp"
+			android:layout_alignTop="@id/main_dock"
 			android:layout_width="fill_parent"
-			android:layout_alignTop="@id/main_dock"/>
+			android:id="@+id/main_progress"
+			android:layout_height="2dp"/>
 
-		<LinearLayout
+		<FrameLayout
 			android:id="@+id/main_multi_box"
+			android:layout_alignParentBottom="true"
+			android:onClick="onBackPressed"
 			android:layout_width="fill_parent"
 			android:layout_height="48dp"
-			android:layout_alignParentBottom="true"
-			android:gravity="center"
-			android:clickable="true"
+            android:paddingRight="24dp"
+            android:paddingLeft="24dp"
 			android:visibility="gone"
-			android:onClick="onBackPressed">
+			android:clickable="true">
 
+            <TextView
+                android:id="@+id/main_multi_box_remove"
+                android:layout_gravity="left|center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:onClick="onRemoveAllClick"
+                android:textColor="#AAffffff"
+                android:clickable="true"
+                android:focusable="true"
+                android:textSize="24sp"
+                android:text="&#xE53C;"/>
+
+            <TextView
+                android:id="@+id/main_multi_box_add"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#AAffffff"
+                android:onClick="onAddPage"
+                android:clickable="true"
+                android:focusable="true"
+                android:textSize="24sp"
+                android:text="&#xE145;"/>
+                
 			<TextView
-				android:id="@+id/main_multi_text"
-				android:layout_width="wrap_content"
+				android:id="@+id/main_multi_box_text"
+                android:layout_gravity="right|center_vertical"
 				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
 				android:textColor="#AAffffff"
+                android:textStyle="bold"
 				android:textSize="16sp"
-				android:text="1">
+				android:text="1"/>
 
-			</TextView>
-
-		</LinearLayout>
+        </FrameLayout>
 
 		<RelativeLayout
 			android:id="@+id/main_manager"
 			android:layout_height="fill_parent"
 			android:layout_width="fill_parent"
-			android:clickable="true"
-			android:visibility="gone">
+			android:visibility="gone"
+			android:clickable="true">
 
 			<RelativeLayout
 				android:id="@+id/main_manager_ground"
@@ -195,58 +221,62 @@
 
 				<LinearLayout
 					android:id="@+id/main_manager_t"
+					android:layout_marginTop="56dp"
 					android:layout_height="48dp"
-					android:layout_width="fill_parent"
-					android:layout_marginTop="56dp">
+					android:layout_width="fill_parent">
 
 					<TextView
 						android:id="@+id/main_manager_t0"
-						android:gravity="center"
-						android:textSize="24sp"
+						android:background="?android:attr/selectableItemBackground"
+						android:onClick="onManagerClick"
 						android:layout_height="fill_parent"
 						android:layout_width="48dp"
-						android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+						android:textSize="24sp"
 						android:clickable="true"
                         android:focusable="true"
-						android:onClick="onManagerClick"/>
+                        android:text="&#xE865;"/>
 
 					<TextView
 						android:id="@+id/main_manager_t1"
+						android:background="?android:attr/selectableItemBackground"
+						android:onClick="onManagerClick"
+                        android:layout_height="fill_parent"
+						android:layout_width="48dp"
 						android:gravity="center"
 						android:textSize="24sp"
-						android:layout_height="fill_parent"
-						android:layout_width="48dp"
-						android:background="?android:attr/selectableItemBackground"
 						android:clickable="true"
                         android:focusable="true"
-						android:onClick="onManagerClick"/>
+                        android:text="&#xE889;"/>
 
 					<TextView
 						android:id="@+id/main_manager_t2"
-						android:gravity="center"
-						android:textSize="24sp"
+						android:background="?android:attr/selectableItemBackground"
+						android:onClick="onManagerClick"
 						android:layout_height="fill_parent"
 						android:layout_width="48dp"
-						android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+						android:textSize="24sp"
 						android:clickable="true"
                         android:focusable="true"
-						android:onClick="onManagerClick"/>
+                        android:text="&#xE8B8;"/>
 
 				</LinearLayout>
 
 				<TextView
 					android:id="@+id/main_manager_th"
-					android:gravity="center"
-					android:textSize="24sp"
-					android:layout_height="48dp"
-					android:layout_width="48dp"
-					android:layout_marginTop="56dp"
 					android:background="?android:attr/selectableItemBackground"
 					android:layout_alignParentRight="true"
+					android:onClick="onManagerClick"
+					android:layout_marginTop="56dp"
+                    android:layout_height="48dp"
+					android:layout_width="48dp"
+					android:visibility="gone"
+                    android:gravity="center"
+					android:textSize="24sp"
 					android:clickable="true"
                     android:focusable="true"
-					android:onClick="onManagerClick"
-					android:visibility="gone"/>
+                    android:text="&#xE872;"/>
 
 				<FrameLayout
 					android:background="#11ffffff"
@@ -254,26 +284,26 @@
 					android:layout_width="fill_parent">
 
 					<EditText
-						android:background="#00000000"
-						android:layout_marginRight="48dp"
-						android:padding="5dp"
+						android:id="@+id/main_text"
 						android:layout_height="48dp"
 						android:layout_width="fill_parent"
+						android:layout_marginRight="48dp"
+						android:background="#00000000"
 						android:imeOptions="actionGo"
-						android:id="@+id/main_text"
+						android:inputType="textUri"
 						android:singleLine="true"
-						android:maxLines="1"
-						android:inputType="textUri"/>
+						android:padding="5dp"
+						android:maxLines="1"/>
 
 					<TextView
 						android:layout_gravity="right"
+						android:onClick="onManagerBackClick"
 						android:id="@+id/main_manager_back"
-						android:gravity="center"
-						android:textSize="24sp"
-						android:layout_height="48dp"
+                        android:layout_height="48dp"
 						android:layout_width="48dp"
 						android:clickable="true"
-						android:onClick="onManagerBackClick"
+						android:gravity="center"
+						android:textSize="24sp"
 						android:text=""/>
 
 				</FrameLayout>
@@ -357,8 +387,8 @@
 		</FrameLayout>
 
 	</RelativeLayout>
-
-	<View
+    
+    <View
 		android:id="@+id/main_night"
 		android:layout_height="fill_parent"
 		android:layout_width="fill_parent"

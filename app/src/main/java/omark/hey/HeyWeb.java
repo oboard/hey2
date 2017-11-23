@@ -19,7 +19,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.PopupMenu;
 import java.lang.reflect.Method;
-import android.webkit.CookieManager;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
 
@@ -97,7 +96,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
         //HeyApi
         mApi = new HeyApi(Main.pages.indexOf(this));
-        addJavascriptInterface(mApi, "CONTEXT");
+        addJavascriptInterface(mApi, "hey");
         addJavascriptInterface(mApi, "H5EXT");
 
         //设置WebClient
