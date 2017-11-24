@@ -30,7 +30,7 @@ public class HeyMenu {
         to = new int[] {
             R.id.menu_item_text,
             R.id.menu_item_icon,
-            R.id.menu_item_on
+            R.id.menu_item_icon
         };
 
         text = new String[] {
@@ -43,7 +43,8 @@ public class HeyMenu {
             S.getString(R.string.lang59),
             S.getString(R.string.lang62),
             S.getString(R.string.lang36),
-            S.getString(R.string.lang63)
+            S.getString(R.string.lang63),
+            S.getString(R.string.lang26)
         };
 
         icon = new int[] {
@@ -53,10 +54,11 @@ public class HeyMenu {
             0xE88A,
             0xE867,
             0xE3A8,
-            0xE3E9,
+            0xE8F5,
             0xE8AA,
             0xE86F,
-            0xE54E
+            0xE54E,
+            0xE8B8
         };
 
         data_list = getData();
@@ -67,14 +69,15 @@ public class HeyMenu {
                 @Override
                 public boolean setViewValue(View v, Object data, String textRepresentation) {
                     if (v.getId() == R.id.menu_item_icon) {
-                        HeyHelper.setFont((TextView)v, "m");
-                        ((TextView)v).setText(String.valueOf((char)((Integer)data).intValue()));
-                        return true;
-                    } else if (v.getId() == R.id.menu_item_on) {
-                        if ((Boolean)data)
-                            v.setBackgroundColor(0x66ffffff);
-                        else
-                            v.setBackgroundColor(0x22ffffff);
+                        if (data instanceof Integer) {
+                            HeyHelper.setFont((TextView)v, "m");
+                            ((TextView)v).setText(String.valueOf((char)((Integer)data).intValue()));
+                        } else if (data instanceof Boolean) {
+                            if ((boolean)data)
+                                ((TextView)v).setTextColor(0xffffffff);
+                            else
+                                ((TextView)v).setTextColor(0x55ffffff);
+                        }
                         return true;
                     }
                     return false;
@@ -102,7 +105,7 @@ public class HeyMenu {
     @JavascriptInterface
     public void setState(int index, boolean o) {
         data_list.get(index).put("back", o);
-            
+
         sa.notifyDataSetChanged();
     }
 
@@ -123,9 +126,9 @@ public class HeyMenu {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("text", text[i]);
             map.put("icon", icon[i]);
-            map.put("back", false);
+            map.put("back", true);
             try {
-                if (icon[i] == 0xE3E9)
+                if (icon[i] == 0xE8F5)
                     map.put("back", Main.vmode);
                 else if (icon[i] == 0xE3A8)
                     map.put("back", Main.night.getTag());

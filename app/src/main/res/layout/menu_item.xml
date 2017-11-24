@@ -4,18 +4,14 @@
 	android:layout_width="fill_parent"
 	android:layout_height="64dp">
 
-	<View
-		android:id="@+id/menu_item_on"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"/>
-
 	<TextView
 		android:id="@+id/menu_item_icon"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:textColor="#FFFFFF"
 		android:textSize="24sp"
-		android:layout_margin="5dp"/>
+		android:layout_margin="5dp"
+		android:layout_centerHorizontal="true"/>
 
 	<TextView
 		android:id="@+id/menu_item_text"
@@ -27,7 +23,8 @@
 		android:maxLines="1"
 		android:ellipsize="end"
 		android:layout_alignParentBottom="true"
-		android:layout_margin="5dp"/>
+		android:layout_margin="5dp"
+		android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
 

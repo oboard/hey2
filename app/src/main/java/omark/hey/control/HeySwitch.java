@@ -20,7 +20,8 @@ import android.graphics.RectF;
 public class HeySwitch extends CheckBox {
     float fx = 0, fy = 0;
     int w = 0, h = 0;
-    static int color = Color.BLACK;
+    static int color = Color.WHITE;
+    static int color2 = Color.BLACK;
 
     public HeySwitch(final Context context) {
         super(context);
@@ -100,7 +101,7 @@ public class HeySwitch extends CheckBox {
 
         //画状态球
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(blendColor(Color.WHITE, color, fx));
+        paint.setColor(blendColor(color2, color, fx));
         canvas.drawCircle(fx * (w - h) + h / 2, h / 2, h / 4, paint);
 
     }

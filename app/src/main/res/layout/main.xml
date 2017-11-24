@@ -56,14 +56,13 @@
 		<FrameLayout
 			android:layout_alignParentBottom="true"
 			android:layout_width="fill_parent"
-			android:layout_height="160dp"
-			android:translationY="160dp"
-			android:padding="2dp">
+			android:layout_height="288dp"
+			android:translationY="288dp">
 
 			<GridView
 				android:id="@+id/main_menu"
 				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
+				android:layout_height="160dp"
 				android:gravity="center"
 				android:stretchMode="columnWidth"
 				android:numColumns="4"
@@ -71,6 +70,17 @@
 				android:verticalSpacing="5dp"
 				android:horizontalSpacing="5dp"/>
 
+            <ScrollView
+                android:id="@+id/main_settings"
+                android:layout_height="288dp"
+                android:layout_width="fill_parent"
+                android:visibility="gone">
+
+                <include
+                    layout="@layout/settings"/>
+            
+            </ScrollView>
+            
 		</FrameLayout>
 
 		<FrameLayout
@@ -80,6 +90,15 @@
 			android:layout_marginBottom="48dp">
 
 		</FrameLayout>
+
+        <View
+            android:id="@+id/main_desktop_float"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+			android:layout_marginBottom="48dp"
+            android:background="#33000000"
+            android:onClick="onBarClick"
+            android:visibility="gone"/>
 
 		<HorizontalScrollView
 			android:id="@+id/main_multi_scroll_box"
@@ -93,55 +112,70 @@
 				android:id="@+id/main_multi_scroll"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-				android:onClick="onBackPressed"/>
+				android:onClick="onBackWeb"/>
 
 		</HorizontalScrollView>
 
 		<omark.hey.ScrollText
-			android:onClick="onDockClick"
 			android:id="@+id/main_dock"
-			android:textColor="#ffffff"
 			android:background="?@android:attr/selectableItemBackground"
-			android:layout_width="fill_parent"
-			android:layout_height="48dp"
 			android:layout_alignParentBottom="true"
-			android:gravity="center"
+            android:layout_width="fill_parent"
+			android:layout_height="48dp"
+			android:onClick="onDockClick"
+			android:textColor="#ffffff"
+            android:paddingRight="48dp"
 			android:paddingLeft="48dp"
-			android:paddingRight="48dp"/>
+			android:gravity="center"/>
 
+        <TextView
+            android:id="@+id/main_button_back"
+            android:background="?android:attr/selectableItemBackground"
+			android:layout_alignParentBottom="true"
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:textColor="#ffffff"
+			android:onClick="onBarClick"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:text="&#xE5C4;"/>
+        
 		<TextView
 			android:id="@+id/main_button_left"
-			android:textColor="#55ffffff"
-			android:gravity="center"
-			android:layout_alignTop="@id/main_dock"
-			android:layout_alignBottom="@id/main_dock"
-			android:textSize="32sp"
-			android:layout_height="wrap_content"
-			android:layout_width="48dp"
 			android:background="?android:attr/selectableItemBackground"
-			android:clickable="true"
+			android:layout_alignBottom="@id/main_dock"
+            android:layout_alignTop="@id/main_dock"
+            android:layout_height="wrap_content"
+			android:layout_width="48dp"
+			android:textColor="#55ffffff"
+			android:onClick="onBarClick"
+            android:clickable="true"
             android:focusable="true"
-			android:onClick="onBarClick"/>
+			android:gravity="center"
+			android:textSize="32sp"/>
 
 		<TextView
 			android:id="@+id/main_button_right"
-			android:textColor="#55ffffff"
-			android:gravity="center"
-			android:layout_alignTop="@id/main_dock"
-			android:layout_alignBottom="@id/main_dock"
-			android:layout_alignParentRight="true"
-			android:textSize="32sp"
-			android:layout_height="wrap_content"
-			android:layout_width="48dp"
 			android:background="?android:attr/selectableItemBackground"
-			android:clickable="true"
+            android:layout_alignBottom="@id/main_dock"
+			android:layout_alignTop="@id/main_dock"
+			android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
+			android:layout_width="48dp"
+			android:textColor="#55ffffff"
+			android:onClick="onBarClick"
+            android:clickable="true"
             android:focusable="true"
-			android:onClick="onBarClick"/>
+			android:gravity="center"
+			android:textSize="32sp"/>
 
 		<TextView
 			android:id="@+id/main_button_number"
-			android:layout_alignTop="@id/main_dock"
 			android:layout_alignBottom="@id/main_dock"
+			android:layout_alignTop="@id/main_dock"
 			android:layout_alignParentRight="true"
 			android:layout_height="wrap_content"
 			android:textColor="#AAffffff"
@@ -162,7 +196,7 @@
 		<FrameLayout
 			android:id="@+id/main_multi_box"
 			android:layout_alignParentBottom="true"
-			android:onClick="onBackPressed"
+			android:onClick="onBackWeb"
 			android:layout_width="fill_parent"
 			android:layout_height="48dp"
             android:paddingRight="24dp"
@@ -248,18 +282,6 @@
 						android:clickable="true"
                         android:focusable="true"
                         android:text="&#xE889;"/>
-
-					<TextView
-						android:id="@+id/main_manager_t2"
-						android:background="?android:attr/selectableItemBackground"
-						android:onClick="onManagerClick"
-						android:layout_height="fill_parent"
-						android:layout_width="48dp"
-                        android:gravity="center"
-						android:textSize="24sp"
-						android:clickable="true"
-                        android:focusable="true"
-                        android:text="&#xE8B8;"/>
 
 				</LinearLayout>
 
@@ -354,17 +376,6 @@
 							android:id="@+id/main_manager_history_list"
 							android:layout_height="fill_parent"
 							android:layout_width="fill_parent"/>
-
-					</FrameLayout>
-
-					<FrameLayout
-						android:id="@+id/main_manager_p3"
-						android:layout_height="fill_parent"
-						android:layout_width="fill_parent"
-						android:visibility="gone">
-
-						<include
-							layout="@layout/settings"/>
 
 					</FrameLayout>
 

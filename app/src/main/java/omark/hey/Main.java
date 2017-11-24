@@ -61,12 +61,14 @@ import java.util.List;
 import java.util.Map;
 import omark.hey.control.HeyProgress;
 import omark.hey.control.HeySetting;
+import android.widget.ScrollView;
+import android.view.animation.TranslateAnimation;
 
 public class Main extends Activity {
     static Main me;
     static int webindex = - 1;
     static boolean vmode = false;
-    static View popn, manager_tab, blacker, night;
+    static View popn, manager_tab, blacker, night, desktop_float;
     static HeyClipboard clipboard;
     static ScrollText dock;
     static EditText text;
@@ -76,13 +78,14 @@ public class Main extends Activity {
     static HeyProgress progressbar;
     static HeyWeb web;
     static ImageView background;
-    static Spinner simulation_u, simulation_a, simulation_d;
+    static Spinner simulation_u, simulation_a;
     static TextView multi_text, back_icon, forward_icon, manager_back, button_left, button_right, button_number, manager_th;
-    static TextView simulation_back, nomarkbook, multi_box_add, multi_box_remove;
-    static TextView[] manager_tab_button = new TextView[3];
+    static TextView simulation_back, nomarkbook, multi_box_add, multi_box_remove, button_back;
+    static TextView[] manager_tab_button = new TextView[2];
     static ListView bookmark_list, history_list;
     static LinearLayout multi_scroll;
     static HorizontalScrollView multi_scroll_box;
+    static ScrollView settings;
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
     static ArrayList<LinearLayout> multi = new ArrayList<LinearLayout>();
     static ArrayList<ImageView> multiimage = new ArrayList<ImageView>();
@@ -133,8 +136,10 @@ public class Main extends Activity {
         dock = (ScrollText)findViewById(R.id.main_dock);
         manager_tab = findViewById(R.id.main_manager_tab);
         root = (RelativeLayout)findViewById(R.id.main_root);
+        desktop_float = findViewById(R.id.main_desktop_float);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
+        settings = (ScrollView)findViewById(R.id.main_settings);
         manager = (RelativeLayout)findViewById(R.id.main_manager);
         background = (ImageView)findViewById(R.id.main_background);
         progressbar = (HeyProgress)findViewById(R.id.main_progress);
@@ -164,11 +169,9 @@ public class Main extends Activity {
         menu.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, final View v, final int i, long l) {
-
                     //点击菜单后，滚回去～
                     View viewGroup = (View)dock.getParent();
-                    viewGroup.scrollTo(0, 0); //.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 320);
-                    freshDock();
+                    viewGroup.scrollTo(0, 0);
                     switch (i) {
                         case 0:
                             web = addPage("");
@@ -268,10 +271,40 @@ public class Main extends Activity {
                                     }
                                 });
                             break;
+                        case 10:
+                            //设置
+                            AnimationSet aniB = new AnimationSet(true);
+                            aniB.addAnimation(new TranslateAnimation(0, 0, dip2px(Main.this, 8), 0));
+                            aniB.addAnimation(new AlphaAnimation(0, 1));
+                            aniB.setInterpolator(new DecelerateInterpolator());
+                            aniB.setDuration(225);
+                            settings.startAnimation(aniB);
+                            settings.setVisibility(View.VISIBLE);
+
+                            AnimationSet aniA = new AnimationSet(true);
+                            aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+                            aniA.addAnimation(new AlphaAnimation(1, 0));
+                            aniA.setInterpolator(new DecelerateInterpolator());
+                            aniA.setDuration(225);
+                            aniA.setAnimationListener(new Animation.AnimationListener() {
+                                    public void onAnimationStart(Animation ani) {}
+                                    public void onAnimationRepeat(Animation ani) {}
+                                    public void onAnimationEnd(Animation ani) {
+                                        menu.setVisibility(View.GONE);
+                                    }
+                                });
+                            menu.startAnimation(aniA);
+                            viewGroup.scrollTo(0, 288);
+
+                            button_back.setVisibility(View.VISIBLE);
+                            dock.setVisibility(View.GONE);
+                            return;
                         default:
                             Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
                             break;
                     }
+
+                    onMenu(false);
                 }
             });
 
@@ -300,6 +333,7 @@ public class Main extends Activity {
         button_left = (TextView)findViewById(R.id.main_button_left);
         button_right = (TextView)findViewById(R.id.main_button_right);
         button_number = (TextView)findViewById(R.id.main_button_number);
+        button_back = (TextView)findViewById(R.id.main_button_back);
 
         multi_box_add = (TextView)findViewById(R.id.main_multi_box_add);
         multi_box_remove = (TextView)findViewById(R.id.main_multi_box_remove);
@@ -311,15 +345,15 @@ public class Main extends Activity {
         button_right.setText(String.valueOf((char)((Integer)0xE3FA).intValue()));
 
         HeyHelper.setFont(back_icon, "m");
-        HeyHelper.setFont(forward_icon, "m");
-        HeyHelper.setFont(manager_back, "m");
+        HeyHelper.setFont(button_back, "m");
         HeyHelper.setFont(button_left, "m");
         HeyHelper.setFont(button_right, "m");
+        HeyHelper.setFont(forward_icon, "m");
+        HeyHelper.setFont(manager_back, "m");
         HeyHelper.setFont(multi_box_add, "m");
         HeyHelper.setFont(multi_box_remove, "m");
         ripple_version(manager_back);
-        ripple_version(multi_box_add);
-        ripple_version(multi_box_remove);
+        ripple_version(button_back);
 
         multi_scroll_box = (HorizontalScrollView)findViewById(R.id.main_multi_scroll_box);
         multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
@@ -330,7 +364,6 @@ public class Main extends Activity {
         nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
         manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
         manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
-        manager_tab_button[2] = (TextView)findViewById(R.id.main_manager_t2);
         for (TextView tvv : manager_tab_button) {
             HeyHelper.setFont(tvv, "m");
         }
@@ -339,7 +372,7 @@ public class Main extends Activity {
         HeyHelper.setFont(manager_th, "m");
 
         onIntent(getIntent());
-        if (webindex < 0)
+        if (webindex < 1)
             onIntent(null);
 
         onChangeBackground(Color.TRANSPARENT, getHeyBackground());
@@ -457,6 +490,18 @@ public class Main extends Activity {
 
     }
 
+    public static void onMenu(boolean open) {
+        ScrollText.isMenu = open;
+        if (open) {
+            button_right.setVisibility(View.GONE);
+            button_number.setVisibility(View.GONE);
+            desktop_float.setVisibility(View.VISIBLE);
+        } else {
+            freshDock();
+            desktop_float.setVisibility(View.GONE);
+        }
+    }
+
     public void setVmode(boolean b) {
         //关掉缓存和Cookies...
         for (int k = 0; k < pages.size(); k++) {
@@ -470,24 +515,79 @@ public class Main extends Activity {
         vmode = b;
     }
 
+    public void onSimulationBack(View v) {
+        final AlphaAnimation tranA = new AlphaAnimation(1, 0);
+        tranA.setDuration(225);
+        tranA.setAnimationListener(new Animation.AnimationListener() {
+                public void onAnimationStart(Animation ani) {}
+                public void onAnimationRepeat(Animation ani) {}
+                public void onAnimationEnd(Animation ani) {
+                    simulation.setVisibility(View.GONE);
+                }
+            });
+        simulation.startAnimation(tranA);
+
+        AnimationSet aniA = new AnimationSet(true);
+        aniA.addAnimation(new ScaleAnimation(0.5f, 1f, 0.5f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+        aniA.setInterpolator(new DecelerateInterpolator());
+        aniA.setFillAfter(true);
+        aniA.setDuration(225);
+        desktop.startAnimation(aniA);
+    }
+
+    public void onBackWeb(View v) {
+        onDockClick(null);
+    }
+
     public void onBarClick(View v) {
         switch (v.getId()) {
             case R.id.main_button_left:
                 onDockClick(v);
                 if (Math.abs(ground.getScrollY()) <= dip2px(this, 48)) {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 160) - ground.getScrollY(), 195);
-                    ScrollText.isMenu = true;
-                    button_right.setVisibility(View.GONE);
-                    button_number.setVisibility(View.GONE);
+                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 288) - ground.getScrollY(), 195);
+                    onMenu(true);
                 } else {
                     dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), -ground.getScrollY(), 195);
-                    ScrollText.isMenu = false;
-                    freshDock();
+                    onMenu(false);
                 }
                 dock.invalidate();
                 break;
             case R.id.main_button_right:
                 onDockClick(null);
+                break;
+            case R.id.main_button_back:
+                button_back.setVisibility(View.GONE);
+                //设置
+                AnimationSet aniB = new AnimationSet(true);
+                aniB.addAnimation( new TranslateAnimation(0, 0, 0, dip2px(Main.this, 8)));
+                aniB.addAnimation(new AlphaAnimation(1, 0));
+                aniB.setInterpolator(new DecelerateInterpolator());
+                aniB.setDuration(225);
+                aniB.setAnimationListener(new Animation.AnimationListener() {
+                        public void onAnimationStart(Animation ani) {}
+                        public void onAnimationRepeat(Animation ani) {}
+                        public void onAnimationEnd(Animation ani) {
+                            settings.setVisibility(View.GONE);
+                        }
+                    });
+                settings.startAnimation(aniB);
+
+                AnimationSet aniA = new AnimationSet(true);
+                aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+                aniA.addAnimation(new AlphaAnimation(0, 1));
+                aniA.setInterpolator(new DecelerateInterpolator());
+                aniA.setDuration(225);
+                menu.startAnimation(aniA);
+                menu.setVisibility(View.VISIBLE);
+                View viewGroup = (View)dock.getParent();
+                viewGroup.scrollTo(0, 160);
+                dock.setVisibility(View.VISIBLE);
+                break;
+            case R.id.main_desktop_float:
+                button_back.setVisibility(View.GONE);
+                menu.setVisibility(View.VISIBLE);
+                settings.setVisibility(View.GONE);
+                onBarClick(button_left);
                 break;
         }
     }
@@ -536,7 +636,6 @@ public class Main extends Activity {
                 new AlertDialog.Builder(this).setTitle(v.getTag().toString()).setSingleChoiceItems(se, S.get("searchindex", 0), new DialogInterface.OnClickListener() { 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                             S.put("search", su[which])
                                 .put("searchindex", which)
                                 .ok();
@@ -707,12 +806,16 @@ public class Main extends Activity {
         }
     };
 
-    public void onBackPressed(View v) {
-        onBackPressed();
-    }
-
     @Override
     public void onBackPressed() {
+        if (ScrollText.isMenu) {
+            if (settings.getVisibility() == View.VISIBLE)
+                onBarClick(button_back);
+            else
+                onBarClick(button_left);
+            return;
+        }
+        
         if (pages.size() == 0) {
             web = addPage("");
             freshDock();
@@ -731,23 +834,7 @@ public class Main extends Activity {
         else if (manager.getVisibility() == View.VISIBLE)
             onManagerBackClick(null);
         else if (simulation.getVisibility() == View.VISIBLE) {
-            final AlphaAnimation tranA = new AlphaAnimation(1, 0);
-            tranA.setDuration(225);
-            tranA.setAnimationListener(new Animation.AnimationListener() {
-                    public void onAnimationStart(Animation ani) {}
-                    public void onAnimationRepeat(Animation ani) {}
-                    public void onAnimationEnd(Animation ani) {
-                        simulation.setVisibility(View.GONE);
-                    }
-                });
-            simulation.startAnimation(tranA);
-
-            AnimationSet aniA = new AnimationSet(true);
-            aniA.addAnimation(new ScaleAnimation(0.5f, 1f, 0.5f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
-            aniA.setInterpolator(new DecelerateInterpolator());
-            aniA.setFillAfter(true);
-            aniA.setDuration(225);
-            desktop.startAnimation(aniA);
+            onSimulationBack(null);
         } else {
             if (web.canGoBack()) {
                 web.goBack();
@@ -830,7 +917,7 @@ public class Main extends Activity {
 
             if (pages.size() > webindex && S.get("pagecolor", true))
                 onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
-            
+
             AnimationSet aniB = new AnimationSet(true);
             aniB.addAnimation(new ScaleAnimation(1f, 1.2f, 1f, 1.2f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
             aniB.addAnimation(new AlphaAnimation(1f, 0f));
@@ -927,8 +1014,7 @@ public class Main extends Activity {
     } public void onManagerClick(View v) {
         final FrameLayout[] page = {
             (FrameLayout)findViewById(R.id.main_manager_p1),
-            (FrameLayout)findViewById(R.id.main_manager_p2),
-            (FrameLayout)findViewById(R.id.main_manager_p3)
+            (FrameLayout)findViewById(R.id.main_manager_p2)
         };
 
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)manager_tab.getLayoutParams();  
@@ -948,9 +1034,6 @@ public class Main extends Activity {
                 page[1].setVisibility(View.VISIBLE);
                 manager_th.setVisibility(View.VISIBLE);
                 break;
-            case R.id.main_manager_t2:
-                page[2].setVisibility(View.VISIBLE);
-                break;
 
             case R.id.main_manager_th:
                 page[1].setVisibility(View.VISIBLE);
@@ -969,7 +1052,7 @@ public class Main extends Activity {
         removeAllPage();
     } public void onAddPage(View v) {
         onDockClick(null);
-        addPage("");
+        web = addPage("");
     }
 
     public HeyWeb addPage(String uri) {
@@ -1082,9 +1165,10 @@ public class Main extends Activity {
         multi_text.setText("" + pages.size());
         button_number.setText(multi_text.getText());
 
-        if (pages.size() < 1) return;
-
-        if (webindex == index) {
+        if (pages.size() < 1) {
+            onDockClick(null);
+            web = addPage("");
+        } else if (webindex == index) {
             webindex = index + ((index == 0) ? 0 : -1);
             web = pages.get(webindex);
             if (multi_scroll_box.getVisibility() != View.VISIBLE)

@@ -45,7 +45,7 @@ public class HeySetting extends RelativeLayout {
         mTextView = new TextView(c);
         mTextView.setMaxLines(1);
         mTextView.setText(getTag().toString());
-        mTextView.setTextColor(Color.BLACK);
+        mTextView.setTextColor(Color.WHITE);
         mTextView.setVisibility(View.VISIBLE);
         mTextView.setEllipsize(TextUtils.TruncateAt.END);
         
@@ -55,7 +55,7 @@ public class HeySetting extends RelativeLayout {
             mSwitch.setVisibility(View.VISIBLE);
         else
             mSwitch.setVisibility(View.GONE);
-            
+        
         setTranslationX(1);
         
         MarginLayoutParams lpm = new MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.WRAP_CONTENT);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <string name="app_name">Hey浏览器</string>
 
     <string name="lang1">默认</string>
@@ -27,7 +27,7 @@
     <string name="lang22">背景</string>
     <string name="lang23">透明</string>
     <string name="lang24">平面</string>
-    <string name="lang25">网页沉浸</string> 
+    <string name="lang25">沉浸</string> 
     <string name="lang26">设置</string>
     <string name="lang27">主页</string>
     <string name="lang28">定制</string>
@@ -61,10 +61,10 @@
     <string name="lang56">标题</string>
     <string name="lang57">链接</string>
     <string name="lang58">无标题</string>
-    <string name="lang59">真空模式</string>
+    <string name="lang59">无痕</string>
     <string name="lang60">夜灯</string>
     <string name="lang61">分屏</string>
-    <string name="lang62">悬浮窗</string>
+    <string name="lang62">浮窗</string>
     <string name="lang63">仿真</string>
     <string name="lang64">用户代理</string>
     <string name="lang65">尺寸</string>
@@ -72,6 +72,6 @@
     <string name="lang67">技术</string>
     <string name="lang68">测试</string>
     <string name="lang69">暂无书签</string>
-    <string name="lang70">新真空页面</string>
-    
+    <string name="lang70">新无痕页面</string>
+
 </resources>
