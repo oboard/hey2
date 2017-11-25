@@ -89,6 +89,10 @@
 			android:layout_height="fill_parent"
 			android:layout_marginBottom="48dp">
 
+
+            <include
+				layout="@layout/home"/>
+            
 		</FrameLayout>
 
         <View

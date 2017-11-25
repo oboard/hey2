@@ -8,8 +8,8 @@ android {
         applicationId "omark.hey"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 39
-        versionName "U-2.0"
+        versionCode 40
+        versionName "U-2.01"
     }
 
     buildTypes {

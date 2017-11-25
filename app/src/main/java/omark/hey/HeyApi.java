@@ -25,8 +25,10 @@ public class HeyApi {
                         if (index == Main.webindex) Main.onChangeBackground(Main.multibottom.get(index), Main.multitop.get(index));
                     } catch (IndexOutOfBoundsException e) {
                         //多半是关闭的太快了
+                    } catch (IllegalArgumentException e2) {
+                        //Bad Color
+                        Main.onChangeBackground(Color.TRANSPARENT, Main.getHeyBackground());
                     }
-
                 }
             });
     }

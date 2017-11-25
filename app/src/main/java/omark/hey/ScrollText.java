@@ -13,7 +13,7 @@ import android.view.animation.AccelerateInterpolator;
 public class ScrollText extends TextView {
 
     public static boolean isMenu = false;
-
+    
     boolean isUper = false;
 
     //按下view时所处的坐标
@@ -58,10 +58,13 @@ public class ScrollText extends TextView {
                     isUp = true;
                     handler.sendEmptyMessageDelayed(0, 300);
                 }
-                if (Main.web.canGoBack())
-                    Main.back_icon.setVisibility(View.VISIBLE);
-                if (Main.web.canGoForward())
-                    Main.forward_icon.setVisibility(View.VISIBLE);
+                if (Main.web != null) {
+                    if (Main.web.canGoBack())
+                        Main.back_icon.setVisibility(View.VISIBLE);
+                    if (Main.web.canGoForward())
+                        Main.forward_icon.setVisibility(View.VISIBLE);
+                }
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (lastS == 3) break;
@@ -114,7 +117,7 @@ public class ScrollText extends TextView {
                     isUper = false;
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 195);
                     if (lastS != 3) Main.freshDock();
-                    
+
                     Main.onMenu(false);
                 }
                 isMenu = isUper;

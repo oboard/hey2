@@ -12,7 +12,7 @@ import android.graphics.Typeface;
 import android.widget.TextView;
 
 public class HeyHelper {
-    static String DEFAULT_HOME = "https://www.bing.com";
+    static String DEFAULT_HOME = "https://www.bing.com/";
     static String DEFAULT_SEARCH = "https://bing.com/search?q=";
     
     public static String getSearch(String body) {

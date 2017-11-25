@@ -25,12 +25,16 @@ public class HeyMenu {
         from = new String[] {
             "text",
             "icon",
-            "back"
+            "back",
+            "stop",
+            "stop2"
         };
         to = new int[] {
             R.id.menu_item_text,
             R.id.menu_item_icon,
-            R.id.menu_item_icon
+            R.id.menu_item_icon,
+            R.id.menu_item_icon,
+            R.id.menu_item_text
         };
 
         text = new String[] {
@@ -77,6 +81,17 @@ public class HeyMenu {
                                 ((TextView)v).setTextColor(0xffffffff);
                             else
                                 ((TextView)v).setTextColor(0x55ffffff);
+                        } else if (data instanceof String) {
+                            if (((String)data).equals(""))
+                                ((TextView)v).setTextColor(0x11ffffff);
+                        }
+                        return true;
+                    } else if (v.getId() == R.id.menu_item_text) {
+                        if (data instanceof String) {
+                            ((TextView)v).setText((String)data);
+                        } else if (data instanceof Boolean) {
+                            if ((boolean)data)
+                                ((TextView)v).setTextColor(0x11ffffff);
                         }
                         return true;
                     }
@@ -108,6 +123,13 @@ public class HeyMenu {
 
         sa.notifyDataSetChanged();
     }
+    
+    public void setStop(int index) {
+        data_list.get(index).put("stop", "");
+        data_list.get(index).put("stop2", true);
+
+        sa.notifyDataSetChanged();
+    }
 
     @JavascriptInterface
     public void add(int icon, String text, String code) {
@@ -115,6 +137,8 @@ public class HeyMenu {
         map.put("text", text);
         map.put("icon", icon);
         map.put("back", false);
+        map.put("stop", "false");
+        map.put("stop2", false);
         data_list.add(map);
         data_code.add(code);
         sa.notifyDataSetChanged();
@@ -127,6 +151,8 @@ public class HeyMenu {
             map.put("text", text[i]);
             map.put("icon", icon[i]);
             map.put("back", true);
+            map.put("stop", "false");
+            map.put("stop2", false);
             try {
                 if (icon[i] == 0xE8F5)
                     map.put("back", Main.vmode);

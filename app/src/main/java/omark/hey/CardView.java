@@ -15,7 +15,7 @@ public class CardView extends FrameLayout {
     private RectF mRoundRect = new RectF();
     private Paint mMaskPaint = new Paint();
     private Paint mZonePaint = new Paint();
-    private float mRadius = (2 * getResources().getDisplayMetrics().density + 0.5f);
+    private float mRadius = (48 * getResources().getDisplayMetrics().density + 0.5f);
 
     public CardView(Context context) {
         this(context, null);

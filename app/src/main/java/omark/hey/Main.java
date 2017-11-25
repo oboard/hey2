@@ -71,7 +71,7 @@ public class Main extends Activity {
     static View popn, manager_tab, blacker, night, desktop_float;
     static HeyClipboard clipboard;
     static ScrollText dock;
-    static EditText text;
+    static EditText text, home_text;
     static GridView menu;
     static FrameLayout desktop, simulation, multi_box;
     static RelativeLayout root, ground, manager, manager_ground;
@@ -83,7 +83,7 @@ public class Main extends Activity {
     static TextView simulation_back, nomarkbook, multi_box_add, multi_box_remove, button_back;
     static TextView[] manager_tab_button = new TextView[2];
     static ListView bookmark_list, history_list;
-    static LinearLayout multi_scroll;
+    static LinearLayout multi_scroll, home_root;
     static HorizontalScrollView multi_scroll_box;
     static ScrollView settings;
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
@@ -97,6 +97,7 @@ public class Main extends Activity {
     static HeyBookmark bookmark;
     static HeyHistory history;
     static Bitmap lastimage;
+    static HeyMenu homemenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +134,12 @@ public class Main extends Activity {
         blacker = findViewById(R.id.main_blacker);
         menu = (GridView)findViewById(R.id.main_menu);
         text = (EditText)findViewById(R.id.main_text);
+        home_text = (EditText)findViewById(R.id.home_text);
         dock = (ScrollText)findViewById(R.id.main_dock);
         manager_tab = findViewById(R.id.main_manager_tab);
         root = (RelativeLayout)findViewById(R.id.main_root);
         desktop_float = findViewById(R.id.main_desktop_float);
+        home_root = (LinearLayout)findViewById(R.id.home_root);
         desktop = (FrameLayout)findViewById(R.id.main_desktop);
         ground = (RelativeLayout)findViewById(R.id.main_ground);
         settings = (ScrollView)findViewById(R.id.main_settings);
@@ -172,34 +175,42 @@ public class Main extends Activity {
                     //点击菜单后，滚回去～
                     View viewGroup = (View)dock.getParent();
                     viewGroup.scrollTo(0, 0);
+
+                    if (((TextView)v.findViewById(R.id.menu_item_icon)).getCurrentTextColor() == 0x22ffffff)
+                        return;
                     switch (i) {
                         case 0:
                             web = addPage("");
                             break;
                         case 1:
-                            web.reload();
+                            if (web != null) web.reload();
                             break;
                         case 2:
-                            try {
-                                //分享文字
-                                Intent shareIntent = new Intent();
-                                shareIntent.setAction(Intent.ACTION_SEND);
-                                shareIntent.putExtra(Intent.EXTRA_TEXT, web.getUrl());
-                                shareIntent.setType("text/plain");
-                                //设置分享列表的标题，并且每次都显示分享列表
-                                startActivity(Intent.createChooser(shareIntent, getString(R.string.lang37))); 
-                            } catch (Exception e) {
-                                Toast.makeText(Main.this, getString(R.string.lang21), Toast.LENGTH_SHORT).show();
+                            if (web != null) {
+                                try {
+                                    //分享文字
+                                    Intent shareIntent = new Intent();
+                                    shareIntent.setAction(Intent.ACTION_SEND);
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, web.getUrl());
+                                    shareIntent.setType("text/plain");
+                                    //设置分享列表的标题，并且每次都显示分享列表
+                                    startActivity(Intent.createChooser(shareIntent, getString(R.string.lang37))); 
+                                } catch (Exception e) {
+                                    Toast.makeText(Main.this, getString(R.string.lang21), Toast.LENGTH_SHORT).show();
+                                }
                             }
                             break;
                         case 3:
-                            web.loadUrl(S.get("home", HeyHelper.DEFAULT_HOME));
+                            if (web != null) 
+                                web.loadUrl(S.get("home", HeyHelper.DEFAULT_HOME));
                             break;
                         case 4:
                             LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
                             final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
-                            t1.setText(web.getTitle());
-                            t2.setText(web.getUrl());
+                            if (web != null) {
+                                t1.setText(web.getTitle());
+                                t2.setText(web.getUrl());
+                            }
                             new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
                                 .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int i) {
@@ -211,16 +222,19 @@ public class Main extends Activity {
                                 }).show();
                             break;
                         case 7:
-                            HeyWindowManager.addWindow(Main.this.getApplicationContext());
-                            HeyWindowManager.web_x.loadUrl(web.getUrl());
+                            if (web != null) {
+                                HeyWindowManager.addWindow(Main.this.getApplicationContext());
+                                HeyWindowManager.web_x.loadUrl(web.getUrl());
+                            }
                             break;
                         case 6:
-                            //真空模式
-                            setVmode(!menus.get(webindex).getState(i));
+                            //无痕模式
+                            setVmode(!vmode);
+
                             break;
                         case 5:
                             //夜间模式
-                            if (!menus.get(webindex).getState(i)) {
+                            if (!homemenu.getState(i)) {
                                 final AlphaAnimation alphaA = new AlphaAnimation(0, 1);
                                 alphaA.setDuration(225);
                                 alphaA.setFillAfter(true);
@@ -239,37 +253,42 @@ public class Main extends Activity {
                                     menus.get(k).setState(i, false);
                                 }
                             }
+                            homemenu.setState(i, !homemenu.getState(i));
                             break;
                         case 8:
                             //开发者模式
-                            if (!menus.get(webindex).getState(i)) {
-                                web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='http://eruda.liriliri.io/eruda.min.js';document.body.appendChild(script);script.onload=function(){eruda.init();eruda.show();};})()");
-                                menus.get(webindex).setState(i, true);
-                            } else {
-                                web.loadUrl("javascript:(function(){eruda.destroy()})()");
-                                menus.get(webindex).setState(i, false);
+                            if (web != null) {
+                                if (!menus.get(webindex).getState(i)) {
+                                    web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='http://eruda.liriliri.io/eruda.min.js';document.body.appendChild(script);script.onload=function(){eruda.init();eruda.show();};})()");
+                                    menus.get(webindex).setState(i, true);
+                                } else {
+                                    web.loadUrl("javascript:(function(){eruda.destroy()})()");
+                                    menus.get(webindex).setState(i, false);
+                                }
                             }
                             break;
                         case 9:
                             //仿真
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    public void run() {
-                                        freshSimulation();
+                            if (web != null) {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        public void run() {
+                                            freshSimulation();
 
-                                        final AlphaAnimation tranA = new AlphaAnimation(0, 1);
-                                        tranA.setDuration(225);
-                                        simulation.startAnimation(tranA);
-                                        simulation.setVisibility(View.VISIBLE);
+                                            final AlphaAnimation tranA = new AlphaAnimation(0, 1);
+                                            tranA.setDuration(225);
+                                            simulation.startAnimation(tranA);
+                                            simulation.setVisibility(View.VISIBLE);
 
-                                        AnimationSet aniA = new AnimationSet(true);
-                                        aniA.addAnimation(new ScaleAnimation(1, 0.5f, 1f, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
-                                        aniA.setInterpolator(new DecelerateInterpolator());
-                                        aniA.setFillAfter(true);
-                                        aniA.setDuration(225);
-                                        desktop.startAnimation(aniA);
+                                            AnimationSet aniA = new AnimationSet(true);
+                                            aniA.addAnimation(new ScaleAnimation(1, 0.5f, 1f, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+                                            aniA.setInterpolator(new DecelerateInterpolator());
+                                            aniA.setFillAfter(true);
+                                            aniA.setDuration(225);
+                                            desktop.startAnimation(aniA);
 
-                                    }
-                                });
+                                        }
+                                    });
+                            }
                             break;
                         case 10:
                             //设置
@@ -294,7 +313,7 @@ public class Main extends Activity {
                                     }
                                 });
                             menu.startAnimation(aniA);
-                            viewGroup.scrollTo(0, 288);
+                            viewGroup.scrollTo(0, (int)dip2px(Main.this, 288));
 
                             button_back.setVisibility(View.VISIBLE);
                             dock.setVisibility(View.GONE);
@@ -317,6 +336,23 @@ public class Main extends Activity {
                             //转到页面
                             web.loadUrl(url);
                             onManagerBackClick(null);
+                            return true;
+                        }
+                    }
+                    return false;
+                }    
+            });
+
+        home_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {  
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event)  {
+                    if (actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                        String url = v.getText().toString();
+                        if (!url.equals("")) {
+                            url = HeyHelper.toWeb(url);
+                            //转到页面
+                            web = addPage(url);
+                            onManagerBackClick(null);
+                            home_text.setText("");
                             return true;
                         }
                     }
@@ -371,18 +407,29 @@ public class Main extends Activity {
         manager_th = (TextView)findViewById(R.id.main_manager_th);
         HeyHelper.setFont(manager_th, "m");
 
+
+        homemenu = new HeyMenu(menu);
+        homemenu.setStop(1);
+        homemenu.setStop(2);
+        homemenu.setStop(3);
+        homemenu.setStop(7);
+        homemenu.setStop(8);
+        homemenu.setStop(9);
+        freshDock();
+        menu.setAdapter(homemenu.getAdapter());
+
         onIntent(getIntent());
         if (webindex < 1)
-            onIntent(null);
+            toHome();
 
         onChangeBackground(Color.TRANSPARENT, getHeyBackground());
-        freshDock();
 
         bookmark_list.setAdapter(bookmark.getAdapter());
         bookmark_list.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, View v, int index, long l) {
                     String url = bookmark.getData().get(index).get("url").toString();
+                    if (web == null) web = addPage("about:blank");
                     web.loadUrl(url);
                     onManagerBackClick(null);
                 }
@@ -419,6 +466,7 @@ public class Main extends Activity {
                 @Override
                 public void onItemClick(AdapterView view, View v, int index, long l) {
                     String url = history.getData().get(index).get("url").toString();
+                    if (web == null) web = addPage("about:blank");
                     web.loadUrl(url);
                     onManagerBackClick(null);
                 }
@@ -502,8 +550,16 @@ public class Main extends Activity {
         }
     }
 
+    public static void toHome() {
+        home_root.setVisibility(View.VISIBLE);
+        menu.setAdapter(homemenu.getAdapter());
+        hidePage();
+        web = null;
+    }
+
     public void setVmode(boolean b) {
         //关掉缓存和Cookies...
+        homemenu.setState(6, b);
         for (int k = 0; k < pages.size(); k++) {
             HeyWeb page = pages.get(k);
             page.getSettings().setAppCacheEnabled(!b);
@@ -537,6 +593,7 @@ public class Main extends Activity {
 
     public void onBackWeb(View v) {
         onDockClick(null);
+        onChangeBackground(Color.TRANSPARENT, getHeyBackground());
     }
 
     public void onBarClick(View v) {
@@ -559,7 +616,7 @@ public class Main extends Activity {
                 button_back.setVisibility(View.GONE);
                 //设置
                 AnimationSet aniB = new AnimationSet(true);
-                aniB.addAnimation( new TranslateAnimation(0, 0, 0, dip2px(Main.this, 8)));
+                aniB.addAnimation(new TranslateAnimation(0, 0, 0, dip2px(Main.this, 8)));
                 aniB.addAnimation(new AlphaAnimation(1, 0));
                 aniB.setInterpolator(new DecelerateInterpolator());
                 aniB.setDuration(225);
@@ -580,7 +637,7 @@ public class Main extends Activity {
                 menu.startAnimation(aniA);
                 menu.setVisibility(View.VISIBLE);
                 View viewGroup = (View)dock.getParent();
-                viewGroup.scrollTo(0, 160);
+                viewGroup.scrollTo(0, (int)dip2px(Main.this, 160));
                 dock.setVisibility(View.VISIBLE);
                 break;
             case R.id.main_desktop_float:
@@ -603,10 +660,10 @@ public class Main extends Activity {
                             S.put("home", et.getText().toString())
                                 .ok();
                         }
-                    }).setNeutralButton(R.string.lang1, new DialogInterface.OnClickListener() {   
+                    }).setNeutralButton("Via", new DialogInterface.OnClickListener() {   
                         public void onClick(DialogInterface dialog, int i) {
-                            S.put("home", HeyHelper.DEFAULT_HOME)
-                                .ok();
+                            onBarClick(desktop_float);
+                            web = addPage("http://leftshine.gitee.io/viaindex/");
                         }
                     }).show();
                 break;
@@ -713,14 +770,19 @@ public class Main extends Activity {
         lp.setMargins(0, 0, 0, (int)dip2px(Main.me, 48));
         desktop.setLayoutParams(lp);
         dock.getLayoutParams().height = (int)dip2px(Main.me, 48);
+
+        if (web != null) {
+            web.setVisibility(View.VISIBLE);
+            home_root.setVisibility(View.GONE);
+        } else
+            toHome();
     }
 
     public static void setUA(String s) {
         for (Object p : pages.toArray()) {
             HeyWeb page = (HeyWeb)p;
-            if (page != null) {
+            if (page != null)
                 page.getSettings().setUserAgentString(s);
-            }
         }
     }
 
@@ -772,25 +834,17 @@ public class Main extends Activity {
                 case Intent.ACTION_WEB_SEARCH:
                     web = addPage(HeyHelper.getSearch(intent.getStringExtra("query")));
                     break;
-                case "omark.hey.addbookmark":
-                    LinearLayout dl = (LinearLayout)LayoutInflater.from(Main.this).inflate(R.layout.diglog_bookmark, null);
-                    final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
-                    new AlertDialog.Builder(Main.this).setView(dl).setTitle(R.string.lang17)
-                        .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int i) {
-                                S.addIndexX("bm" , new String[] {"b", "bn", "bt"}, new String[] {t2.getText().toString(), t1.getText().toString(), "" + System.currentTimeMillis()});
-                                finish();
-                            }
-                        }).show();
-                    break;
-                case "omark.hey.bookmark":
-                    onDockLongClick(null);
+                case "omark.hey.see":
+                    web = addPage("http://4g.yigouu.com");
                     break;
                 case "omark.hey.add2":
                     setVmode(true);
                     break;
                 case "omark.hey.add":
                     web = addPage("");
+                    break;
+                default:
+                    toHome();
                     break;
             }
         } catch (Exception e) {}
@@ -815,7 +869,7 @@ public class Main extends Activity {
                 onBarClick(button_left);
             return;
         }
-        
+
         if (pages.size() == 0) {
             web = addPage("");
             freshDock();
@@ -894,10 +948,12 @@ public class Main extends Activity {
 
             hidePage();
             dock.setVisibility(View.GONE);
+            home_root.setVisibility(View.GONE);
             button_left.setVisibility(View.GONE);
             button_right.setVisibility(View.GONE);
             button_number.setVisibility(View.GONE);
             scaleAni(false);
+
         } else {
             freshDock();
             scaleAni(true);
@@ -912,11 +968,13 @@ public class Main extends Activity {
             aniA.addAnimation(new AlphaAnimation(0f, 1f));
             aniA.setInterpolator(new DecelerateInterpolator());
             aniA.setDuration(225);
-            web.startAnimation(aniA);
-            web.setVisibility(View.VISIBLE);
+            desktop.startAnimation(aniA);
+            desktop.setVisibility(View.VISIBLE);
 
-            if (pages.size() > webindex && S.get("pagecolor", true))
-                onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+            if (web != null) {
+                if (pages.size() > webindex && S.get("pagecolor", true))
+                    onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
+            }
 
             AnimationSet aniB = new AnimationSet(true);
             aniB.addAnimation(new ScaleAnimation(1f, 1.2f, 1f, 1.2f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
@@ -937,22 +995,21 @@ public class Main extends Activity {
             multi_box.setVisibility(View.GONE);
 
         } else {
-            if (web != null) {
-                AnimationSet aniA = new AnimationSet(true);
-                aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
-                aniA.addAnimation(new AlphaAnimation(1f, 0f));
-                aniA.setInterpolator(new DecelerateInterpolator());
-                aniA.setDuration(225);
-                web.startAnimation(aniA);
-                web.setVisibility(View.VISIBLE);
-                aniA.setAnimationListener(new Animation.AnimationListener() {
-                        public void onAnimationStart(Animation ani) {}
-                        public void onAnimationRepeat(Animation ani) {}
-                        public void onAnimationEnd(Animation ani) {
-                            web.setVisibility(View.GONE);
-                        }
-                    });
-            }
+            AnimationSet aniA = new AnimationSet(true);
+            aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
+            aniA.addAnimation(new AlphaAnimation(1f, 0f));
+            aniA.setInterpolator(new DecelerateInterpolator());
+            aniA.setDuration(225);
+            desktop.startAnimation(aniA);
+            desktop.setVisibility(View.VISIBLE);
+            aniA.setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationStart(Animation ani) {}
+                    public void onAnimationRepeat(Animation ani) {}
+                    public void onAnimationEnd(Animation ani) {
+                        desktop.setVisibility(View.GONE);
+                    }
+                });
+
             AnimationSet aniB = new AnimationSet(true);
             aniB.addAnimation(new ScaleAnimation(1.2f, 1f, 1.2f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f));
             aniB.addAnimation(new AlphaAnimation(0f, 1f));
@@ -966,7 +1023,7 @@ public class Main extends Activity {
             root.setBackgroundDrawable(getHeyBackground());
         }
     } public void onDockLongClick(View v) {
-        text.setText(web.getUrl());
+        if (web != null) text.setText(web.getUrl());
         text.selectAll();
         text.requestFocus();
         keyboardState(true);
@@ -998,7 +1055,7 @@ public class Main extends Activity {
                 public void onAnimationRepeat(Animation ani) {}
                 public void onAnimationEnd(Animation ani) {
                     manager.setVisibility(View.GONE);
-                    if (S.get("pagecolor", true))
+                    if (web != null && S.get("pagecolor", true))
                         onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }
             });
@@ -1088,6 +1145,7 @@ public class Main extends Activity {
 
         multi_text.setText("" + pages.size());
         button_number.setText(multi_text.getText());
+        setVmode(vmode);
         return new_web;
     }  public HeyWeb addPageB(String uri) {
         String link = uri.equals("") ? S.get("home", "https://www.bing.com") : uri;
@@ -1115,8 +1173,9 @@ public class Main extends Activity {
 
         multi_text.setText("" + pages.size());
         button_number.setText(multi_text.getText());
+        setVmode(vmode);
         return new_web;
-    } public void hidePage() {
+    } public static void hidePage() {
         for (Object page : pages.toArray()) {
             ((HeyWeb)page).setVisibility(View.GONE);
         }
@@ -1143,8 +1202,8 @@ public class Main extends Activity {
 
         multi_text.setText("" + pages.size());
         button_number.setText(multi_text.getText());
-        onDockClick(dock);
-        web = addPage("");
+        onDockClick(null);
+        toHome();
     } public void removePage(int index) {
         HeyWeb page = pages.get(index);
         if (page != null) {
@@ -1167,7 +1226,7 @@ public class Main extends Activity {
 
         if (pages.size() < 1) {
             onDockClick(null);
-            web = addPage("");
+            toHome();
         } else if (webindex == index) {
             webindex = index + ((index == 0) ? 0 : -1);
             web = pages.get(webindex);
@@ -1242,7 +1301,7 @@ public class Main extends Activity {
         super.onDestroy();
     }
 
-    public Drawable getHeyBackground() {
+    public static Drawable getHeyBackground() {
         Drawable d = new ColorDrawable(S.getColor(R.color.colorPrimary));
         if (S.get("background", 0) == 1) d = new BitmapDrawable(S.getStorePic("background"));
         return d;
@@ -1299,8 +1358,10 @@ public class Main extends Activity {
                 } else {
                     yy = moe.getY();
                 }
-                popn.setX(w.getX() + moe.getX());
-                popn.setY(w.getY() + moe.getY());
+                if (moe.getAction() != MotionEvent.ACTION_DOWN) {
+                    popn.setX(w.getX() + moe.getX());
+                    popn.setY(w.getY() + moe.getY());
+                }
                 return false;
             }
         });
@@ -1522,7 +1583,7 @@ class HeyWebChrome extends WebChromeClient {
 
                     //v.scrollTo(0, 0);
                     Bitmap b = Main.me.getWebDrawing();
-                    b = FastBlur.rsBlur(Main.me, b, 20);
+                    b = FastBlur.rsBlur(Main.me, b, 5);
                     Main.multitop.set(Main.webindex, new BitmapDrawable(Bitmap.createBitmap(b , 0, 0, b.getWidth(), 1)));
                     Main.onChangeBackground(Main.multibottom.get(Main.webindex), Main.multitop.get(Main.webindex));
                 }

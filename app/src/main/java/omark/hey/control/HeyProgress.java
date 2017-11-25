@@ -5,15 +5,21 @@ import android.graphics.Paint;
 import android.graphics.Color;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 
-public class HeyProgress extends ProgressBar {
+public class HeyProgress extends View {
 
     static int color = 0x55ffffff;
-
+    int progress = 0;
+    
     public HeyProgress(final Context context) {
         super(context);
     } public HeyProgress(final Context context, AttributeSet attr) {
         super(context, attr);
+    }
+    
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     @Override
@@ -22,7 +28,7 @@ public class HeyProgress extends ProgressBar {
         int h = getHeight(), w = getWidth();
         Paint p = new Paint();
         p.setColor(color);
-        canvas.drawRect(w - w * getProgress() / 100, 0, w * getProgress() / 100, h, p);
+        canvas.drawRect(w - w * progress / 100, 0, w * progress / 100, h, p);
     }
 
 }
