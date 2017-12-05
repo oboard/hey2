@@ -1,9 +1,7 @@
 package omark.hey;
-import android.preference.PreferenceActivity;
-import android.os.Bundle;
-import android.os.Build;
-import android.view.MenuItem;
-import android.view.KeyEvent;
+import android.os.*;
+import android.preference.*;
+import android.view.*;
 
 public class About extends PreferenceActivity {
 

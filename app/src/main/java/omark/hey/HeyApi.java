@@ -1,9 +1,7 @@
 package omark.hey;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.webkit.JavascriptInterface;
+import android.graphics.*;
+import android.os.*;
+import android.webkit.*;
 
 public class HeyApi {
 
@@ -34,8 +32,8 @@ public class HeyApi {
     }
 
     @JavascriptInterface
-    public void showSource(String html) {
-
+    public void searchText(String text) {
+		Main.web.loadUrl(HeyHelper.getSearch(text));
     }
 
     //H5EXT!----------------

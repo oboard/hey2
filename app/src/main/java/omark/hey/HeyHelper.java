@@ -1,19 +1,11 @@
 package omark.hey;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Typeface;
-import android.widget.TextView;
+import android.graphics.*;
+import android.widget.*;
 
 public class HeyHelper {
-    static String DEFAULT_HOME = "https://www.bing.com/";
-    static String DEFAULT_SEARCH = "https://bing.com/search?q=";
+    static String DEFAULT_HOME = "https://www.sogo.com/";
+    static String DEFAULT_SEARCH = "https://sogo.com/web?query=";
     
     public static String getSearch(String body) {
         return S.get("search" , HeyHelper.DEFAULT_SEARCH) + body;

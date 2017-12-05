@@ -1,7 +1,5 @@
 package omark.hey;
-import java.util.List;
-import android.webkit.WebView;
-import android.webkit.WebSettings;
+import android.webkit.*;
 
 public class UserAgent {
 

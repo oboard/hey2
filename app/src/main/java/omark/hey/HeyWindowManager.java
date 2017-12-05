@@ -1,19 +1,13 @@
 package omark.hey;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
-import android.view.WindowManager;
-import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import java.util.ArrayList;
-import omark.hey.HeyWindow;
-import omark.hey.Main;
+import android.content.*;
+import android.graphics.*;
+import android.net.*;
+import android.os.*;
+import android.view.*;
+import android.webkit.*;
+import java.util.*;
+import omark.hey.*;
 
 public class HeyWindowManager {
 

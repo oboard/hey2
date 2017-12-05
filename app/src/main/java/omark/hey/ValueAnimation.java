@@ -1,25 +1,22 @@
 package omark.hey;
 
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import java.util.ArrayList;
-import java.util.List;
+import android.view.animation.*;
 
 public class ValueAnimation extends Animation {
-    
+
     private OnAnimatorUpdateListener mAnimatorUpdateListener;
     private float[] mValuesF;
     private int[] mValuesI;
     private float mValue;
     private int mType;
-    
+
     public ValueAnimation() {
     }
 
     public static ValueAnimation ofInt(int...values) {
         return new ValueAnimation().setIntValues(values);
     }
-    
+
     public static ValueAnimation ofFloat(float...values) {
         return new ValueAnimation().setFloatValues(values);
     }
@@ -35,11 +32,11 @@ public class ValueAnimation extends Animation {
         mValuesF = values.clone();
         return this;
     }
-    
+
     public float getAnimatedValue() {
         return mValue;
     }
-    
+
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
         super.applyTransformation(interpolatedTime, t);
@@ -53,8 +50,8 @@ public class ValueAnimation extends Animation {
         }
         mAnimatorUpdateListener.onAnimationUpdate(this);
     }
-    
-    
+
+
     //Callback
     public ValueAnimation addUpdateListener(final OnAnimatorUpdateListener onAnimatorUpdateListener) {
         mAnimatorUpdateListener = onAnimatorUpdateListener;
@@ -63,5 +60,5 @@ public class ValueAnimation extends Animation {
     public interface OnAnimatorUpdateListener {
         void onAnimationUpdate(ValueAnimation animation);
     }
-    
+
 }

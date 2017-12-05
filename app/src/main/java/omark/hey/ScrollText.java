@@ -1,14 +1,10 @@
 package omark.hey;
-import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Scroller;
-import android.widget.TextView;
-import android.view.View.OnClickListener;
-import android.view.animation.AccelerateInterpolator;
+import android.content.*;
+import android.os.*;
+import android.util.*;
+import android.view.*;
+import android.view.animation.*;
+import android.widget.*;
 
 public class ScrollText extends TextView {
 
@@ -118,7 +114,8 @@ public class ScrollText extends TextView {
                     scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 195);
                     if (lastS != 3) Main.freshDock();
 
-                    Main.onMenu(false);
+					ScrollText.isMenu = false;
+					Main.desktop_float.setVisibility(View.GONE);
                 }
                 isMenu = isUper;
 

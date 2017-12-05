@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
-	android:versionCode="40"
-	android:versionName="U-2.01">
+	android:versionCode="41"
+	android:versionName="U-2.05">
 
 	<uses-sdk
 		android:minSdkVersion="16"

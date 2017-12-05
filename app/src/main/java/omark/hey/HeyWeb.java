@@ -1,24 +1,16 @@
 package omark.hey;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.net.http.SslError;
-import android.os.Build;
-import android.util.AttributeSet;
-import android.view.DragEvent;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnLongClickListener;
-import android.webkit.DownloadListener;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.PopupMenu;
-import java.lang.reflect.Method;
+import android.content.*;
+import android.graphics.*;
+import android.net.*;
+import android.net.http.*;
+import android.os.*;
+import android.util.*;
+import android.view.*;
+import android.view.View.*;
+import android.webkit.*;
+import android.widget.*;
+import java.lang.reflect.*;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
 
@@ -96,15 +88,26 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
         //HeyApi
         mApi = new HeyApi(Main.pages.indexOf(this));
+		//我就是强啊！兼容三个浏览器的API
         addJavascriptInterface(mApi, "hey");
+        addJavascriptInterface(mApi, "via");
         addJavascriptInterface(mApi, "H5EXT");
 
         //设置WebClient
         setWebViewClient(new WebViewClient() {
-                //file update
 
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					if (url.equals("folder://")) {
+						Main.me.onDockLongClick(null);
+						Main.manager_tab_button[0].performClick();
+						return true;
+					} else if (url.equals("history://")) {
+						Main.me.onDockLongClick(null);
+						Main.manager_tab_button[1].performClick();
+						return true;
+					}
+
                     HitTestResult hitTestResult = view.getHitTestResult();
                     if (isUri(url)) {
                         if (hitTestResult == null) {
@@ -179,13 +182,17 @@ public class HeyWeb extends WebView implements OnLongClickListener {
             });
 
         //设置拖拽
+		//在分屏的时候拖拽EditText的内容到Hey，可以发起访问链接或搜索
         setOnDragListener(new View.OnDragListener() {
                 @Override
                 public boolean onDrag(View view, DragEvent dragEvent) {
-                    if (dragEvent.getAction() == DragEvent.ACTION_DROP) {
-                        String c = dragEvent.getClipData().getItemAt(0).getText().toString();
-                        loadUrl(HeyHelper.toWeb(c));
-                    }
+					switch (dragEvent.getAction()) {
+						case DragEvent.ACTION_DROP:
+							String c = dragEvent.getClipData().getItemAt(0).getText().toString();
+							loadUrl(HeyHelper.toWeb(c));
+							setPadding(0,0,0,0);
+							break;
+					}
                     return true;
                 }
             });
@@ -224,11 +231,13 @@ public class HeyWeb extends WebView implements OnLongClickListener {
 
     public static boolean isUri(String url) {
         return url.startsWith("http:") ||
-            url.startsWith("https:") ||
-            url.startsWith("file:") ||
-            url.startsWith("content:") ||
             url.startsWith("javascript:") ||
-            url.startsWith("about:");
+			url.startsWith("history:") ||
+			url.startsWith("folder:") ||
+            url.startsWith("content:") ||
+            url.startsWith("https:") ||
+            url.startsWith("about:") ||
+			url.startsWith("file:");
     }
 
     @Override
@@ -281,7 +290,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                         //后台打开
                         Main.me.addPageB(result.getExtra());
                     } else if (i.getTitle().equals(S.getString(R.string.lang40)))
-                    //Open
+					//Open
                         loadUrl(result.getExtra());
                     else if (i.getTitle().equals(S.getString(R.string.lang41))) {
                         //Save
