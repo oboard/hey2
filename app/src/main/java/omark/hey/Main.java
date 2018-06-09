@@ -26,7 +26,7 @@ public class Main extends Activity {
     static View popn, manager_tab, blacker, night, desktop_float;
     static HeyClipboard clipboard;
     static ScrollText dock;
-    static EditText text;//, home_text;
+    static EditText text, simulation_e;
     static GridView menu;
     static FrameLayout desktop, simulation, multi_box;
     static RelativeLayout root, ground, manager, manager_ground;
@@ -79,7 +79,7 @@ public class Main extends Activity {
         }
 
         setContentView(R.layout.main);
-
+		//嘟嘟嘟加载界面!!!
 
 
 
@@ -361,7 +361,7 @@ public class Main extends Activity {
 
         manager_th = (TextView)findViewById(R.id.main_manager_th);
         HeyHelper.setFont(manager_th, "m");
-		
+
         homemenu = new HeyMenu(menu);
 		/*        homemenu.setStop(1);
 		 homemenu.setStop(2);
@@ -461,8 +461,15 @@ public class Main extends Activity {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                     simulation_a.setAdapter(new ArrayAdapter<String>(Main.this, android.R.layout.simple_spinner_item, UserAgent.ss[pos]));
-                    setUA(UserAgent.ssr()[pos][0]);
-                    web.reload();
+                    if (pos != 10) {
+						simulation_a.setVisibility(View.VISIBLE);
+						simulation_e.setVisibility(View.GONE);
+						setUA(UserAgent.ssr()[pos][0]);
+                    	web.reload();
+					} else {
+						simulation_a.setVisibility(View.GONE);
+						simulation_e.setVisibility(View.VISIBLE);
+					}
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
@@ -487,6 +494,7 @@ public class Main extends Activity {
          @Override
          public void onNothingSelected(AdapterView<?> parent) {}
          });*/
+		simulation_e = (EditText)findViewById(R.id.simulation_e);
         simulation_back = (TextView)findViewById(R.id.simulation_back);
         ripple_version(simulation_back);
         HeyHelper.setFont(simulation_back, "m");
@@ -537,7 +545,7 @@ public class Main extends Activity {
                 }
             });
         simulation.startAnimation(tranA);
-
+		setUA(UserAgent.ssr()[(int)simulation_u.getSelectedItemPosition()][simulation_a.getSelectedItemPosition()]);
         AnimationSet aniA = new AnimationSet(true);
         aniA.addAnimation(new ScaleAnimation(0.5f, 1f, 0.5f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
         aniA.setInterpolator(new DecelerateInterpolator());
@@ -691,12 +699,7 @@ public class Main extends Activity {
 
     public static void freshSimulation() {
         simulation.invalidate();
-        try {
-            Bitmap bitmap = Bitmap.createBitmap(lastimage, 0, (int)simulation.getY(), lastimage.getWidth(), (int)(dip2px(Main.me, 240)));
-            simulation.setBackgroundDrawable(new BitmapDrawable(FastBlur.rsBlur(Main.me, bitmap, 25)));
-        } catch (Exception e) {
-            simulation.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        }
+        simulation.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
     }
 
     public static void freshDock() {
@@ -735,6 +738,8 @@ public class Main extends Activity {
             if (page != null)
                 page.getSettings().setUserAgentString(s);
         }
+		//给自定义UA文本框赋值
+		simulation_e.setText(s);
     }
 
     public static void onChangeBackground(Integer f, Drawable b) {
@@ -783,9 +788,6 @@ public class Main extends Activity {
 				break;
 			case Intent.ACTION_WEB_SEARCH:
 				web = addPage(HeyHelper.getSearch(intent.getStringExtra("query")));
-				break;
-			case "omark.hey.see":
-				web = addPage("http://4g.yigouu.com");
 				break;
 			case "omark.hey.add2":
 				setVmode(true);
@@ -893,7 +895,7 @@ public class Main extends Activity {
                 multiimage.get(webindex).setTag(webindex);
                 multitext.get(webindex).setText(web.getTitle());
             } catch (Exception e) {
-                //手速过快
+                //手速过快23333
             }
             if (v != null) return;
 
@@ -909,7 +911,11 @@ public class Main extends Activity {
         } else {
             freshDock();
             scaleAni(true);
-			onChangeBackground(multibottom.get(webindex), multitop.get(webindex));
+			try {
+				onChangeBackground(multibottom.get(webindex), multitop.get(webindex));
+			} catch (Exception e) {
+
+			}
         }
 
     }
@@ -1054,8 +1060,9 @@ public class Main extends Activity {
                 break;
         }
     } public void onRemoveAllClick(View v) {
-        onDockClick(null);
         removeAllPage();
+		onDockClick(null);
+		onDockClick(null);
     } public void onAddPage(View v) {
         onDockClick(null);
         web = addPage("");
@@ -1087,7 +1094,7 @@ public class Main extends Activity {
         multi_box.setVisibility(View.GONE);
 
         AnimationSet aniA = new AnimationSet(true);
-        aniA.addAnimation(new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0.5f));
+        aniA.addAnimation(new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 1f));
         aniA.addAnimation(new AlphaAnimation(0f, 1f));
         aniA.setDuration(225);
         new_web.startAnimation(aniA);
@@ -1175,7 +1182,8 @@ public class Main extends Activity {
 
         if (pages.size() < 1) {
 			web = addPage("");
-            onDockClick(null);
+			onDockClick(null);
+			onDockClick(null);
         } else if (webindex == index) {
             webindex = index + ((index == 0) ? 0 : -1);
             web = pages.get(webindex);

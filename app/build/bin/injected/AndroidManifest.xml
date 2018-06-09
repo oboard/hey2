@@ -54,9 +54,7 @@
 		android:allowBackup="true"
 		android:label="@string/name"
 		android:icon="@drawable/icon"
-		android:resizeableActivity="true"
-		android:hardwareAccelerated="true"
-		android:roundIcon="@drawable/icon">
+		android:hardwareAccelerated="true">
 
 		<activity
 			android:name=".About"/>
@@ -69,7 +67,6 @@
 			android:name=".Main"
 			android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard"
 			android:windowSoftInputMode="adjustPan"
-			android:supportsPictureInPicture="true"
 			android:alwaysRetainTaskState="true"
 			android:launchMode="singleTask"
 			android:theme="@style/AppTheme"

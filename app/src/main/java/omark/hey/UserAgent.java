@@ -57,7 +57,8 @@ public class UserAgent {
         "QQBrowser",
         "Maxthon",
         "UC",
-        "IE"
+        "IE",
+		"Custom"
     };
 
     public static final String[][] ss = new String[][]{
@@ -106,7 +107,10 @@ public class UserAgent {
             "7",
             "8",
             "9",
-        }
+        }, {
+			"Cutom"
+		}
+		
     };
 
     public static final String[][] ssr() {
@@ -156,7 +160,9 @@ public class UserAgent {
                 ie_7,
                 ie_8,
                 ie_9,
-            }
+            }, {
+				Main.me.simulation_e.getText().toString()
+			}
         };
     }
 }

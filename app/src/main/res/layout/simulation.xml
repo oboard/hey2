@@ -24,6 +24,17 @@
 		<TextView
 			android:background="?android:attr/selectableItemBackground"
 			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_gravity="right|center_vertical"
+			android:onClick="onSimulation_test"
+			android:focusable="true"
+			android:clickable="true"
+			android:text="Text"/>
+
+		<TextView
+			android:background="?android:attr/selectableItemBackground"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_gravity="right|center_vertical"
 			android:layout_marginRight="10dp"
 			android:layout_height="wrap_content"
@@ -32,7 +43,7 @@
 			android:onClick="onSimulationBack"
 			android:textColor="#ffffff"
 			android:clickable="true"
-            android:focusable="true"
+			android:focusable="true"
 			android:text=""/>
 
 	</FrameLayout>
@@ -58,6 +69,13 @@
 		android:id="@+id/simulation_a"
 		android:layout_margin="10dp"
 		android:textColor="#000000"/>
+
+	<EditText
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:ems="10"
+		android:visibility="gone"
+		android:id="@+id/simulation_e"/>
 
 </LinearLayout>
 
