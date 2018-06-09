@@ -22,15 +22,17 @@
 			android:textColor="#ffffff"/>
 
 		<TextView
+			android:id="@+id/simulation_test"
 			android:background="?android:attr/selectableItemBackground"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:layout_gravity="right|center_vertical"
-			android:onClick="onSimulation_test"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:onClick="onSimulationTest"
+			android:textColor="#0096FF"
 			android:focusable="true"
 			android:clickable="true"
-			android:text="Text"/>
+			android:text="@string/lang68"/>
 
 		<TextView
 			android:background="?android:attr/selectableItemBackground"

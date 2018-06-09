@@ -35,7 +35,7 @@ public class Main extends Activity {
     static ImageView background;
     static Spinner simulation_u, simulation_a;
     static TextView multi_text, back_icon, forward_icon, manager_back, button_left, button_right, button_number, manager_th;
-    static TextView simulation_back, nomarkbook, multi_box_add, multi_box_remove, button_back;
+    static TextView simulation_back, simulation_test, nomarkbook, multi_box_add, multi_box_remove, button_back;
     static TextView[] manager_tab_button = new TextView[2];
     static ListView bookmark_list, history_list;
     static LinearLayout multi_scroll;//, home_root;
@@ -495,11 +495,17 @@ public class Main extends Activity {
          public void onNothingSelected(AdapterView<?> parent) {}
          });*/
 		simulation_e = (EditText)findViewById(R.id.simulation_e);
+		simulation_test = (TextView)findViewById(R.id.simulation_test);
         simulation_back = (TextView)findViewById(R.id.simulation_back);
-        ripple_version(simulation_back);
+		ripple_version(simulation_back);
+        ripple_version(simulation_test);
         HeyHelper.setFont(simulation_back, "m");
-
+		
     }
+	public static void onSimulationTest(View v)  {
+		web.loadUrl("http://sited.noear.org/ua/");
+		web.invalidate();
+	}
 
     public static void onMenu(boolean open) {
         ScrollText.isMenu = open;
