@@ -23,7 +23,7 @@ public class Main extends Activity {
     static Main me;
     static int webindex;
     static boolean vmode = false;
-    static View popn, manager_tab, blacker, night, desktop_float;
+    static View popn, blacker, night, desktop_float;
     static HeyClipboard clipboard;
     static ScrollText dock;
     static EditText text, simulation_e;
@@ -78,30 +78,59 @@ public class Main extends Activity {
              */
         }
 
-        setContentView(R.layout.main);
+
+		setContentView(R.layout.main);
 		//嘟嘟嘟加载界面!!!
 
-
-
         me = this;
-        popn = findViewById(R.id.main_popn);
-        night = findViewById(R.id.main_night);
-        blacker = findViewById(R.id.main_blacker);
-        menu = (GridView)findViewById(R.id.main_menu);
-        text = (EditText)findViewById(R.id.main_text);
-        //home_text = (EditText)findViewById(R.id.home_text);
-        dock = (ScrollText)findViewById(R.id.main_dock);
-        //manager_tab = findViewById(R.id.main_manager_tab);
-        root = (RelativeLayout)findViewById(R.id.main_root);
-        desktop_float = findViewById(R.id.main_desktop_float);
-        //home_root = (LinearLayout)findViewById(R.id.home_root);
-        desktop = (FrameLayout)findViewById(R.id.main_desktop);
-        ground = (RelativeLayout)findViewById(R.id.main_ground);
-        settings = (ScrollView)findViewById(R.id.main_settings);
-        manager = (RelativeLayout)findViewById(R.id.main_manager);
-        background = (ImageView)findViewById(R.id.main_background);
-        progressbar = (HeyProgress)findViewById(R.id.main_progress);
-        manager_ground = (RelativeLayout)findViewById(R.id.main_manager_ground);
+		{
+			popn = findViewById(R.id.main_popn);
+			night = findViewById(R.id.main_night);
+			blacker = findViewById(R.id.main_blacker);
+			menu = (GridView)findViewById(R.id.main_menu);
+			text = (EditText)findViewById(R.id.main_text);
+			//home_text = (EditText)findViewById(R.id.home_text);
+			dock = (ScrollText)findViewById(R.id.main_dock);
+			//manager_tab = findViewById(R.id.main_manager_tab);
+			root = (RelativeLayout)findViewById(R.id.main_root);
+			desktop_float = findViewById(R.id.main_desktop_float);
+			//home_root = (LinearLayout)findViewById(R.id.home_root);
+			desktop = (FrameLayout)findViewById(R.id.main_desktop);
+			ground = (RelativeLayout)findViewById(R.id.main_ground);
+			settings = (ScrollView)findViewById(R.id.main_settings);
+			manager = (RelativeLayout)findViewById(R.id.main_manager);
+			background = (ImageView)findViewById(R.id.main_background);
+			progressbar = (HeyProgress)findViewById(R.id.main_progress);
+			manager_ground = (RelativeLayout)findViewById(R.id.main_manager_ground);
+
+			bookmark_list = (ListView)findViewById(R.id.main_manager_bookmark_list);
+			history_list = (ListView)findViewById(R.id.main_manager_history_list);
+
+			manager_back = (TextView)findViewById(R.id.main_manager_back);
+			back_icon = (TextView)findViewById(R.id.main_back_icon);
+			forward_icon = (TextView)findViewById(R.id.main_forward_icon);
+			button_left = (TextView)findViewById(R.id.main_button_left);
+			button_right = (TextView)findViewById(R.id.main_button_right);
+			button_number = (TextView)findViewById(R.id.main_button_number);
+			button_back = (TextView)findViewById(R.id.main_button_back);
+
+			multi_box_add = (TextView)findViewById(R.id.main_multi_box_add);
+			multi_box_remove = (TextView)findViewById(R.id.main_multi_box_remove);
+			multi_scroll_box = (HorizontalScrollView)findViewById(R.id.main_multi_scroll_box);
+			multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
+			multi_box = (FrameLayout)findViewById(R.id.main_multi_box);
+			multi_text = (TextView)findViewById(R.id.main_multi_box_text);
+			
+			manager_th = (TextView)findViewById(R.id.main_manager_th);
+			nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
+			
+			simulation_e = (EditText)findViewById(R.id.simulation_e);
+			simulation_test = (TextView)findViewById(R.id.simulation_test);
+			
+			menulayout_box = (FrameLayout)findViewById(R.id.menulayout_box);
+			menu_layout = (FrameLayout)findViewById(R.id.main_menu_layout);
+		}
+		
 		((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
         night.setTag(false);
 
@@ -313,19 +342,6 @@ public class Main extends Activity {
 		 }    
 		 });*/
 
-        bookmark_list = (ListView)findViewById(R.id.main_manager_bookmark_list);
-        history_list = (ListView)findViewById(R.id.main_manager_history_list);
-
-        manager_back = (TextView)findViewById(R.id.main_manager_back);
-        back_icon = (TextView)findViewById(R.id.main_back_icon);
-        forward_icon = (TextView)findViewById(R.id.main_forward_icon);
-        button_left = (TextView)findViewById(R.id.main_button_left);
-        button_right = (TextView)findViewById(R.id.main_button_right);
-        button_number = (TextView)findViewById(R.id.main_button_number);
-        button_back = (TextView)findViewById(R.id.main_button_back);
-
-        multi_box_add = (TextView)findViewById(R.id.main_multi_box_add);
-        multi_box_remove = (TextView)findViewById(R.id.main_multi_box_remove);
 
         manager_back.setTextColor(S.getColor(R.color.colorPrimary));
         back_icon.setTextColor(S.getColor(R.color.colorBackground));
@@ -344,13 +360,10 @@ public class Main extends Activity {
         ripple_version(manager_back);
         ripple_version(button_back);
 
-        multi_scroll_box = (HorizontalScrollView)findViewById(R.id.main_multi_scroll_box);
-        multi_scroll = (LinearLayout)findViewById(R.id.main_multi_scroll);
-        multi_box = (FrameLayout)findViewById(R.id.main_multi_box);
-        multi_text = (TextView)findViewById(R.id.main_multi_box_text);
+
         addMulti();
 
-        nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
+        
 		/*
 		 manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
 		 manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
@@ -358,7 +371,7 @@ public class Main extends Activity {
 		 HeyHelper.setFont(tvv, "m");
 		 }*/
 
-        manager_th = (TextView)findViewById(R.id.main_manager_th);
+        
         HeyHelper.setFont(manager_th, "m");
 
         homemenu = new HeyMenu(menu);
@@ -377,8 +390,7 @@ public class Main extends Activity {
             web = addPage("");
 
 		//菜单容器***
-		menulayout_box = (FrameLayout)findViewById(R.id.menulayout_box);
-		menu_layout = (FrameLayout)findViewById(R.id.main_menu_layout);
+		
         menulayout_box.scrollTo(0, -(int)dip2px(this, 250));
 
 		//色彩!!!
@@ -499,12 +511,14 @@ public class Main extends Activity {
          @Override
          public void onNothingSelected(AdapterView<?> parent) {}
          });*/
-		simulation_e = (EditText)findViewById(R.id.simulation_e);
-		simulation_test = (TextView)findViewById(R.id.simulation_test);
+		
         simulation_back = (TextView)findViewById(R.id.simulation_back);
 		ripple_version(simulation_back);
         ripple_version(simulation_test);
         HeyHelper.setFont(simulation_back, "m");
+
+
+		
 
     }
 	public static void onSimulationTest(View v)  {
@@ -1054,20 +1068,20 @@ public class Main extends Activity {
          }
          }.sendEmptyMessageDelayed(0, 225);*/
     } public void onManagerClick(View v) {
-  /*      final FrameLayout[] page = {
-            (FrameLayout)findViewById(R.id.main_manager_p1),
-            (FrameLayout)findViewById(R.id.main_manager_p2)
-        };*/
+		/*      final FrameLayout[] page = {
+		 (FrameLayout)findViewById(R.id.main_manager_p1),
+		 (FrameLayout)findViewById(R.id.main_manager_p2)
+		 };*/
 
-        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)manager_tab.getLayoutParams();  
-        params.setMargins((int)v.getX(), 0, 0, 0);
-        manager_tab.setLayoutParams(params);
+        //final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)manager_tab.getLayoutParams();  
+       // params.setMargins((int)v.getX(), 0, 0, 0);
+     //   manager_tab.setLayoutParams(params);
 
-       /* for (FrameLayout l : page) {
-            l.setVisibility(View.GONE);
-        }*/
+		/* for (FrameLayout l : page) {
+		 l.setVisibility(View.GONE);
+		 }*/
 
-        manager_th.setVisibility(View.GONE);
+      //  manager_th.setVisibility(View.GONE);
         switch (v.getId()) {
 				/*
 				 case R.id.main_manager_t0:
