@@ -21,7 +21,7 @@ public class ScrollText extends TextView {
     int lastX = 0, lastY = 0, lastS = 0, dip10 = 10;
 
     //滑动~
-    Scroller scroller, scroller2;
+    Scroller scroller;
 
     public ScrollText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,7 +58,6 @@ public static boolean first = true;
 					mMenu = Main.menulayout_box;
 					first = false;
 				}
-				scroller2 = new Scroller(Main.menu.getContext(), new AccelerateInterpolator());
 				
                 if (!isUper) {
                     isUp = true;
@@ -132,8 +131,8 @@ public static boolean first = true;
                     Main.onMenu(true);
                 } else {
                     isUper = false;
-                    mMenu.scrollTo(0, mMenu.getHeight());
-					ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), Main.menu_layout.getHeight());
+                    
+					ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), -Main.menu_layout.getHeight());
 				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
 							public void onAnimationUpdate(ValueAnimation animaion) {
 								int a = (int) animaion.getAnimatedValue();

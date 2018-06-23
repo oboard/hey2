@@ -568,7 +568,7 @@ public class Main extends Activity {
             case R.id.main_button_left:
                 onDockClick(v);
                 if (menulayout_box.getScrollY() < -menu_layout.getHeight() / 2) {
-					ValueAnimation ani = ValueAnimation.ofInt(menulayout_box.getScrollY(), Main.menu_layout.getHeight());
+					ValueAnimation ani = ValueAnimation.ofInt(menulayout_box.getScrollY(), 0);
 				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
 							public void onAnimationUpdate(ValueAnimation animaion) {
 								int a = (int) animaion.getAnimatedValue();
@@ -578,7 +578,7 @@ public class Main extends Activity {
 					menulayout_box.setAnimation(ani);
                     onMenu(true);
                 } else {
-                    ValueAnimation ani = ValueAnimation.ofInt(menulayout_box.getScrollY(), Main.menu_layout.getHeight());
+                    ValueAnimation ani = ValueAnimation.ofInt(menulayout_box.getScrollY(), -menu_layout.getHeight());
 				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
 							public void onAnimationUpdate(ValueAnimation animaion) {
 								int a = (int) animaion.getAnimatedValue();
