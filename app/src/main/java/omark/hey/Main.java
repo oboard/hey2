@@ -36,7 +36,7 @@ public class Main extends Activity {
     static Spinner simulation_u, simulation_a;
     static TextView multi_text, back_icon, forward_icon, manager_back, button_left, button_right, button_number, manager_th;
     static TextView simulation_back, simulation_test, nomarkbook, multi_box_add, multi_box_remove, button_back;
-    static TextView[] manager_tab_button = new TextView[2];
+	//  static TextView[] manager_tab_button = new TextView[2];
     static ListView bookmark_list, history_list;
     static LinearLayout multi_scroll;//, home_root;
     static HorizontalScrollView multi_scroll_box;
@@ -91,7 +91,7 @@ public class Main extends Activity {
         text = (EditText)findViewById(R.id.main_text);
         //home_text = (EditText)findViewById(R.id.home_text);
         dock = (ScrollText)findViewById(R.id.main_dock);
-        manager_tab = findViewById(R.id.main_manager_tab);
+        //manager_tab = findViewById(R.id.main_manager_tab);
         root = (RelativeLayout)findViewById(R.id.main_root);
         desktop_float = findViewById(R.id.main_desktop_float);
         //home_root = (LinearLayout)findViewById(R.id.home_root);
@@ -351,11 +351,12 @@ public class Main extends Activity {
         addMulti();
 
         nomarkbook = (TextView)findViewById(R.id.main_nomarkbook);
-        manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
-        manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
-        for (TextView tvv : manager_tab_button) {
-            HeyHelper.setFont(tvv, "m");
-        }
+		/*
+		 manager_tab_button[0] = (TextView)findViewById(R.id.main_manager_t0);
+		 manager_tab_button[1] = (TextView)findViewById(R.id.main_manager_t1);
+		 for (TextView tvv : manager_tab_button) {
+		 HeyHelper.setFont(tvv, "m");
+		 }*/
 
         manager_th = (TextView)findViewById(R.id.main_manager_th);
         HeyHelper.setFont(manager_th, "m");
@@ -374,12 +375,12 @@ public class Main extends Activity {
         onIntent(getIntent());
         if (webindex < 0)
             web = addPage("");
-			
+
 		//菜单容器***
 		menulayout_box = (FrameLayout)findViewById(R.id.menulayout_box);
 		menu_layout = (FrameLayout)findViewById(R.id.main_menu_layout);
         menulayout_box.scrollTo(0, -(int)dip2px(this, 250));
-		
+
 		//色彩!!!
         onChangeBackground(Color.TRANSPARENT, getHeyBackground());
 
@@ -504,6 +505,7 @@ public class Main extends Activity {
 		ripple_version(simulation_back);
         ripple_version(simulation_test);
         HeyHelper.setFont(simulation_back, "m");
+
     }
 	public static void onSimulationTest(View v)  {
 		web.loadUrl("http://sited.noear.org/ua/");
@@ -771,7 +773,7 @@ public class Main extends Activity {
         else
             Main.background.setImageDrawable(new ColorDrawable(f));
 
-		menu_layout.setBackgroundDrawable(Main.background.getDrawable());
+		//menu_layout.setBackgroundDrawable(Main.background.getDrawable());
         int c = f;
         if (f == Color.TRANSPARENT) {
             if (b instanceof ColorDrawable)
@@ -1011,9 +1013,11 @@ public class Main extends Activity {
             nomarkbook.setVisibility(View.GONE);
         else
             nomarkbook.setVisibility(View.VISIBLE);
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
                 public void run() {
                     Bitmap bitmap = lastimage;
+
                     bitmap = FastBlur.rsBlur(Main.this, bitmap, 25);
                     manager.setBackgroundDrawable(new BitmapDrawable(bitmap));
 
@@ -1023,7 +1027,9 @@ public class Main extends Activity {
                     manager.setVisibility(View.VISIBLE);
                 }
             });
-    } public void onManagerBackClick(View v) {
+    } 
+
+	public void onManagerBackClick(View v) {
         keyboardState(false);
         if (manager.getVisibility() == View.GONE) return;
 
@@ -1048,31 +1054,32 @@ public class Main extends Activity {
          }
          }.sendEmptyMessageDelayed(0, 225);*/
     } public void onManagerClick(View v) {
-        final FrameLayout[] page = {
+  /*      final FrameLayout[] page = {
             (FrameLayout)findViewById(R.id.main_manager_p1),
             (FrameLayout)findViewById(R.id.main_manager_p2)
-        };
+        };*/
 
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)manager_tab.getLayoutParams();  
         params.setMargins((int)v.getX(), 0, 0, 0);
         manager_tab.setLayoutParams(params);
 
-        for (FrameLayout l : page) {
+       /* for (FrameLayout l : page) {
             l.setVisibility(View.GONE);
-        }
+        }*/
 
         manager_th.setVisibility(View.GONE);
         switch (v.getId()) {
-            case R.id.main_manager_t0:
-                page[0].setVisibility(View.VISIBLE);
-                break;
-            case R.id.main_manager_t1:
-                page[1].setVisibility(View.VISIBLE);
-                manager_th.setVisibility(View.VISIBLE);
-                break;
-
+				/*
+				 case R.id.main_manager_t0:
+				 page[0].setVisibility(View.VISIBLE);
+				 break;
+				 case R.id.main_manager_t1:
+				 page[1].setVisibility(View.VISIBLE);
+				 manager_th.setVisibility(View.VISIBLE);
+				 break;
+				 */
             case R.id.main_manager_th:
-                page[1].setVisibility(View.VISIBLE);
+                //page[1].setVisibility(View.VISIBLE);
                 manager_th.setVisibility(View.VISIBLE);
                 new AlertDialog.Builder(this).setTitle(R.string.lang39)
                     .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
@@ -1349,21 +1356,32 @@ public class Main extends Activity {
     }
 
     public Bitmap getWebDrawing() {
-        View view = getWindow().getDecorView();
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
+		/*
+		 try {
+		 desktop.setDrawingCacheEnabled(true);
+		 Bitmap bitmap = Bitmap.createBitmap(desktop.getDrawingCache());
+		 desktop.setDrawingCacheEnabled(false);
+		 return bitmap;
+		 } catch (Exception e) {
+		 */
+		View view = getWindow().getDecorView();
+		Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		view.draw(canvas);
 
-        lastimage = Bitmap.createBitmap(bitmap, 0, (int)desktop.getY(), view.getWidth(), view.getHeight() - getNavigationBarHeight(this) - (int)desktop.getY());
+		lastimage = Bitmap.createBitmap(bitmap, 0, (int)desktop.getY(), view.getWidth(), view.getHeight() - getNavigationBarHeight(this) - (int)desktop.getY());
 
-        return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - (int)desktop.getY() - getNavigationBarHeight(this));
-    } public Bitmap getWebDrawingB() {
+		return Bitmap.createBitmap(bitmap, (int)desktop.getScrollX(), (int)desktop.getY(), view.getWidth() - (int)desktop.getScrollX(), view.getHeight() - dock.getHeight() - (int)desktop.getY() - getNavigationBarHeight(this));
+		//}
+	} 
+	public Bitmap getWebDrawingB() {
         Display view = getWindowManager().getDefaultDisplay();
         ColorDrawable drawable = new ColorDrawable(Color.WHITE);
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap); drawable.draw(canvas); //拿到这个bitmap了
         return bitmap;
-    } public void ripple_version(View view_children) {
+    }
+	public void ripple_version(View view_children) {
         //版本兼容
         int[] attrsArray = {
             (android.os.Build.VERSION.SDK_INT >= 21) ?

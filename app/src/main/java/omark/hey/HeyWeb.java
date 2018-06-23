@@ -100,11 +100,11 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
 					if (url.equals("folder://")) {
 						Main.me.onDockLongClick(null);
-						Main.manager_tab_button[0].performClick();
+						//Main.manager_tab_button[0].performClick();
 						return true;
 					} else if (url.equals("history://")) {
 						Main.me.onDockLongClick(null);
-						Main.manager_tab_button[1].performClick();
+						//Main.manager_tab_button[1].performClick();
 						return true;
 					}
 

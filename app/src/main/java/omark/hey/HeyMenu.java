@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import android.webkit.CookieManager;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
 public class HeyMenu {
     // 图片封装为一个数组
@@ -18,6 +20,7 @@ public class HeyMenu {
     SimpleAdapter sa;
     GridView gv;
 
+	FrameLayout mMenu;
     List<Map<String, Object>> data_list;
     ArrayList<String> data_code = new ArrayList<String>();
 
@@ -105,7 +108,61 @@ public class HeyMenu {
                      }*/
                 }
             });
+		
+		g.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
 
+					int y = (int)event.getY();
+
+					switch (event.getAction()) {
+						case MotionEvent.ACTION_DOWN:
+							mMenu = Main.menulayout_box;
+							
+							break;
+						case MotionEvent.ACTION_MOVE:
+							int offsety = mMenu.getScrollY() - y;
+
+							int max = Main.menu_layout.getHeight();
+							if (offsety > max) offsety = max;
+							mMenu.scrollTo(0, offsety);
+
+							mMenu.invalidate();
+							
+							break;
+						case MotionEvent.ACTION_UP:
+
+							if (mMenu.getScrollY() > -Main.menu_layout.getHeight() / 2) {
+								Main.dock.isUper = true;
+								ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), 0);
+								ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+										public void onAnimationUpdate(ValueAnimation animaion) {
+											int a = (int) animaion.getAnimatedValue();
+											mMenu.setScrollY(a);
+										}
+									}).setDuration(225);
+								mMenu.setAnimation(ani);
+								Main.onMenu(true);
+							} else {
+								Main.dock.isUper = false;
+
+								ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), -Main.menu_layout.getHeight());
+								ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+										public void onAnimationUpdate(ValueAnimation animaion) {
+											int a = (int) animaion.getAnimatedValue();
+											mMenu.setScrollY(a);
+										}
+									}).setDuration(225);
+								mMenu.setAnimation(ani);
+
+								ScrollText.isMenu = false;
+								Main.desktop_float.setVisibility(View.GONE);
+							}
+							break;
+					}
+					return false;
+				}
+			});
     }
 
     public SimpleAdapter getAdapter() {
@@ -123,7 +180,7 @@ public class HeyMenu {
 
         sa.notifyDataSetChanged();
     }
-    
+
     public void setStop(int index) {
         data_list.get(index).put("stop", "");
         data_list.get(index).put("stop2", true);

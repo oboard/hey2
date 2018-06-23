@@ -18,7 +18,7 @@ public class ScrollText extends TextView {
     boolean isUper = false;
 
     //按下view时所处的坐标
-    int lastX = 0, lastY = 0, lastS = 0, dip10 = 10;
+    int lastX = 0, lastY = 0, lastS = 0, dip5 = 10;
 
     //滑动~
     Scroller scroller;
@@ -26,7 +26,7 @@ public class ScrollText extends TextView {
     public ScrollText(Context context, AttributeSet attrs) {
         super(context, attrs);
         scroller = new Scroller(context, new AccelerateInterpolator());
-		 dip10 = (int)Main.dip2px(context, 10);
+		 dip5 = (int)Main.dip2px(context, 5);
     }
 
     Boolean isUp = true;
@@ -75,7 +75,7 @@ public static boolean first = true;
                 if (lastS == 3) break;
                 int offsetx = viewGroup.getScrollX() + lastX - x;
                 int offsety = viewGroup.getScrollY() + lastY - y;
-                if (Math.abs(offsetx) > dip10 || Math.abs(offsety) > dip10) {
+                if (Math.abs(offsetx) > dip5 || Math.abs(offsety) > dip5) {
                     isUp = false;
                     if (lastS == 0) {
                         if (Math.abs(offsetx) >= Math.abs(offsety))
@@ -90,12 +90,12 @@ public static boolean first = true;
                             offsetx = max;
                         else if (offsetx < -max) 
                             offsetx = -max;
-                        viewGroup.scrollTo(offsetx, 0);
+                        viewGroup.setScrollX(offsetx);
                     } else {
                         int max = Main.menu_layout.getHeight() - lastY;
                         if (offsety > max) offsety = max;
 						mMenu.scrollTo(0, offsety - max);
-						setText("" + (offsety - max));
+						
                         mMenu.invalidate();
 						//viewGroup.scrollTo(0, offsety);
                     }
@@ -108,14 +108,15 @@ public static boolean first = true;
                     if (viewGroup.getScrollX() > Main.dip2px(this.getContext(), 50)) {
                         web.goForward();
 
-                        web.loadUrl("javascript:document.title = " + web.getTitle());
+                        //web.loadUrl("javascript:document.title = " + web.getTitle());
                     } else if (viewGroup.getScrollX() < -Main.dip2px(this.getContext(), 50)) {
                         web.goBack();
 
-                        web.loadUrl("javascript:document.title = " + web.getTitle());
-						viewGroup.scrollTo(0, 0);
+                        //web.loadUrl("javascript:document.title = " + web.getTitle());
                     }
                 }
+				scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 225);
+				
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
                 
 				if (mMenu.getScrollY() > -Main.menu_layout.getHeight() / 2) {
