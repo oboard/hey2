@@ -4,8 +4,8 @@ import android.graphics.*;
 import android.widget.*;
 
 public class HeyHelper {
-    static String DEFAULT_HOME = "https://www.sogo.com/";
-    static String DEFAULT_SEARCH = "https://sogo.com/web?query=";
+    static String DEFAULT_HOME = "http://nav.ailuoku6.top/";
+    static String DEFAULT_SEARCH = "https://baidu.com/s?word=";
     
     public static String getSearch(String body) {
         return S.get("search" , HeyHelper.DEFAULT_SEARCH) + body;

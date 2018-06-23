@@ -59,28 +59,17 @@
 			android:layout_height="288dp"
 			android:translationY="288dp">
 
-			<GridView
-				android:id="@+id/main_menu"
+			<ScrollView
+				android:id="@+id/main_settings"
+				android:layout_height="288dp"
 				android:layout_width="fill_parent"
-				android:layout_height="160dp"
-				android:gravity="center"
-				android:stretchMode="columnWidth"
-				android:numColumns="4"
-				android:columnWidth="80dp"
-				android:verticalSpacing="5dp"
-				android:horizontalSpacing="5dp"/>
+				android:visibility="gone">
 
-            <ScrollView
-                android:id="@+id/main_settings"
-                android:layout_height="288dp"
-                android:layout_width="fill_parent"
-                android:visibility="gone">
+				<include
+					layout="@layout/settings"/>
 
-                <include
-                    layout="@layout/settings"/>
-            
-            </ScrollView>
-            
+			</ScrollView>
+
 		</FrameLayout>
 
 		<FrameLayout
@@ -88,17 +77,17 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_marginBottom="48dp">
-            
+
 		</FrameLayout>
 
-        <View
-            android:id="@+id/main_desktop_float"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
+		<View
+			android:id="@+id/main_desktop_float"
+			android:layout_height="fill_parent"
+			android:layout_width="fill_parent"
 			android:layout_marginBottom="48dp"
-            android:background="#33000000"
-            android:onClick="onBarClick"
-            android:visibility="gone"/>
+			android:background="#22000000"
+			android:onClick="onBarClick"
+			android:visibility="gone"/>
 
 		<HorizontalScrollView
 			android:id="@+id/main_multi_scroll_box"
@@ -106,7 +95,7 @@
 			android:layout_height="fill_parent"
 			android:layout_marginBottom="48dp"
 			android:visibility="gone"
-            android:scrollbars="none">
+			android:scrollbars="none">
 
 			<LinearLayout
 				android:id="@+id/main_multi_scroll"
@@ -120,55 +109,55 @@
 			android:id="@+id/main_dock"
 			android:background="?@android:attr/selectableItemBackground"
 			android:layout_alignParentBottom="true"
-            android:layout_width="fill_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="48dp"
 			android:onClick="onDockClick"
 			android:textColor="#ffffff"
-            android:paddingRight="48dp"
+			android:paddingRight="48dp"
 			android:paddingLeft="48dp"
 			android:gravity="center"/>
 
-        <TextView
-            android:id="@+id/main_button_back"
-            android:background="?android:attr/selectableItemBackground"
+		<TextView
+			android:id="@+id/main_button_back"
+			android:background="?android:attr/selectableItemBackground"
 			android:layout_alignParentBottom="true"
-            android:layout_height="48dp"
-            android:layout_width="48dp"
-            android:textColor="#ffffff"
+			android:layout_height="48dp"
+			android:layout_width="48dp"
+			android:textColor="#ffffff"
 			android:onClick="onBarClick"
-            android:visibility="gone"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:textSize="24sp"
-            android:text="&#xE5C4;"/>
-        
+			android:visibility="gone"
+			android:clickable="true"
+			android:focusable="true"
+			android:gravity="center"
+			android:textSize="24sp"
+			android:text=""/>
+
 		<TextView
 			android:id="@+id/main_button_left"
 			android:background="?android:attr/selectableItemBackground"
 			android:layout_alignBottom="@id/main_dock"
-            android:layout_alignTop="@id/main_dock"
-            android:layout_height="wrap_content"
+			android:layout_alignTop="@id/main_dock"
+			android:layout_height="wrap_content"
 			android:layout_width="48dp"
 			android:textColor="#55ffffff"
 			android:onClick="onBarClick"
-            android:clickable="true"
-            android:focusable="true"
+			android:clickable="true"
+			android:focusable="true"
 			android:gravity="center"
 			android:textSize="32sp"/>
 
 		<TextView
 			android:id="@+id/main_button_right"
 			android:background="?android:attr/selectableItemBackground"
-            android:layout_alignBottom="@id/main_dock"
+			android:layout_alignBottom="@id/main_dock"
 			android:layout_alignTop="@id/main_dock"
 			android:layout_alignParentRight="true"
-            android:layout_height="wrap_content"
+			android:layout_height="wrap_content"
 			android:layout_width="48dp"
 			android:textColor="#55ffffff"
 			android:onClick="onBarClick"
-            android:clickable="true"
-            android:focusable="true"
+			android:clickable="true"
+			android:focusable="true"
 			android:gravity="center"
 			android:textSize="32sp"/>
 
@@ -199,47 +188,50 @@
 			android:onClick="onBackWeb"
 			android:layout_width="fill_parent"
 			android:layout_height="48dp"
-            android:paddingRight="24dp"
-            android:paddingLeft="24dp"
+			android:paddingRight="24dp"
+			android:paddingLeft="24dp"
 			android:visibility="gone"
 			android:clickable="true">
 
-            <TextView
-                android:id="@+id/main_multi_box_remove"
-                android:layout_gravity="left|center_vertical"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:onClick="onRemoveAllClick"
-                android:textColor="#AAffffff"
-                android:clickable="true"
-                android:focusable="true"
-                android:textSize="24sp"
-                android:text="&#xE53C;"/>
+			<TextView
+				android:id="@+id/main_multi_box_remove"
+				android:layout_gravity="left|center_vertical"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:onClick="onRemoveAllClick"
+				android:textColor="#AAffffff"
+				android:clickable="true"
+				android:focusable="true"
+				android:textSize="24sp"
+				android:text=""/>
 
-            <TextView
-                android:id="@+id/main_multi_box_add"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="#AAffffff"
-                android:onClick="onAddPage"
-                android:clickable="true"
-                android:focusable="true"
-                android:textSize="24sp"
-                android:text="&#xE145;"/>
-                
+			<TextView
+				android:id="@+id/main_multi_box_add"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_gravity="center"
+				android:textColor="#AAffffff"
+				android:onClick="onAddPage"
+				android:clickable="true"
+				android:focusable="true"
+				android:textSize="24sp"
+				android:text=""/>
+
 			<TextView
 				android:id="@+id/main_multi_box_text"
-                android:layout_gravity="right|center_vertical"
+				android:layout_gravity="right|center_vertical"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:textColor="#AAffffff"
-                android:textStyle="bold"
+				android:textStyle="bold"
 				android:textSize="16sp"
 				android:text="1"/>
 
-        </FrameLayout>
-
+		</FrameLayout>
+		
+		<include
+			layout="@layout/menulayout"/>
+		
 		<RelativeLayout
 			android:id="@+id/main_manager"
 			android:layout_height="fill_parent"
@@ -265,23 +257,23 @@
 						android:onClick="onManagerClick"
 						android:layout_height="fill_parent"
 						android:layout_width="48dp"
-                        android:gravity="center"
+						android:gravity="center"
 						android:textSize="24sp"
 						android:clickable="true"
-                        android:focusable="true"
-                        android:text="&#xE865;"/>
+						android:focusable="true"
+						android:text=""/>
 
 					<TextView
 						android:id="@+id/main_manager_t1"
 						android:background="?android:attr/selectableItemBackground"
 						android:onClick="onManagerClick"
-                        android:layout_height="fill_parent"
+						android:layout_height="fill_parent"
 						android:layout_width="48dp"
 						android:gravity="center"
 						android:textSize="24sp"
 						android:clickable="true"
-                        android:focusable="true"
-                        android:text="&#xE889;"/>
+						android:focusable="true"
+						android:text=""/>
 
 				</LinearLayout>
 
@@ -291,14 +283,14 @@
 					android:layout_alignParentRight="true"
 					android:onClick="onManagerClick"
 					android:layout_marginTop="56dp"
-                    android:layout_height="48dp"
+					android:layout_height="48dp"
 					android:layout_width="48dp"
 					android:visibility="gone"
-                    android:gravity="center"
+					android:gravity="center"
 					android:textSize="24sp"
 					android:clickable="true"
-                    android:focusable="true"
-                    android:text="&#xE872;"/>
+					android:focusable="true"
+					android:text=""/>
 
 				<FrameLayout
 					android:background="#11ffffff"
@@ -321,7 +313,7 @@
 						android:layout_gravity="right"
 						android:onClick="onManagerBackClick"
 						android:id="@+id/main_manager_back"
-                        android:layout_height="48dp"
+						android:layout_height="48dp"
 						android:layout_width="48dp"
 						android:clickable="true"
 						android:gravity="center"
@@ -361,7 +353,7 @@
 							android:layout_width="fill_parent"
 							android:text="@string/lang69"
 							android:clickable="true"
-                            android:focusable="true"
+							android:focusable="true"
 							android:gravity="center"/>
 
 					</FrameLayout>
@@ -398,8 +390,8 @@
 		</FrameLayout>
 
 	</RelativeLayout>
-    
-    <View
+
+	<View
 		android:id="@+id/main_night"
 		android:layout_height="fill_parent"
 		android:layout_width="fill_parent"

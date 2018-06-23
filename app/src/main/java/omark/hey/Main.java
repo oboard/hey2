@@ -28,7 +28,7 @@ public class Main extends Activity {
     static ScrollText dock;
     static EditText text, simulation_e;
     static GridView menu;
-    static FrameLayout desktop, simulation, multi_box;
+    static FrameLayout desktop, simulation, multi_box, menu_layout, menulayout_box;
     static RelativeLayout root, ground, manager, manager_ground;
     static HeyProgress progressbar;
     static HeyWeb web;
@@ -102,7 +102,7 @@ public class Main extends Activity {
         background = (ImageView)findViewById(R.id.main_background);
         progressbar = (HeyProgress)findViewById(R.id.main_progress);
         manager_ground = (RelativeLayout)findViewById(R.id.main_manager_ground);
-        ((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
+		((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
         night.setTag(false);
 
         //4.4以上透明
@@ -127,10 +127,8 @@ public class Main extends Activity {
         menu.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView view, final View v, final int i, long l) {
-                    //点击菜单后，滚回去～
-                    View viewGroup = (View)dock.getParent();
-                    viewGroup.scrollTo(0, 0);
-
+                    //点击菜单后，缩回去～
+					onBarClick(button_left);
                     if (((TextView)v.findViewById(R.id.menu_item_icon)).getCurrentTextColor() == 0x22ffffff)
                         return;
                     switch (i) {
@@ -268,7 +266,7 @@ public class Main extends Activity {
                                     }
                                 });
                             menu.startAnimation(aniA);
-                            viewGroup.scrollTo(0, (int)dip2px(Main.this, 288));
+                            menu.getLayoutParams().height = 0;
 
                             button_back.setVisibility(View.VISIBLE);
                             dock.setVisibility(View.GONE);
@@ -376,7 +374,13 @@ public class Main extends Activity {
         onIntent(getIntent());
         if (webindex < 0)
             web = addPage("");
-
+			
+		//菜单容器***
+		menulayout_box = (FrameLayout)findViewById(R.id.menulayout_box);
+		menu_layout = (FrameLayout)findViewById(R.id.main_menu_layout);
+        menulayout_box.scrollTo(0, -(int)dip2px(this, 250));
+		
+		//色彩!!!
         onChangeBackground(Color.TRANSPARENT, getHeyBackground());
 
         bookmark_list.setAdapter(bookmark.getAdapter());
@@ -500,7 +504,6 @@ public class Main extends Activity {
 		ripple_version(simulation_back);
         ripple_version(simulation_test);
         HeyHelper.setFont(simulation_back, "m");
-		
     }
 	public static void onSimulationTest(View v)  {
 		web.loadUrl("http://sited.noear.org/ua/");
@@ -564,12 +567,26 @@ public class Main extends Activity {
         switch (v.getId()) {
             case R.id.main_button_left:
                 onDockClick(v);
-                if (Math.abs(ground.getScrollY()) <= dip2px(this, 48)) {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), (int)dip2px(this, 160) - ground.getScrollY(), 195);
+                if (menulayout_box.getScrollY() < -menu_layout.getHeight() / 2) {
+					ValueAnimation ani = ValueAnimation.ofInt(menulayout_box.getScrollY(), Main.menu_layout.getHeight());
+				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+							public void onAnimationUpdate(ValueAnimation animaion) {
+								int a = (int) animaion.getAnimatedValue();
+								menulayout_box.setScrollY(a);
+							}
+						}).setDuration(225);
+					menulayout_box.setAnimation(ani);
                     onMenu(true);
                 } else {
-                    dock.scroller.startScroll(ground.getScrollX(), ground.getScrollY(), -ground.getScrollX(), -ground.getScrollY(), 195);
-                    onMenu(false);
+                    ValueAnimation ani = ValueAnimation.ofInt(menulayout_box.getScrollY(), Main.menu_layout.getHeight());
+				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+							public void onAnimationUpdate(ValueAnimation animaion) {
+								int a = (int) animaion.getAnimatedValue();
+								menulayout_box.setScrollY(a);
+							}
+						}).setDuration(225);
+					menulayout_box.setAnimation(ani);
+					onMenu(false);
                 }
                 dock.invalidate();
                 break;
@@ -754,6 +771,7 @@ public class Main extends Activity {
         else
             Main.background.setImageDrawable(new ColorDrawable(f));
 
+		menu_layout.setBackgroundDrawable(Main.background.getDrawable());
         int c = f;
         if (f == Color.TRANSPARENT) {
             if (b instanceof ColorDrawable)

@@ -1,27 +1,32 @@
 package omark.hey;
-import android.content.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
-import android.view.animation.*;
-import android.widget.*;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.Scroller;
+import android.widget.TextView;
 
 public class ScrollText extends TextView {
 
+	FrameLayout mMenu;
     public static boolean isMenu = false;
-    
+
     boolean isUper = false;
 
     //按下view时所处的坐标
     int lastX = 0, lastY = 0, lastS = 0, dip10 = 10;
 
     //滑动~
-    Scroller scroller;
+    Scroller scroller, scroller2;
 
     public ScrollText(Context context, AttributeSet attrs) {
         super(context, attrs);
         scroller = new Scroller(context, new AccelerateInterpolator());
-        dip10 = (int)Main.dip2px(context, 10);
+		 dip10 = (int)Main.dip2px(context, 10);
     }
 
     Boolean isUp = true;
@@ -38,7 +43,7 @@ public class ScrollText extends TextView {
             isUp = false;
         }
     };
-
+public static boolean first = true;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         View viewGroup = (View)getParent();
@@ -49,7 +54,12 @@ public class ScrollText extends TextView {
                 lastX = x;
                 lastY = y;
                 Main.me.onDockClick(this);
-
+				if (first) {
+					mMenu = Main.menulayout_box;
+					first = false;
+				}
+				scroller2 = new Scroller(Main.menu.getContext(), new AccelerateInterpolator());
+				
                 if (!isUper) {
                     isUp = true;
                     handler.sendEmptyMessageDelayed(0, 300);
@@ -83,9 +93,12 @@ public class ScrollText extends TextView {
                             offsetx = -max;
                         viewGroup.scrollTo(offsetx, 0);
                     } else {
-                        int max = (int)Main.dip2px(this.getContext(), 160);
+                        int max = Main.menu_layout.getHeight() - lastY;
                         if (offsety > max) offsety = max;
-                        viewGroup.scrollTo(0, offsety);
+						mMenu.scrollTo(0, offsety - max);
+						setText("" + (offsety - max));
+                        mMenu.invalidate();
+						//viewGroup.scrollTo(0, offsety);
                     }
                 } else 
                     viewGroup.scrollTo(0, 0);
@@ -101,18 +114,34 @@ public class ScrollText extends TextView {
                         web.goBack();
 
                         web.loadUrl("javascript:document.title = " + web.getTitle());
+						viewGroup.scrollTo(0, 0);
                     }
                 }
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
-                if (viewGroup.getScrollY() >= (int)Main.dip2px(this.getContext(), 100)) {
+                
+				if (mMenu.getScrollY() > -Main.menu_layout.getHeight() / 2) {
                     isUper = true;
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), (int)Main.dip2px(getContext(), 160) - viewGroup.getScrollY(), 195);
-
+					ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), 0);
+				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+							public void onAnimationUpdate(ValueAnimation animaion) {
+								int a = (int) animaion.getAnimatedValue();
+								mMenu.setScrollY(a);
+							}
+						}).setDuration(225);
+					mMenu.setAnimation(ani);
                     Main.onMenu(true);
                 } else {
                     isUper = false;
-                    scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 195);
-                    if (lastS != 3) Main.freshDock();
+                    mMenu.scrollTo(0, mMenu.getHeight());
+					ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), Main.menu_layout.getHeight());
+				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
+							public void onAnimationUpdate(ValueAnimation animaion) {
+								int a = (int) animaion.getAnimatedValue();
+								mMenu.setScrollY(a);
+							}
+						}).setDuration(225);
+					mMenu.setAnimation(ani);
+					if (lastS != 3) Main.freshDock();
 
 					ScrollText.isMenu = false;
 					Main.desktop_float.setVisibility(View.GONE);
