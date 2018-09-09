@@ -8,8 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import omark.hey.HeyHelper;
 import omark.hey.R;
+import omark.hey.control.HeySetting;
 
-public class HeySetting extends Activity {
+public class HeySettingActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

@@ -271,9 +271,10 @@ public class Main extends Activity {
                             break;
                         case 10:
                             //设置
-                            
+                            startActivity(new Intent(Main.this, HeySettingActivity.class));
+							break;
                         default:
-                            Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Main.this, "what", Toast.LENGTH_SHORT).show();
                             break;
                     }
 
