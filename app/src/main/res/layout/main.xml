@@ -54,25 +54,6 @@
 		android:clipChildren="false">
 
 		<FrameLayout
-			android:layout_alignParentBottom="true"
-			android:layout_width="fill_parent"
-			android:layout_height="288dp"
-			android:translationY="288dp">
-
-			<ScrollView
-				android:id="@+id/main_settings"
-				android:layout_height="288dp"
-				android:layout_width="fill_parent"
-				android:visibility="gone">
-
-				<include
-					layout="@layout/settings"/>
-
-			</ScrollView>
-
-		</FrameLayout>
-
-		<FrameLayout
 			android:id="@+id/main_desktop"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"

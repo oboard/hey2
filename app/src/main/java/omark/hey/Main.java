@@ -40,7 +40,6 @@ public class Main extends Activity {
     static ListView bookmark_list, history_list;
     static LinearLayout multi_scroll;//, home_root;
     static HorizontalScrollView multi_scroll_box;
-    static ScrollView settings;
     static ArrayList<HeyWeb> pages = new ArrayList<HeyWeb>();
     static ArrayList<LinearLayout> multi = new ArrayList<LinearLayout>();
     static ArrayList<ImageView> multiimage = new ArrayList<ImageView>();
@@ -97,7 +96,6 @@ public class Main extends Activity {
 			//home_root = (LinearLayout)findViewById(R.id.home_root);
 			desktop = (FrameLayout)findViewById(R.id.main_desktop);
 			ground = (RelativeLayout)findViewById(R.id.main_ground);
-			settings = (ScrollView)findViewById(R.id.main_settings);
 			manager = (RelativeLayout)findViewById(R.id.main_manager);
 			background = (ImageView)findViewById(R.id.main_background);
 			progressbar = (HeyProgress)findViewById(R.id.main_progress);
@@ -130,8 +128,7 @@ public class Main extends Activity {
 			menulayout_box = (FrameLayout)findViewById(R.id.menulayout_box);
 			menu_layout = (FrameLayout)findViewById(R.id.main_menu_layout);
 		}
-		
-		((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
+	
         night.setTag(false);
 
         //4.4以上透明
@@ -274,32 +271,7 @@ public class Main extends Activity {
                             break;
                         case 10:
                             //设置
-                            AnimationSet aniB = new AnimationSet(true);
-                            aniB.addAnimation(new TranslateAnimation(0, 0, dip2px(Main.this, 8), 0));
-                            aniB.addAnimation(new AlphaAnimation(0, 1));
-                            aniB.setInterpolator(new DecelerateInterpolator());
-                            aniB.setDuration(225);
-                            settings.startAnimation(aniB);
-                            settings.setVisibility(View.VISIBLE);
-
-                            AnimationSet aniA = new AnimationSet(true);
-                            aniA.addAnimation(new ScaleAnimation(1, 0.9f, 1f, 0.9f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
-                            aniA.addAnimation(new AlphaAnimation(1, 0));
-                            aniA.setInterpolator(new DecelerateInterpolator());
-                            aniA.setDuration(225);
-                            aniA.setAnimationListener(new Animation.AnimationListener() {
-                                    public void onAnimationStart(Animation ani) {}
-                                    public void onAnimationRepeat(Animation ani) {}
-                                    public void onAnimationEnd(Animation ani) {
-                                        menu.setVisibility(View.GONE);
-                                    }
-                                });
-                            menu.startAnimation(aniA);
-                            menu.getLayoutParams().height = 0;
-
-                            button_back.setVisibility(View.VISIBLE);
-                            dock.setVisibility(View.GONE);
-                            return;
+                            
                         default:
                             Toast.makeText(Main.this, "不存在的操作", Toast.LENGTH_SHORT).show();
                             break;
@@ -609,132 +581,15 @@ public class Main extends Activity {
             case R.id.main_button_right:
                 onDockClick(null);
                 break;
-            case R.id.main_button_back:
-                button_back.setVisibility(View.GONE);
-                //设置
-                AnimationSet aniB = new AnimationSet(true);
-                aniB.addAnimation(new TranslateAnimation(0, 0, 0, dip2px(Main.this, 8)));
-                aniB.addAnimation(new AlphaAnimation(1, 0));
-                aniB.setInterpolator(new DecelerateInterpolator());
-                aniB.setDuration(225);
-                aniB.setAnimationListener(new Animation.AnimationListener() {
-                        public void onAnimationStart(Animation ani) {}
-                        public void onAnimationRepeat(Animation ani) {}
-                        public void onAnimationEnd(Animation ani) {
-                            settings.setVisibility(View.GONE);
-                        }
-                    });
-                settings.startAnimation(aniB);
-
-                AnimationSet aniA = new AnimationSet(true);
-                aniA.addAnimation(new ScaleAnimation(0.9f, 1f, 0.9f, 1f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
-                aniA.addAnimation(new AlphaAnimation(0, 1));
-                aniA.setInterpolator(new DecelerateInterpolator());
-                aniA.setDuration(225);
-                menu.startAnimation(aniA);
-                menu.setVisibility(View.VISIBLE);
-                View viewGroup = (View)dock.getParent();
-                viewGroup.scrollTo(0, (int)dip2px(Main.this, 160));
-                dock.setVisibility(View.VISIBLE);
-                break;
             case R.id.main_desktop_float:
                 button_back.setVisibility(View.GONE);
                 menu.setVisibility(View.VISIBLE);
-                settings.setVisibility(View.GONE);
                 onBarClick(button_left);
                 break;
         }
     }
 
-    public void onSettingClick(View v) {
-        switch (v.getId()) {
-            case R.id.setting_1:
-                final EditText et = new EditText(this);
-                et.setText(S.get("home", HeyHelper.DEFAULT_HOME));
-                new AlertDialog.Builder(this).setView(et).setTitle(v.getTag().toString())
-                    .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int i) {
-                            S.put("home", et.getText().toString())
-                                .ok();
-                        }
-                    }).setNeutralButton("Via", new DialogInterface.OnClickListener() {   
-                        public void onClick(DialogInterface dialog, int i) {
-                            onBarClick(desktop_float);
-                            web = addPage("http://leftshine.gitee.io/viaindex/");
-                        }
-                    }).show();
-                break;
-            case R.id.setting_2:
-                S.put("pagecolor", ((HeySetting)v).isChecked())
-                    .ok();
-                break;
-            case R.id.setting_3:
-                final String[] se = {
-                    "Bing",
-                    "Google",
-                    "Baidu",
-                    "Sogou",
-                    "Yandex",
-                    "Yahoo",
-                    "360"
-                };
-                final String[] su = {
-                    "https://bing.com/search?q=",
-                    "https://google.com.hk/search?q=",
-                    "https://baidu.com/s?word=",
-                    "https://sogo.com/web?query=",
-                    "https://yandex.com/search/?text=",
-                    "https://search.yahoo.com/search?p=",
-                    "https://so.com/s?q="
-                };
-                new AlertDialog.Builder(this).setTitle(v.getTag().toString()).setSingleChoiceItems(se, S.get("searchindex", 0), new DialogInterface.OnClickListener() { 
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            S.put("search", su[which])
-                                .put("searchindex", which)
-                                .ok();
-
-                            dialog.dismiss();
-                        } 
-                    }).show();
-                break;
-            case R.id.setting_4:
-                new AlertDialog.Builder(this).setTitle(v.getTag().toString())
-                    .setItems(new String[] {
-                        S.getString(R.string.lang1),
-                        S.getString(R.string.lang13)
-                    }, new DialogInterface.OnClickListener() { 
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            S.put("background", which).ok();
-                            if (which == 0) return;
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(intent, 1);
-                        }
-                    }).show();
-                break;
-            case R.id.setting_5:
-                new AlertDialog.Builder(this).setTitle(v.getTag().toString())
-                    .setSingleChoiceItems(new String[] {
-                        S.getString(R.string.lang14),
-                        S.getString(R.string.lang15)
-                    }, S.get("style", 0), new DialogInterface.OnClickListener() { 
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            S.put("style", which).ok();
-                            freshDock();
-
-                            dialog.dismiss();
-                        }
-                    }).show();
-                break;
-            case R.id.setting_6:
-                startActivity(new Intent(this, About.class));
-                break;
-        }
-    }
+    
 
     public static void freshSimulation() {
         simulation.invalidate();
@@ -853,10 +708,7 @@ public class Main extends Activity {
     @Override
     public void onBackPressed() {
         if (ScrollText.isMenu) {
-            if (settings.getVisibility() == View.VISIBLE)
-                onBarClick(button_back);
-            else
-                onBarClick(button_left);
+            onBarClick(button_left);
             return;
         }
 
