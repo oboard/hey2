@@ -4,7 +4,8 @@
 	android:id="@+id/settings_root"
 	android:layout_height="wrap_content"
 	android:layout_width="fill_parent"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:padding="10dp">
 
 	<omark.hey.control.HeySetting
 		android:id="@+id/setting_1"

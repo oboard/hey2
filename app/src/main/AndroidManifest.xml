@@ -25,6 +25,8 @@
         
         <activity android:name=".About"/>
 
+		<activity android:name=".HeySettingActivity"/>
+			
         <activity
             android:name=".Crash"
             android:process=":Crash" />

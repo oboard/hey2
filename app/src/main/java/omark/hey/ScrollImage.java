@@ -69,7 +69,9 @@ public class ScrollImage extends ImageView {
                 break;
         }
         return true;
-    } public static float dip2px(Context context, float dipValue) {
+    }
+	
+	public static float dip2px(Context context, float dipValue) {
         return (dipValue * context.getResources().getDisplayMetrics().density + 0.5f) ;
     }
 

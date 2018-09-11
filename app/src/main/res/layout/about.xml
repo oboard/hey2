@@ -11,6 +11,10 @@
             android:title="测试群"
             android:summary="676176107"/>
         
+		<Preference
+			android:title="特别感谢eruda.js提供的开发者功能！"
+			android:summary="https://github.com/liriliri/eruda"/>
+		
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -51,7 +55,7 @@
         <Preference
             android:title="Curium"
             android:summary="@string/lang68"/>
-        
+	
     </PreferenceCategory>
    
 </PreferenceScreen>

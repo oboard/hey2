@@ -9,6 +9,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.animation.ValueAnimator;
 
 public class ScrollText extends TextView {
 
@@ -118,34 +119,35 @@ public static boolean first = true;
 				scroller.startScroll(viewGroup.getScrollX(), viewGroup.getScrollY(), -viewGroup.getScrollX(), -viewGroup.getScrollY(), 225);
 				
                 if (Math.abs(viewGroup.getScrollX()) < 10 && Math.abs(viewGroup.getScrollY()) < 10 && isUp) Main.me.onDockLongClick(null);
-                
+                ValueAnimator ani;
 				if (mMenu.getScrollY() > -Main.menu_layout.getHeight() / 2) {
                     isUper = true;
-					ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), 0);
-				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
-							public void onAnimationUpdate(ValueAnimation animaion) {
-								int a = (int) animaion.getAnimatedValue();
+				    ani = ValueAnimator.ofInt(mMenu.getScrollY(), 0);
+				    ani.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+							public void onAnimationUpdate(ValueAnimator animaion) {
+								int a = animaion.getAnimatedValue();
 								mMenu.setScrollY(a);
 							}
-						}).setDuration(225);
-					mMenu.setAnimation(ani);
+						});
+						
                     Main.onMenu(true);
                 } else {
                     isUper = false;
                     
-					ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), -Main.menu_layout.getHeight());
-				    ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
-							public void onAnimationUpdate(ValueAnimation animaion) {
-								int a = (int) animaion.getAnimatedValue();
+					ani = ValueAnimator.ofInt(mMenu.getScrollY(), -Main.menu_layout.getHeight());
+				    ani.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+							public void onAnimationUpdate(ValueAnimator animaion) {
+								int a = animaion.getAnimatedValue();
 								mMenu.setScrollY(a);
 							}
-						}).setDuration(225);
-					mMenu.setAnimation(ani);
+						});
 					if (lastS != 3) Main.freshDock();
 
 					ScrollText.isMenu = false;
 					Main.desktop_float.setVisibility(View.GONE);
                 }
+				ani.setDuration(225);
+				ani.start();
                 isMenu = isUper;
 
                 Main.back_icon.setVisibility(View.GONE);

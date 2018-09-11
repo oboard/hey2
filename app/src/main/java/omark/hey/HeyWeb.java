@@ -11,6 +11,7 @@ import android.view.View.*;
 import android.webkit.*;
 import android.widget.*;
 import java.lang.reflect.*;
+import java.io.IOException;
 
 public class HeyWeb extends WebView implements OnLongClickListener {
 
@@ -154,7 +155,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                         S.addIndexX("hm", new String[] {"h", "hn", "ht"}, new String[] {url, t, "" + time});
                     }
                 }
-
+				
                 public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                     //handler.cancel(); // Android默认的处理方式
                     handler.proceed(); // 接受所有网站的证书
@@ -279,10 +280,10 @@ public class HeyWeb extends WebView implements OnLongClickListener {
         //绑定菜单项的点击事件
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 public boolean onMenuItemClick(MenuItem i) {
-                    if (i.getTitle().equals(S.getString(R.string.lang53)))
+                    if (i.getTitle().equals(S.getString(R.string.lang53))) {
                     //复制链接
                         Main.clipboard.set(result.getExtra());
-                    else if (i.getTitle().equals(S.getString(R.string.lang52))) {
+                   } else if (i.getTitle().equals(S.getString(R.string.lang52))) {
                         //新页面打开
                         Main.me.onDockClick(v);
                         Main.web = Main.me.addPage(result.getExtra());

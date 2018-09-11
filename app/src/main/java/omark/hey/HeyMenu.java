@@ -1,7 +1,10 @@
 package omark.hey;
 
+import android.animation.ValueAnimator;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -9,9 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import android.webkit.CookieManager;
-import android.view.MotionEvent;
-import android.widget.FrameLayout;
 
 public class HeyMenu {
     // 图片封装为一个数组
@@ -108,7 +108,7 @@ public class HeyMenu {
                      }*/
                 }
             });
-		
+
 		g.setOnTouchListener(new View.OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -118,7 +118,7 @@ public class HeyMenu {
 					switch (event.getAction()) {
 						case MotionEvent.ACTION_DOWN:
 							mMenu = Main.menulayout_box;
-							
+
 							break;
 						case MotionEvent.ACTION_MOVE:
 							int offsety = mMenu.getScrollY() - y;
@@ -128,36 +128,39 @@ public class HeyMenu {
 							mMenu.scrollTo(0, offsety);
 
 							mMenu.invalidate();
-							
+
 							break;
 						case MotionEvent.ACTION_UP:
-
+							ValueAnimator ani;
 							if (mMenu.getScrollY() > -Main.menu_layout.getHeight() / 2) {
 								Main.dock.isUper = true;
-								ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), 0);
-								ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
-										public void onAnimationUpdate(ValueAnimation animaion) {
-											int a = (int) animaion.getAnimatedValue();
+							    ani = ValueAnimator.ofInt(mMenu.getScrollY(), 0);
+
+								ani.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+										public void onAnimationUpdate(ValueAnimator animaion) {
+											int a = animaion.getAnimatedValue();
 											mMenu.setScrollY(a);
 										}
-									}).setDuration(225);
-								mMenu.setAnimation(ani);
+									});
+
+
 								Main.onMenu(true);
 							} else {
 								Main.dock.isUper = false;
 
-								ValueAnimation ani = ValueAnimation.ofInt(mMenu.getScrollY(), -Main.menu_layout.getHeight());
-								ani.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
-										public void onAnimationUpdate(ValueAnimation animaion) {
+							    ani = ValueAnimator.ofInt(mMenu.getScrollY(), -Main.menu_layout.getHeight());
+								ani.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+										public void onAnimationUpdate(ValueAnimator animaion) {
 											int a = (int) animaion.getAnimatedValue();
 											mMenu.setScrollY(a);
 										}
-									}).setDuration(225);
-								mMenu.setAnimation(ani);
+									});
 
 								ScrollText.isMenu = false;
 								Main.desktop_float.setVisibility(View.GONE);
 							}
+							ani.setDuration(125);
+							ani.start();
 							break;
 					}
 					return false;

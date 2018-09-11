@@ -5,13 +5,16 @@
 	android:layout_height="fill_parent"
 	android:orientation="vertical"
 	android:id="@+id/menulayout_box"
-	android:gravity="bottom">
+	android:gravity="bottom"
+	android:padding="10dp">
 
 	<FrameLayout
 		android:id="@+id/main_menu_layout"
 		android:layout_width="fill_parent"
-		android:layout_height="210dp"
-		android:layout_gravity="bottom">
+		android:layout_height="230dp"
+		android:padding="10dp"
+		android:layout_gravity="bottom"
+		android:background="@drawable/roundrect">
 
 		<GridView
 			android:id="@+id/main_menu"
@@ -22,8 +25,7 @@
 			android:numColumns="4"
 			android:columnWidth="80dp"
 			android:verticalSpacing="5dp"
-			android:horizontalSpacing="5dp"
-			android:background="#000000"/>
+			android:horizontalSpacing="5dp"/>
 
 	</FrameLayout>
 

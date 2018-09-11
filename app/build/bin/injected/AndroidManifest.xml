@@ -2,11 +2,11 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
-	android:versionCode="42"
-	android:versionName="U-2.1">
+	android:versionCode="43"
+	android:versionName="U-2.1.1">
 
 	<uses-sdk
-		android:minSdkVersion="16"
+		android:minSdkVersion="19"
 		android:targetSdkVersion="22"/>
 
 	<uses-permission
@@ -58,6 +58,9 @@
 
 		<activity
 			android:name=".About"/>
+
+		<activity
+			android:name=".HeySettingActivity"/>
 
 		<activity
 			android:name=".Crash"

@@ -18,6 +18,7 @@ import android.widget.AdapterView.*;
 import java.io.*;
 import java.util.*;
 import omark.hey.control.*;
+import android.animation.ValueAnimator;
 
 public class Main extends Activity {
     static Main me;
@@ -238,7 +239,7 @@ public class Main extends Activity {
                             //开发者模式
                             if (web != null) {
                                 if (!menus.get(webindex).getState(i)) {
-                                    web.loadUrl("javascript:(function(){var script=document.createElement('script');script.src='http://eruda.liriliri.io/eruda.min.js';document.body.appendChild(script);script.onload=function(){eruda.init();eruda.show();};})()");
+                                    web.loadUrl("javascript:(function(){var script = document.createElement('script'); script.src='//cdn.jsdelivr.net/npm/eruda'; document.body.appendChild(script); script.onload = function(){eruda.init()}})();");
                                     menus.get(webindex).setState(i, true);
                                 } else {
                                     web.loadUrl("javascript:(function(){eruda.destroy()})()");
@@ -502,9 +503,7 @@ public class Main extends Activity {
     public static void onMenu(boolean open) {
         ScrollText.isMenu = open;
         if (open) {
-            button_right.setVisibility(View.GONE);
-            button_number.setVisibility(View.GONE);
-            desktop_float.setVisibility(View.VISIBLE);
+			desktop_float.setVisibility(View.VISIBLE);
         } else {
             freshDock();
             desktop_float.setVisibility(View.GONE);
@@ -563,7 +562,7 @@ public class Main extends Activity {
 								int a = (int) animaion.getAnimatedValue();
 								menulayout_box.setScrollY(a);
 							}
-						}).setDuration(225);
+						}).setDuration(125);
 					menulayout_box.setAnimation(ani);
                     onMenu(true);
                 } else {
@@ -573,7 +572,7 @@ public class Main extends Activity {
 								int a = (int) animaion.getAnimatedValue();
 								menulayout_box.setScrollY(a);
 							}
-						}).setDuration(225);
+						}).setDuration(125);
 					menulayout_box.setAnimation(ani);
 					onMenu(false);
                 }
@@ -784,7 +783,7 @@ public class Main extends Activity {
             try {
                 Bitmap l = getWebDrawing();
                 multiimages.set(webindex, l);
-                multiimage.get(webindex).setImageBitmap(HeyHelper.getRoundedCornerBitmap(l, dip2px(this, 5)));
+                multiimage.get(webindex).setImageBitmap(HeyHelper.getRCB(l));
                 multiimage.get(webindex).setTag(webindex);
                 multitext.get(webindex).setText(web.getTitle());
             } catch (Exception e) {
@@ -1022,7 +1021,7 @@ public class Main extends Activity {
         multi_scroll_box.setVisibility(View.GONE);
         multi_box.setVisibility(View.GONE);
 
-        multiimage.get(pages.size() - 1).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(pages.size() - 1), dip2px(this, 2)));
+        multiimage.get(pages.size() - 1).setImageBitmap(HeyHelper.getRCB(multiimages.get(pages.size() - 1)));
         multiimage.get(pages.size() - 1).setTag(pages.size() - 1);
 
         multi_text.setText("" + pages.size());
@@ -1124,7 +1123,7 @@ public class Main extends Activity {
             multiimage.get(i).setTag(i);
             multiimage.get(i).setVisibility(View.VISIBLE);
             multitext.get(i).setText(pages.get(i).getTitle());
-            multiimage.get(i).setImageBitmap(HeyHelper.getRoundedCornerBitmap(multiimages.get(i), dip2px(this, 2)));
+            multiimage.get(i).setImageBitmap(HeyHelper.getRCB(multiimages.get(i)));
         }
     } public void aniMulti(int fristindex) {
         final AnimationSet aniA = new AnimationSet(true);
@@ -1165,28 +1164,28 @@ public class Main extends Activity {
     long yt = 0;
     float yy = 0;
     public View.OnTouchListener HeyWebTouch(final HeyWeb w) {
-        final float h1 = dip2px(Main.this, 48), h2 = dip2px(Main.this, 24);
+        final int h1 = (int)dip2px(Main.this, 48), h2 = (int)dip2px(Main.this, 24);
         return (new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent moe) {
                 if (moe.getAction() != MotionEvent.ACTION_DOWN && !ScrollText.isMenu) {
                     if (Math.abs(yy - moe.getY()) > h2) {
                         if (yt < System.currentTimeMillis()) {
-                            ValueAnimation valueA;
+                            ValueAnimator valueA;
                             if (yy > moe.getY()) {
-                                valueA = ValueAnimation.ofFloat(dock.getLayoutParams().height, h2);
+                                valueA = ValueAnimator.ofInt(dock.getLayoutParams().height, h2);
 
                                 if (button_left.getVisibility() == View.VISIBLE && S.get("style", 0) == 0) {
                                     button_left.setVisibility(View.GONE);
                                     button_right.setVisibility(View.GONE);
                                 }
                             } else {
-                                valueA = ValueAnimation.ofFloat(dock.getLayoutParams().height, h1);
+                                valueA = ValueAnimator.ofInt(dock.getLayoutParams().height, h1);
 
                                 if (button_left.getVisibility() == View.GONE && S.get("style", 0) == 0) {
                                     final AlphaAnimation aniA = new AlphaAnimation(0f, 1f);
                                     button_left.setAnimation(aniA);
                                     button_right.setAnimation(aniA);
-                                    aniA.setDuration(195);
+                                    aniA.setDuration(125);
                                     aniA.startNow();
 
                                     button_left.setVisibility(View.VISIBLE);
@@ -1194,18 +1193,18 @@ public class Main extends Activity {
                                 }
                             }
                             dock.clearAnimation();
-                            valueA.setDuration(195);
-                            valueA.addUpdateListener(new ValueAnimation.OnAnimatorUpdateListener() {
-                                    public void onAnimationUpdate(ValueAnimation animaion) {
+                            valueA.setDuration(125);
+                            valueA.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                    public void onAnimationUpdate(ValueAnimator animaion) {
                                         final RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)desktop.getLayoutParams();
-                                        final int a = (int) animaion.getAnimatedValue();
+                                        final int a = animaion.getAnimatedValue();
                                         lp.setMargins(0, 0, 0, a);
                                         desktop.setLayoutParams(lp);
                                         dock.getLayoutParams().height = a;
                                     }
                                 });
-                            dock.startAnimation(valueA);
-                            yt = 195 + System.currentTimeMillis();
+                            valueA.start();
+                            yt = 125 + System.currentTimeMillis();
                         }
                         yy = moe.getY();
                     }
