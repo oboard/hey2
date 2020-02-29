@@ -1,22 +1,37 @@
 package omark.hey;
 
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.webkit.JavascriptInterface;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import omark.hey.Main;
+import omark.hey.R;
 
 public class HeyMenu {
     // 图片封装为一个数组
-    String [] from, text;
-    int[] to, icon;
+    public String [] from, text,com;
+    int[] to, icon,textb;
     SimpleAdapter sa;
     GridView gv;
 
@@ -40,19 +55,42 @@ public class HeyMenu {
             R.id.menu_item_text
         };
 
-        text = new String[] {
-            S.getString(R.string.lang42),
-            S.getString(R.string.lang18),
-            S.getString(R.string.lang37),
-            S.getString(R.string.lang27),
-            S.getString(R.string.lang17),
-            S.getString(R.string.lang60),
-            S.getString(R.string.lang59),
-            S.getString(R.string.lang62),
-            S.getString(R.string.lang36),
-            S.getString(R.string.lang63),
-            S.getString(R.string.lang26)
+        textb = new int[] {
+            R.string.lang42,
+            R.string.lang18,
+            R.string.lang37,
+            R.string.lang27,
+            R.string.lang17,
+            R.string.lang60,
+            R.string.lang59,
+            R.string.lang62,
+            R.string.lang36,
+            R.string.lang63,
+			R.string.lang71,
+            R.string.lang26
         };
+		com = new String[] {
+			"add",
+			"ref",
+			"sha",
+			"hom",
+			"adb",
+			"nig",
+			"bli",
+			"flo",
+			"dev",
+			"sim",
+			"pic",
+			"set"
+        };
+
+		List<String> ls = new ArrayList<String>();
+		for (int i:textb) {
+			ls.add(S.getString(i));
+		}
+
+		text = new String[ls.size() + 1];
+		ls.toArray(text);
 
         icon = new int[] {
             0xE145,
@@ -65,6 +103,7 @@ public class HeyMenu {
             0xE8AA,
             0xE86F,
             0xE54E,
+			0xE3B6,
             0xE8B8
         };
 
@@ -168,6 +207,147 @@ public class HeyMenu {
 			});
     }
 
+	public void run(int i, Main mm) {
+		final Main m = mm;
+		switch ((String)getData().get(i).get("com")) {
+			case "add":
+				m.web = m.addPage("");
+				break;
+			case "ref":
+				if (m.web != null) m.web.reload();
+				break;
+			case "sha":
+				if (m.web != null) {
+					try {
+						//分享文字
+						Intent shareIntent = new Intent();
+						shareIntent.setAction(Intent.ACTION_SEND);
+						shareIntent.putExtra(Intent.EXTRA_TEXT, m.web.getUrl());
+						shareIntent.setType("text/plain");
+						//设置分享列表的标题，并且每次都显示分享列表
+						m.startActivity(Intent.createChooser(shareIntent, m.getString(R.string.lang37))); 
+					} catch (Exception e) {
+						Toast.makeText(m, m.getString(R.string.lang21), Toast.LENGTH_SHORT).show();
+					}
+				}
+				break;
+			case "hom":
+				if (m.web != null) 
+					m.web.loadUrl(S.get("home", HeyHelper.DEFAULT_HOME));
+				break;
+			case "adb":
+				LinearLayout dl = (LinearLayout)LayoutInflater.from(m).inflate(R.layout.diglog_bookmark, null);
+				final EditText t1 = (EditText)dl.findViewById(R.id.diglog_bookmark_1), t2 = (EditText)dl.findViewById(R.id.diglog_bookmark_2);
+				if (m.web != null) {
+					t1.setText(m.web.getTitle());
+					t2.setText(m.web.getUrl());
+				}
+				new AlertDialog.Builder(m).setView(dl).setTitle(R.string.lang17)
+					.setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int i) {
+							S.addIndexX("bm" , new String[] {"b", "bn", "bt"}, new String[] {t2.getText().toString(), t1.getText().toString(), "" + System.currentTimeMillis()});
+
+							m.bookmark_list.setAdapter(m.bookmark.getAdapter());
+							Toast.makeText(m, R.string.lang20, Toast.LENGTH_SHORT).show();
+						}
+					}).show();
+				break;
+			case "flo":
+				//floatview
+				if (m.web != null) {
+					HeyWindowManager.addWindow(m.getApplicationContext());
+					HeyWindowManager.web_x.loadUrl(m.web.getUrl());
+				}
+				break;
+			case "bli":
+				//无痕模式
+				m.setVmode(!m.vmode);
+
+				break;
+			case "nig":
+				//夜间模式
+				if (!getState(i)) {
+					final AlphaAnimation alphaA = new AlphaAnimation(0, 1);
+					alphaA.setDuration(225);
+					alphaA.setFillAfter(true);
+					m.night.startAnimation(alphaA);
+					m.night.setTag(true);
+					for (int k = 0; k < m.pages.size(); k++) {
+						m.menus.get(k).setState(i, true);
+					}
+				} else {
+					final AlphaAnimation alphaA = new AlphaAnimation(1, 0);
+					alphaA.setDuration(225);
+					alphaA.setFillAfter(true);
+					m.night.startAnimation(alphaA);
+					m.night.setTag(false);
+					for (int k = 0; k < m.pages.size(); k++) {
+						m.menus.get(k).setState(i, false);
+					}
+				}
+				m.homemenu.setState(i, !m.homemenu.getState(i));
+				break;
+			case "dev":
+				//开发者模式
+				if (m.web != null) {
+					if (!m.menus.get(m.webindex).getState(i)) {
+						m.web.runJS("var script = document.createElement('script'); script.src='//cdn.jsdelivr.net/npm/eruda'; document.body.appendChild(script); script.onload = function(){eruda.init()}");
+						m.menus.get(m.webindex).setState(i, true);
+					} else {
+						m.web.runJS("eruda.destroy()");
+						m.menus.get(m.webindex).setState(i, false);
+					}
+				}
+				break;
+			case "sim":
+				//仿真
+				if (m.web != null) {
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+							public void run() {
+								m.freshSimulation();
+
+								final AlphaAnimation tranA = new AlphaAnimation(0, 1);
+								tranA.setDuration(225);
+								m.simulation.startAnimation(tranA);
+								m.simulation.setVisibility(View.VISIBLE);
+
+								AnimationSet aniA = new AnimationSet(true);
+								aniA.addAnimation(new ScaleAnimation(1, 0.5f, 1f, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.2f));
+								aniA.setInterpolator(new DecelerateInterpolator());
+								aniA.setFillAfter(true);
+								aniA.setDuration(225);
+								m.desktop.startAnimation(aniA);
+
+							}
+						});
+				}
+				break;
+			case "pic":
+				m.web.runJS(
+				"var imgs = document.getElementsByTagName(\"img\");" +
+				"var urlArray = [];" +
+				"for (var i=0;i<imgs.length;i++){" +
+				"var src = imgs[i].src;" +
+				"urlArray.push(src);" +
+				"}" +
+				"window.hey.cmd(\"pic\",urlArray.toString());"
+				);
+				m.web = m.addPage("file:///android_asset/i.html");
+				return;
+				//break;
+			case "set":
+				//设置
+				m.startActivity(new Intent(m, HeySettingActivity.class));
+				break;
+			default:
+				Toast.makeText(m, "what", Toast.LENGTH_SHORT).show();
+				break;
+		}
+
+		m.onMenu(false);
+	}
+
+
     public SimpleAdapter getAdapter() {
         return sa;
     }
@@ -192,13 +372,14 @@ public class HeyMenu {
     }
 
     @JavascriptInterface
-    public void add(int icon, String text, String code) {
+    public void add(int icon, String text, String com, String code) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("text", text);
         map.put("icon", icon);
         map.put("back", false);
         map.put("stop", "false");
         map.put("stop2", false);
+		map.put("com", com);
         data_list.add(map);
         data_code.add(code);
         sa.notifyDataSetChanged();
@@ -213,6 +394,7 @@ public class HeyMenu {
             map.put("back", true);
             map.put("stop", "false");
             map.put("stop2", false);
+			map.put("com", com[i]);
             try {
                 if (icon[i] == 0xE8F5)
                     map.put("back", Main.vmode);
@@ -221,8 +403,15 @@ public class HeyMenu {
             } catch (Exception e) {
             }
             data_code.add("");
-            date_list.add(map);
+			if (i != 7) 
+				date_list.add(map);
         }
         return date_list;
     }
+
+
+
+
+
+
 }

@@ -5,7 +5,7 @@
         
         <Preference
             android:title="@string/app_name"
-            android:summary="U-2.0"/>
+            android:summary="U-2.2"/>
 
         <Preference
             android:title="测试群"

@@ -8,6 +8,7 @@ import android.view.*;
 import android.webkit.*;
 import java.util.*;
 import omark.hey.*;
+import android.provider.Settings;
 
 public class HeyWindowManager {
 
@@ -28,6 +29,19 @@ public class HeyWindowManager {
 
 
     public static HeyWindowManager addWindow(Context context) {
+		if (Build.VERSION.SDK_INT >= 23) {
+            if(!Settings.canDrawOverlays(Main.me.getApplicationContext())) {
+                //启动Activity让用户授权
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                Main.me.startActivity(intent);
+                return me;
+            } else {
+                //执行6.0以上绘制代码
+            }
+        } else {
+            //执行6.0以下绘制代码
+        }
+		
         window_x = new HeyWindow(context);
         web_x = new HeyWeb(context);
         final HeyWeb webk = web_x;
@@ -123,13 +137,12 @@ class HeyWindowWebChrome extends WebChromeClient {
             if (title.equals("about:blank")) return;
             mWindow.title.setText(title);
             if (!S.get("pagecolor", true)) return;
-            v.loadUrl("javascript:(function(){" +
-                      "try{" +
+			
+            ((HeyWeb)v).runJS("try{" +
                       "CONTEXT_WINDOW.onReceivedThemeColor(document.querySelector(\"meta[name='theme-color']\").getAttribute(\"content\")," + HeyWindowManager.windows.indexOf(mWindow) + ");" +
                       "}catch(e){" +
                       "CONTEXT_WINDOW.onReceivedThemeColor(\"\"," + HeyWindowManager.windows.indexOf(mWindow) + ");" +
-                      "}" +
-                      "})()");
+                      "}");
         } catch (Exception e) {
             e.printStackTrace();
         }

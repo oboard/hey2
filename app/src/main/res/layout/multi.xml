@@ -6,33 +6,6 @@
 	android:layout_width="wrap_content"
 	android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_margin="10dp"
-        android:layout_height="fill_parent"
-        android:layout_width="wrap_content"
-        android:layout_weight="1"
-        android:clipChildren="false">
-
-        <TextView
-            android:textColor="#fff"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:id="@+id/multi_text0"/>
-
-        <omark.hey.ScrollImage
-            android:layout_margin="5dp"
-            android:onClick="onMultiClick"
-            android:id="@+id/multi_image0"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/multi_text0"/>
-
-    </RelativeLayout>
-    
 	<RelativeLayout
 		android:layout_margin="10dp"
 		android:layout_height="fill_parent"
@@ -59,6 +32,33 @@
 			android:layout_below="@id/multi_text1"/>
 
 	</RelativeLayout>
+	
+    <RelativeLayout
+        android:layout_margin="10dp"
+        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:clipChildren="false">
+
+        <TextView
+            android:textColor="#fff"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:id="@+id/multi_text0"/>
+
+        <omark.hey.ScrollImage
+            android:layout_margin="5dp"
+            android:onClick="onMultiClick"
+            android:id="@+id/multi_image0"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/multi_text0"/>
+
+    </RelativeLayout>
 
 </LinearLayout>
 

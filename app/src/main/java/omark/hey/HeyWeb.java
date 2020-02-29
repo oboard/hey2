@@ -18,15 +18,17 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     public HeyApi mApi;
     public WebChromeClient mClient;
 
-    private OnScrollChangedCallback mOnScrollChangedCallback;
+ //   private OnScrollChangedCallback mOnScrollChangedCallback;
 
     public HeyWeb(final Context context) {
         super(context);
         init();
-    } public HeyWeb(final Context context, AttributeSet attr) {
+    } 
+	public HeyWeb(final Context context, AttributeSet attr) {
         super(context, attr);
         init();
-    } void init() {
+    }
+	void init() {
         //一堆WebView设置
         WebSettings webSettings = getSettings();
 
@@ -128,7 +130,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
                 public void onPageStarted(WebView v, String url, Bitmap favicon) {
                     super.onPageStarted(v, url, favicon);
                     try {
-                        Main.menus.get(Main.pages.indexOf(v)).setState(8, false);
+                        Main.menus.get(Main.pages.indexOf(v)).setState(7, false);
                     } catch (Exception e) {
                         //找不到朋友
                     }
@@ -199,6 +201,12 @@ public class HeyWeb extends WebView implements OnLongClickListener {
             });
 
     }
+	
+
+	public void runJS(String js) {
+		loadUrl("javascript:(function(){" + js + "})()");
+	}
+	
 
     @Override
     public void setWebChromeClient(WebChromeClient client) {
@@ -209,7 +217,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     public WebChromeClient getWebChromeClient() {
         return mClient;
     }
-
+/*
     @Override
     protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
@@ -228,8 +236,7 @@ public class HeyWeb extends WebView implements OnLongClickListener {
     public interface OnScrollChangedCallback {
         void onScroll(WebView v, int l, int t);
     }
-
-
+*/
     public static boolean isUri(String url) {
         return url.startsWith("http:") ||
             url.startsWith("javascript:") ||

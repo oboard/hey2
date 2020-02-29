@@ -28,7 +28,7 @@ public class HeyProgress extends View {
         int h = getHeight(), w = getWidth();
         Paint p = new Paint();
         p.setColor(color);
-        canvas.drawRect(w - w * progress / 100, 0, w * progress / 100, h, p);
+        canvas.drawRect(0, 0, w * progress / 100, h, p);
     }
 
 }

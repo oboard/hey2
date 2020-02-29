@@ -47,7 +47,7 @@ public class ScrollText extends TextView {
 public static boolean first = true;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        View viewGroup = (View)getParent();
+        View viewGroup =(View)getParent();
         int x = (int)event.getX(), y = (int)event.getY();
 
         switch (event.getAction()) {

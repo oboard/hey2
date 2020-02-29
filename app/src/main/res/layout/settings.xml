@@ -1,54 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/settings_root"
-	android:layout_height="wrap_content"
-	android:layout_width="fill_parent"
-	android:orientation="vertical"
-	android:padding="10dp">
-
-	<omark.hey.control.HeySetting
-		android:id="@+id/setting_1"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<Preference
+		android:key="h"
 		android:onClick="onSettingClick"
-		android:layout_height="48dp"
-		android:layout_width="fill_parent"
-		android:tag="@string/lang27"/>
+		android:title="@string/lang27"/>
 
-	<omark.hey.control.HeySetting
-		android:id="@+id/setting_3"
+	<Preference
+		android:key="s"
 		android:onClick="onSettingClick"
-		android:layout_height="48dp"
-		android:layout_width="fill_parent"
-		android:tag="@string/lang29"/>
+		android:title="@string/lang29"/>
 
-	<omark.hey.control.HeySetting
-		android:id="@+id/setting_4"
+	<Preference
+		android:key="b"
 		android:onClick="onSettingClick"
-		android:layout_height="48dp"
-		android:layout_width="fill_parent"
-		android:tag="@string/lang22"/>
+		android:title="@string/lang22"/>
 
-	<omark.hey.control.HeySetting
-		android:id="@+id/setting_5"
+	<Preference
+		android:key="st"
 		android:onClick="onSettingClick"
-		android:layout_height="48dp"
-		android:layout_width="fill_parent"
-		android:tag="@string/lang12"/>
+		android:title="@string/lang12"/>
 
-	<omark.hey.control.HeySetting
-		android:id="@+id/setting_2"
+	<Preference
+		android:key="a"
 		android:onClick="onSettingClick"
-		android:layout_height="48dp"
-		android:layout_width="fill_parent"
-		android:tag="@string/lang25"
-		android:translationX="100dp"/>
+		android:title="@string/lang33"/>
 
-	<omark.hey.control.HeySetting
-		android:id="@+id/setting_6"
-		android:onClick="onSettingClick"
-		android:layout_height="48dp"
-		android:layout_width="fill_parent"
-		android:tag="@string/lang33"/>
-
-</LinearLayout>
-
+</PreferenceScreen>

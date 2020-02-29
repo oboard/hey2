@@ -2,21 +2,18 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="omark.hey"
-	android:versionCode="43"
-	android:versionName="U-2.1.1">
+	android:versionCode="45"
+	android:versionName="U-2.2">
 
 	<uses-sdk
-		android:minSdkVersion="19"
-		android:targetSdkVersion="22"/>
+		android:minSdkVersion="23"
+		android:targetSdkVersion="29"/>
 
 	<uses-permission
 		android:name="android.permission.INTERNET"/>
 
 	<uses-permission
 		android:name="android.permission.SET_ORIENTATION"/>
-
-	<uses-permission
-		android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
 	<uses-permission
 		android:name="android.permission.CHANGE_CONFIGURATION"/>
@@ -36,6 +33,12 @@
 	<uses-permission
 		android:name="android.permission.SET_PREFERRED_APPLICATIONS"/>
 
+	<uses-permission
+		android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
 	<uses-feature
 		android:name="android.hardware.location.gps"
 		android:required="false"/>
@@ -54,6 +57,7 @@
 		android:allowBackup="true"
 		android:label="@string/name"
 		android:icon="@drawable/icon"
+		android:usesCleartextTraffic="true"
 		android:hardwareAccelerated="true">
 
 		<activity

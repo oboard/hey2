@@ -53,8 +53,11 @@ public class HeyWindow extends LinearLayout {
         int sw = display.getWidth(), sh = display.getHeight();
 
         //总是出现在应用程序窗口之上。
-        lp.type = WindowManager.LayoutParams.TYPE_PHONE;
+        //lp.type = WindowManager.LayoutParams.TYPE_PHONE;
 
+		//WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+		lp.type =2032;// WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+		
         lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
         //悬浮窗默认显示的位置

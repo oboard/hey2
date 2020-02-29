@@ -2,6 +2,7 @@ package omark.hey;
 import android.graphics.*;
 import android.os.*;
 import android.webkit.*;
+import android.widget.Toast;
 
 public class HeyApi {
 
@@ -20,12 +21,12 @@ public class HeyApi {
                             Main.multibottom.set(index, Color.parseColor(color));
                         else
                             Main.multibottom.set(index, Color.TRANSPARENT);
-                        if (index == Main.webindex) Main.onChangeBackground(Main.multibottom.get(index), Main.multitop.get(index));
+                        if (index == Main.webindex) Main.onChangeBackground(Main.multibottom.get(index));
                     } catch (IndexOutOfBoundsException e) {
                         //多半是关闭的太快了
                     } catch (IllegalArgumentException e2) {
                         //Bad Color
-                        Main.onChangeBackground(Color.TRANSPARENT, Main.getHeyBackground());
+                        Main.onChangeBackground(Color.TRANSPARENT);
                     }
                 }
             });
@@ -139,6 +140,12 @@ public class HeyApi {
     }
     @JavascriptInterface
     public String cmd(String str, String value) {
+		switch(str) {
+			case "pic":
+				set("image",value);
+				Toast.makeText(Main.me, value,Toast.LENGTH_LONG).show();
+				break;
+		}
         return "";
     }
 }

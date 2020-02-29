@@ -6,7 +6,9 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.widget.Toast;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -131,30 +133,34 @@ public class S {
     }
     
     public static void storePic(String key, Bitmap bitmap) {
+		
+		
+		
+		
+		
+		
         if (key == null || key.isEmpty() || bitmap == null) return;
-        FileOutputStream fos = null;
-        try {
-            fos = c.openFileOutput(key, Context.MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (FileNotFoundException e) {
-
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.flush();
-                    fos.close();
-                } catch (IOException e) {
-
-                }
-            }
-        }
-    } public static Bitmap getStorePic(String key) {
+		
+		String dir = c.getFilesDir().getAbsolutePath();
+		try {  
+			File file = new File(dir + key + ".jpg");  
+			FileOutputStream out = new FileOutputStream(file);  
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);  
+			out.flush();  
+			out.close();  
+		} catch (Exception e) {  
+			e.printStackTrace();  
+		} 
+    }
+	public static Bitmap getStorePic(String key) {
         if (key == null || key.isEmpty()) return null;
-        FileInputStream fin = null;
+        
         Bitmap bitmap = null;
-        try {
-            fin = c.openFileInput(key);
-            bitmap = BitmapFactory.decodeStream(fin);
+        String dir = c.getFilesDir().getAbsolutePath();
+		try {  
+			File file = new File(dir + key + ".jpg");
+			FileInputStream in = new FileInputStream(file);
+            bitmap = BitmapFactory.decodeStream(in);
         } catch (FileNotFoundException e) {
 
         }

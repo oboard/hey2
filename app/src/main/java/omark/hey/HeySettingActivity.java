@@ -1,32 +1,44 @@
 package omark.hey;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.widget.EditText;
+import java.io.FileNotFoundException;
 import omark.hey.HeyHelper;
-import omark.hey.R;
-import omark.hey.control.HeySetting;
 
-public class HeySettingActivity extends Activity {
+public class HeySettingActivity extends PreferenceActivity implements  Preference.OnPreferenceClickListener{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings);
+
+        this.addPreferencesFromResource(R.layout.settings);
 		
-
-		((HeySetting)findViewById(R.id.setting_2)).setChecked(S.get("pagecolor", true));
+		findPreference("h").setOnPreferenceClickListener(this);
+		findPreference("s").setOnPreferenceClickListener(this);
+		findPreference("b").setOnPreferenceClickListener(this);
+		findPreference("st").setOnPreferenceClickListener(this);
+		findPreference("a").setOnPreferenceClickListener(this);
+		
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB)
+            getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
-
-	public void onSettingClick(View v) {
-        switch (v.getId()) {
-            case R.id.setting_1:
+	
+	@Override
+    public boolean onPreferenceClick(Preference preference) {
+       
+        switch (preference.getOrder()) {
+            case 0:
                 final EditText et = new EditText(this);
                 et.setText(S.get("home", HeyHelper.DEFAULT_HOME));
-                new AlertDialog.Builder(this).setView(et).setTitle(v.getTag().toString())
+                new AlertDialog.Builder(this).setView(et).setTitle(preference.getTitle())
                     .setNegativeButton(R.string.lang4, null).setPositiveButton(R.string.lang3, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int i) {
                             S.put("home", et.getText().toString())
@@ -34,11 +46,7 @@ public class HeySettingActivity extends Activity {
                         }
                     }).show();
                 break;
-            case R.id.setting_2:
-                S.put("pagecolor", ((HeySetting)v).isChecked())
-                    .ok();
-                break;
-            case R.id.setting_3:
+            case 1:
                 final String[] se = {
                     "Bing",
                     "Google",
@@ -57,7 +65,7 @@ public class HeySettingActivity extends Activity {
                     "https://search.yahoo.com/search?p=",
                     "https://so.com/s?q="
                 };
-                new AlertDialog.Builder(this).setTitle(v.getTag().toString()).setSingleChoiceItems(se, S.get("searchindex", 0), new DialogInterface.OnClickListener() { 
+                new AlertDialog.Builder(this).setTitle(preference.getTitle()).setSingleChoiceItems(se, S.get("searchindex", 0), new DialogInterface.OnClickListener() { 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             S.put("search", su[which])
@@ -68,8 +76,8 @@ public class HeySettingActivity extends Activity {
                         } 
                     }).show();
                 break;
-            case R.id.setting_4:
-                new AlertDialog.Builder(this).setTitle(v.getTag().toString())
+            case 2:
+                new AlertDialog.Builder(this).setTitle(preference.getTitle())
                     .setItems(new String[] {
                         S.getString(R.string.lang1),
                         S.getString(R.string.lang13)
@@ -85,8 +93,8 @@ public class HeySettingActivity extends Activity {
                         }
                     }).show();
                 break;
-            case R.id.setting_5:
-                new AlertDialog.Builder(this).setTitle(v.getTag().toString())
+            case 3:
+                new AlertDialog.Builder(this).setTitle(preference.getTitle())
                     .setSingleChoiceItems(new String[] {
                         S.getString(R.string.lang14),
                         S.getString(R.string.lang15)
@@ -100,10 +108,26 @@ public class HeySettingActivity extends Activity {
                         }
                     }).show();
                 break;
-            case R.id.setting_6:
+            case 4:
                 startActivity(new Intent(this, About.class));
                 break;
         }
+    return true;
+}
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent)  {
+		if (requestCode == 1) {
+			if (resultCode == RESULT_OK) {
+				Uri uri = intent.getData();
+				ContentResolver cr = this.getContentResolver();
+				try {
+					S.storePic("background", BitmapFactory.decodeStream(cr.openInputStream(uri)));
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
     }
-	
+
 }

@@ -1,6 +1,8 @@
 package omark.hey;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,8 +11,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.util.Base64;
 import android.widget.TextView;
-import android.content.Context;
+import java.io.ByteArrayOutputStream;
 
 public class HeyHelper {
     static String DEFAULT_HOME = "http://nav.ailuoku6.top/";
@@ -27,6 +30,44 @@ public class HeyHelper {
 	public static float dip2px(Context context, float dipValue) {
         return (dipValue * context.getResources().getDisplayMetrics().density + 0.5f) ;
     }
+	
+	
+	
+	
+	public static String convertIconToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();// outputstream
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] appicon = baos.toByteArray();// 转为byte数组
+        String img = Base64.encodeToString(appicon, Base64.DEFAULT);
+        return img;
+
+    }
+
+
+	/**
+     * string转成bitmap
+     *
+     * @param str
+     */
+    public static Bitmap convertStringToIcon(String str) {
+        // OutputStream out;
+        Bitmap bitmap = null;
+        try {
+            // out = new FileOutputStream("/sdcard/aa.jpg");
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(str, Base64.DEFAULT);
+            bitmap =
+				BitmapFactory.decodeByteArray(bitmapArray, 0,
+											  bitmapArray.length);
+            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return bitmap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+	
+	
+	
 	
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float round) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
