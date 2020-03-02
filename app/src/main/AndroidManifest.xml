@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS" />
 	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>  
 	
 		
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
@@ -59,54 +58,55 @@
             </intent-filter>
             
             <!--这就是添加打开方式的办法了(๑•̀ㅂ•́)و✧-->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:scheme="file" />
-                <data android:scheme="javascript" />
-                <data android:scheme="about" />
+			<intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.APP_BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="http" />
-                <data android:scheme="file" />
-                <data android:scheme="https" />
-                <data android:mimeType="text/html" />
-                <data android:mimeType="text/plain" />
-                <data android:mimeType="application/xhtml+xml" />
-                <data android:mimeType="application/vnd.wap.xhtml+xml" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.WEB_SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.BROWSABLE" />
-			</intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.WEB_SEARCH" />
-                <action android:name="android.intent.action.MEDIA_SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="text/*"/>
+                <data android:mimeType="audio/*"/>
+                <data android:mimeType="video/*"/>
+                <data android:mimeType="image/*"/>
+                <data android:mimeType="application/xhtml+xml"/>
+                <data android:mimeType="application/x-webarchive-xml"/>
+                <data android:mimeType="application/vnd.wap.xhtml+xml"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:mimeType="text/*"/>
+                <data android:mimeType="image/*"/>
             </intent-filter>
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <action android:name="android.intent.action.WEB_SEARCH"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts"/>
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.VIEW" />

@@ -34,7 +34,9 @@ public class HeyMenu {
     int[] to, icon,textb;
     SimpleAdapter sa;
     GridView gv;
-
+	int oy = 0;
+	
+	
 	FrameLayout mMenu;
     List<Map<String, Object>> data_list;
     ArrayList<String> data_code = new ArrayList<String>();
@@ -147,22 +149,22 @@ public class HeyMenu {
                      }*/
                 }
             });
-
+		
 		g.setOnTouchListener(new View.OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 
 					int y = (int)event.getY();
-
+					
 					switch (event.getAction()) {
 						case MotionEvent.ACTION_DOWN:
 							mMenu = Main.menulayout_box;
-
+							oy = y;
 							break;
 						case MotionEvent.ACTION_MOVE:
-							int offsety = mMenu.getScrollY() - y;
+							int offsety = mMenu.getScrollY() - y+oy;
 
-							int max = Main.menu_layout.getHeight();
+							int max = Main.menu_layout.getHeight()/2;
 							if (offsety > max) offsety = max;
 							mMenu.scrollTo(0, offsety);
 

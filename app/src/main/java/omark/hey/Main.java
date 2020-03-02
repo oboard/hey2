@@ -613,7 +613,10 @@ public class Main extends Activity {
             return;
         }
         if (intent.getAction() == null) return;
-		if (intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) return;
+		if(intent.getCategories() != null) {
+			if (intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) return;
+		}
+		
 		switch (intent.getAction()) {
 			case Intent.ACTION_SEND:
 				web = addPage(HeyHelper.getSearch(intent.getStringExtra(Intent.EXTRA_TEXT)));
@@ -631,7 +634,9 @@ public class Main extends Activity {
 				web = addPage("");
 				break;
 			default:
-				web = addPage("");
+			String s = "";
+			
+				web = addPage(intent.getDataString());
 				break;
         }
     }

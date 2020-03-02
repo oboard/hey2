@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.widget.EditText;
 import java.io.FileNotFoundException;
 import omark.hey.HeyHelper;
@@ -129,5 +131,13 @@ public class HeySettingActivity extends PreferenceActivity implements  Preferenc
 			}
 		}
     }
+	
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) finish();
+        return super.onOptionsItemSelected(item);
+    } @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) finish();
+        return super.onKeyDown(keyCode, event);
+    } 
 
 }
